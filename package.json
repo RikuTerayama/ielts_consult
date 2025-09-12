@@ -2,6 +2,9 @@
   "name": "ielts-site",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20 <22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/indexnow-prepare.mjs && astro build && node scripts/indexnow-ping.mjs",
@@ -9,7 +12,6 @@
     "wxr:convert": "node scripts/wxr-to-md.mjs --xml input/note-ielts_consult-1.xml --assets input/assets --out src/content/blog --images public/images"
   },
   "dependencies": {
-    "@astrojs/content": "^4.0.0",
     "@astrojs/sitemap": "^3.1.3",
     "astro": "^4.15.0",
     "cheerio": "^1.0.0",
