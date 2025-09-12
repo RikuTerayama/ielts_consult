@@ -72,6 +72,20 @@ function findAssetFile(filename, assetsDir) {
   return null;
 }
 
+// 重複するslugをチェックして連番を付ける
+function generateUniqueSlug(baseSlug, existingSlugs) {
+  let slug = baseSlug;
+  let counter = 2;
+  
+  while (existingSlugs.has(slug)) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  
+  existingSlugs.add(slug);
+  return slug;
+}
+
 // HTMLから画像を処理
 function processImages(html, slug, assetsDir, imagesDir) {
   const $ = cheerio.load(html);
@@ -105,14 +119,14 @@ function processImages(html, slug, assetsDir, imagesDir) {
       
       log(`画像をコピー: ${filename} → /images/${slug}/`);
     } else {
-      log(`アセットが見つかりません: ${filename}`, 'error');
+      log(`アセットが見つかりません: ${filename} (元のURLを維持)`);
     }
   });
   
-  return $.html();
+  return { html: $.html(), imageCount: processedCount };
 }
 
-// テキストからdescriptionを生成
+// テキストからdescriptionを生成（160文字）
 function generateDescription(html) {
   const $ = cheerio.load(html);
   const text = $.text().replace(/\s+/g, ' ').trim();
@@ -121,16 +135,16 @@ function generateDescription(html) {
     return text;
   }
   
-  // 140-160文字の範囲で適切な切れ目を探す
-  let end = 160;
-  while (end > 140) {
-    if (text[end] === '。' || text[end] === '.' || text[end] === '！' || text[end] === '!') {
-      return text.substring(0, end + 1);
-    }
-    end--;
+  return text.substring(0, 160);
+}
+
+// canonical URLを生成
+function generateCanonical(slug) {
+  const siteUrl = process.env.PUBLIC_SITE_URL;
+  if (siteUrl) {
+    return `${siteUrl}/blog/${slug}/`;
   }
-  
-  return text.substring(0, 140) + '...';
+  return `/blog/${slug}/`;
 }
 
 // メイン処理
@@ -186,6 +200,8 @@ async function main() {
     
     let processedCount = 0;
     let skippedCount = 0;
+    let totalImageCount = 0;
+    const existingSlugs = new Set();
     
     // 各アイテムを処理
     for (const item of items) {
@@ -197,6 +213,7 @@ async function main() {
         const postName = item['wp:post_name']?.[0];
         const postId = item['wp:post_id']?.[0];
         const postType = item['wp:post_type']?.[0];
+        const updatedDate = item['wp:post_modified']?.[0];
         
         // カテゴリとタグを抽出
         const categories = item.category || [];
@@ -217,9 +234,9 @@ async function main() {
         }
         
         // slugを生成
-        let slug;
+        let baseSlug;
         if (postName) {
-          slug = postName;
+          baseSlug = postName;
         } else {
           const titleSlug = slugify(title, { 
             lower: true, 
@@ -227,16 +244,20 @@ async function main() {
             locale: 'ja'
           });
           if (titleSlug && titleSlug.length > 0) {
-            slug = titleSlug;
+            baseSlug = titleSlug;
           } else {
-            slug = `post-${postId || Date.now()}`;
+            baseSlug = `post-${postId || Date.now()}`;
           }
         }
+        
+        // 重複チェックしてユニークなslugを生成
+        const slug = generateUniqueSlug(baseSlug, existingSlugs);
         
         log(`処理中: ${title} (slug: ${slug})`);
         
         // 画像を処理
-        const processedHtml = processImages(content, slug, options.assetsDir, options.imagesDir);
+        const { html: processedHtml, imageCount } = processImages(content, slug, options.assetsDir, options.imagesDir);
+        totalImageCount += imageCount;
         
         // HTMLをMarkdownに変換
         const markdown = turndownService.turndown(processedHtml);
@@ -246,6 +267,10 @@ async function main() {
         
         // 日付をフォーマット
         const pubDate = postDate ? new Date(postDate).toISOString().split('T')[0] : undefined;
+        const updatedDateFormatted = updatedDate ? new Date(updatedDate).toISOString().split('T')[0] : undefined;
+        
+        // canonical URLを生成
+        const canonical = generateCanonical(slug);
         
         // Frontmatterを生成
         const frontmatter = {
@@ -253,9 +278,11 @@ async function main() {
           description: description,
           slug: slug,
           pubDate: pubDate,
+          updatedDate: updatedDateFormatted,
           tags: tags.length > 0 ? tags : undefined,
           category: category || undefined,
-          draft: false
+          draft: false,
+          canonical: canonical
         };
         
         // Frontmatterを文字列に変換
@@ -285,7 +312,7 @@ async function main() {
       }
     }
     
-    log(`処理完了! 成功: ${processedCount}件, スキップ: ${skippedCount}件`, 'success');
+    log(`処理完了! 成功: ${processedCount}件, スキップ: ${skippedCount}件, 画像コピー: ${totalImageCount}枚`, 'success');
     
   } catch (error) {
     log(`致命的エラー: ${error.message}`, 'error');
