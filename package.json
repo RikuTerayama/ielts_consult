@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/indexnow-prepare.mjs && astro build && node scripts/indexnow-ping.mjs",
     "preview": "astro preview",
     "wxr:convert": "node scripts/wxr-to-md.mjs --xml input/note-ielts_consult-1.xml --assets input/assets --out src/content/blog --images public/images"
   },
