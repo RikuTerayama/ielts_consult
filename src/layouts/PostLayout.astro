@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+const { title, description, pubDate, updatedDate, canonical } = Astro.props as CollectionEntry<'blog'>['data'];
+const pageUrl = new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString();
+---
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical ?? pageUrl} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={pageUrl} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+      <article>
+        <h1>{title}</h1>
+        {pubDate && <p><small>公開日: {pubDate}{updatedDate ? `（更新日: ${updatedDate}` : ''}{updatedDate ? '）' : ''}</small></p>}
+        <slot />
+      </article>
+    </main>
+  </body>
+</html>

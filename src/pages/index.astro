@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('blog')).sort((a, b) => (b.data.pubDate || '').localeCompare(a.data.pubDate || ''));
+---
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>IELTS Blog</title>
+    <link rel="canonical" href={new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString()} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <main style="max-width: 920px; margin: 2rem auto; padding: 0 1rem;">
+      <h1>IELTS コンテンツ</h1>
+      <ul>
+        {posts.map(p => (
+          <li>
+            <a href={`/blog/${p.data.slug}/`}>{p.data.title}</a>
+            {p.data.pubDate && <small>（{p.data.pubDate}）</small>}
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>
