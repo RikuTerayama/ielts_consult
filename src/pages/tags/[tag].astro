@@ -17,22 +17,21 @@ export async function getStaticPaths() {
 }
 
 const { tag } = Astro.params;
-const decodedTag = decodeURIComponent(tag);
 const posts = await getCollection('blog');
 const filteredPosts = posts
-  .filter(post => post.data.tags && post.data.tags.includes(decodedTag))
+  .filter(post => post.data.tags && post.data.tags.includes(tag))
   .sort((a, b) => (b.data.pubDate || '').localeCompare(a.data.pubDate || ''));
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>タグ: #{decodedTag} - IELTS Blog</title>
+    <title>タグ: #{tag} - IELTS Blog</title>
     <link rel="canonical" href={new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString()} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
     <main style="max-width: 920px; margin: 2rem auto; padding: 0 1rem;">
-      <h1>タグ: #{decodedTag}</h1>
+      <h1>タグ: #{tag}</h1>
       <div style="margin-bottom: 2rem;">
         <a href="/blog/" style="margin-right: 1rem;">← ブログ一覧</a>
         <a href="/tags/" style="margin-right: 1rem;">← タグ一覧</a>
@@ -66,7 +65,7 @@ const filteredPosts = posts
                 <div style="margin-bottom: 0.5rem;">
                   <strong>タグ:</strong>
                   {post.data.tags.map(t => (
-                    <a href={`/tags/${encodeURIComponent(t)}/`} style={`margin-left: 0.5rem; color: ${t === decodedTag ? '#dc3545' : '#007bff'}; text-decoration: none; font-weight: ${t === decodedTag ? 'bold' : 'normal'};`}>
+                    <a href={`/tags/${encodeURIComponent(t)}/`} style={`margin-left: 0.5rem; color: ${t === tag ? '#dc3545' : '#007bff'}; text-decoration: none; font-weight: ${t === tag ? 'bold' : 'normal'};`}>
                       #{t}
                     </a>
                   ))}
