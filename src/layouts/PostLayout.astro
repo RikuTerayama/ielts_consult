@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import AdSenseHead from '../components/AdSenseHead.astro';
 const { title, description, pubDate, updatedDate, canonical } = Astro.props as CollectionEntry<'blog'>['data'];
 const pageUrl = new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString();
 ---
@@ -14,6 +15,9 @@ const pageUrl = new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUB
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={pageUrl} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {import.meta.env.GSC_META && <meta name="google-site-verification" content={import.meta.env.GSC_META} />}
+    {import.meta.env.BING_META && <meta name="msvalidate.01" content={import.meta.env.BING_META} />}
+    <AdSenseHead />
   </head>
   <body>
     <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
