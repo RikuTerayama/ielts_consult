@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "node scripts/indexnow-prepare.mjs && astro build && node scripts/indexnow-ping.mjs",
     "preview": "astro preview",
-    "wxr:convert": "node scripts/wxr-to-md.mjs --xml input/note-ielts_consult-1.xml --assets input/assets --out src/content/blog --images public/images"
+    "wxr:inspect": "node scripts/wxr-inspect.mjs --xml input/note-ielts_consult-1.xml",
+    "wxr:convert": "node scripts/wxr-to-md.mjs --xml input/note-ielts_consult-1.xml --assets input/assets --out src/content/blog --images public/images",
+    "wxr:split": "node scripts/wxr-split.mjs --xml input/note-ielts_consult-1.xml --out input/wxr-split --per 10"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.1.3",
