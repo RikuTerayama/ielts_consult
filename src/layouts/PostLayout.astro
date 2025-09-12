@@ -1,0 +1,232 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import AdSenseHead from '../components/AdSenseHead.astro';
+const { title, description, pubDate, updatedDate, canonical } = Astro.props as CollectionEntry<'blog'>['data'];
+const siteBase = Astro.site ?? import.meta.env.PUBLIC_SITE_URL ?? 'https://<your-site>.netlify.app';
+const pageUrl = new URL(Astro.url, siteBase).toString();
+---
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title} - IELTS 学習ガイド</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical ?? pageUrl} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={pageUrl} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {import.meta.env.GSC_META && <meta name="google-site-verification" content={import.meta.env.GSC_META} />}
+    {import.meta.env.BING_META && <meta name="msvalidate.01" content={import.meta.env.BING_META} />}
+    <AdSenseHead />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        line-height: 1.6; 
+        color: #333; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      .container { 
+        max-width: 900px; 
+        margin: 0 auto; 
+        padding: 2rem 1rem; 
+      }
+      .article-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .article-header {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .article-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+      }
+      .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        color: #666;
+        font-size: 0.9rem;
+      }
+      .article-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 3rem;
+      }
+      .article-content h1, .article-content h2, .article-content h3, .article-content h4, .article-content h5, .article-content h6 {
+        margin: 2rem 0 1rem 0;
+        color: #667eea;
+        font-weight: 700;
+      }
+      .article-content h1 { font-size: 2rem; }
+      .article-content h2 { font-size: 1.8rem; }
+      .article-content h3 { font-size: 1.5rem; }
+      .article-content p {
+        margin-bottom: 1.5rem;
+      }
+      .article-content ul, .article-content ol {
+        margin: 1.5rem 0;
+        padding-left: 2rem;
+      }
+      .article-content li {
+        margin-bottom: 0.5rem;
+      }
+      .article-content blockquote {
+        border-left: 4px solid #667eea;
+        padding-left: 1.5rem;
+        margin: 2rem 0;
+        font-style: italic;
+        color: #555;
+      }
+      .article-content code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9em;
+      }
+      .article-content pre {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 2rem 0;
+      }
+      .article-content pre code {
+        background: none;
+        padding: 0;
+      }
+      .article-footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #f0f0f0;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        margin-bottom: 2rem;
+      }
+      .back-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      }
+      .tags-section {
+        margin-top: 2rem;
+      }
+      .tags-label {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .tag {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+      .tag:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+      .category {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-top: 1rem;
+      }
+      .category:hover {
+        background: #667eea;
+        color: white;
+        transform: scale(1.05);
+      }
+      @media (max-width: 768px) {
+        .article-title { font-size: 2rem; }
+        .article-card { padding: 2rem; }
+        .article-meta { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <article class="article-card">
+        <header class="article-header">
+          <h1 class="article-title">{title}</h1>
+          <div class="article-meta">
+            {pubDate && (
+              <span>📅 公開日: {pubDate}</span>
+            )}
+            {updatedDate && updatedDate !== pubDate && (
+              <span>🔄 更新日: {updatedDate}</span>
+            )}
+          </div>
+        </header>
+
+        <div class="article-content">
+          <slot />
+        </div>
+
+        <footer class="article-footer">
+          <a href="/" class="back-link">← ホームに戻る</a>
+          
+          <div class="tags-section">
+            {Astro.props.tags && Astro.props.tags.length > 0 && (
+              <>
+                <span class="tags-label">🏷️ タグ:</span>
+                <div class="tags-list">
+                  {Astro.props.tags.map(tag => (
+                    <a href={`/tags/${encodeURIComponent(tag)}/`} class="tag">
+                      #{tag}
+                    </a>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {Astro.props.category && (
+              <a href={`/categories/${encodeURIComponent(Astro.props.category)}/`} class="category">
+                📁 {Astro.props.category}
+              </a>
+            )}
+          </div>
+        </footer>
+      </article>
+    </div>
+  </body>
+</html>
