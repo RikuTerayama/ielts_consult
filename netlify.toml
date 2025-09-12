@@ -1,6 +1,9 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  node_version = "20.18.0"
+  node_version = "20"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 # 将来 AdSense を入れるときは /ads.txt を public に配置
