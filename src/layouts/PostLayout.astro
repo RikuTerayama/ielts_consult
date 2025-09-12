@@ -2,7 +2,8 @@
 import type { CollectionEntry } from 'astro:content';
 import AdSenseHead from '../components/AdSenseHead.astro';
 const { title, description, pubDate, updatedDate, canonical } = Astro.props as CollectionEntry<'blog'>['data'];
-const pageUrl = new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString();
+const siteBase = Astro.site ?? import.meta.env.PUBLIC_SITE_URL ?? 'https://<your-site>.netlify.app';
+const pageUrl = new URL(Astro.url, siteBase).toString();
 ---
 <html lang="ja">
   <head>
@@ -25,6 +26,34 @@ const pageUrl = new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUB
         <h1>{title}</h1>
         {pubDate && <p><small>公開日: {pubDate}{updatedDate ? `（更新日: ${updatedDate}` : ''}{updatedDate ? '）' : ''}</small></p>}
         <slot />
+        
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
+          <div style="margin-bottom: 1rem;">
+            <a href="/blog/" style="color: #007bff; text-decoration: none;">← ブログ一覧</a>
+          </div>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+            {Astro.props.tags && Astro.props.tags.length > 0 && (
+              <div>
+                <strong style="margin-right: 0.5rem;">タグ:</strong>
+                {Astro.props.tags.map(tag => (
+                  <a href={`/tags/${encodeURIComponent(tag)}/`} style="margin-right: 0.5rem; color: #007bff; text-decoration: none; background: #f8f9fa; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.9rem;">
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+            )}
+            
+            {Astro.props.category && (
+              <div>
+                <strong style="margin-right: 0.5rem;">カテゴリ:</strong>
+                <a href={`/categories/${encodeURIComponent(Astro.props.category)}/`} style="color: #007bff; text-decoration: none; background: #f8f9fa; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.9rem;">
+                  {Astro.props.category}
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
       </article>
     </main>
   </body>
