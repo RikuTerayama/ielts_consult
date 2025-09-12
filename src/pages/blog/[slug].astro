@@ -3,13 +3,15 @@ import { getCollection } from 'astro:content';
 import { Markdown } from 'astro/components';
 import PostLayout from '../../layouts/PostLayout.astro';
 
-const { slug } = Astro.params;
-const posts = await getCollection('blog');
-const post = posts.find(p => p.data.slug === slug);
-
-if (!post) {
-  throw new Error(`Post not found for slug: ${slug}`);
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((p) => ({
+    params: { slug: p.data.slug },
+    props: { post: p },
+  }));
 }
+
+const { post } = Astro.props;
 ---
 <PostLayout {...post.data}>
   <Markdown content={post.body} />
