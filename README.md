@@ -106,5 +106,37 @@ public/
 scripts/
 ├── wxr-inspect.mjs       # WXR検査スクリプト
 ├── wxr-to-md.mjs         # 変換スクリプト
-└── wxr-split.mjs         # 分割スクリプト
+├── wxr-split.mjs         # 分割スクリプト
+└── ensure-content.mjs    # プレースホルダー生成スクリプト
 ```
+
+## ローカル運用の恒久対策
+
+### 初回セットアップ
+1. **WXRファイルとアセットを配置**:
+   - `input/note-ielts_consult-1.xml` にWXRファイルを配置
+   - `input/assets/` に画像アセットを配置
+
+2. **記事を生成**:
+   ```bash
+   npm run wxr:convert
+   ```
+   これにより以下が生成されます：
+   - `src/content/blog/*.md` - Markdown記事ファイル
+   - `public/images/<slug>/` - 処理済み画像ファイル
+
+3. **生成物をコミット**:
+   ```bash
+   git add src/content/blog public/images
+   git commit -m "Add blog content and images"
+   git push
+   ```
+
+### 継続運用
+- **Netlify自動デプロイ**: コミット＆プッシュ後、Netlifyが自動でビルド・デプロイ
+- **プレースホルダー機能**: 記事がない場合、`ensure-content.mjs`が一時記事を生成（本番導線は早めに実記事へ移行推奨）
+
+### トラブルシューティング
+- **記事が表示されない**: `src/content/blog/` に`.md`ファイルが存在するか確認
+- **画像が表示されない**: `public/images/` に画像ファイルが存在するか確認
+- **ビルドエラー**: `npm run build` でローカルビルドをテスト
