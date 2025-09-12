@@ -1,87 +1,32 @@
 ---
 import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog')).sort((a, b) => (b.data.pubDate || '').localeCompare(a.data.pubDate || ''));
-const totalPages = Math.ceil(posts.length / 12);
-const currentPage = 1;
-const startIndex = (currentPage - 1) * 12;
-const endIndex = startIndex + 12;
-const paginatedPosts = posts.slice(startIndex, endIndex);
-const siteBase = Astro.site ?? import.meta.env.PUBLIC_SITE_URL ?? 'https://<your-site>.netlify.app';
-const pageUrl = new URL(Astro.url, siteBase).toString();
+const base = (import.meta.env.PUBLIC_SITE_URL || Astro.site || 'https://<your-site>.netlify.app').toString().replace(/\/$/, '');
+const pageUrl = new URL(Astro.url.pathname, base).toString();
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>IELTS Blog</title>
+    <title>IELTS コンテンツ</title>
     <link rel="canonical" href={pageUrl} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <main style="max-width: 920px; margin: 2rem auto; padding: 0 1rem;">
+    <main style="max-width:920px;margin:2rem auto;padding:0 1rem;">
       <h1>IELTS コンテンツ</h1>
-      <div style="margin-bottom: 2rem;">
-        <a href="/tags/" style="margin-right: 1rem;">タグ一覧</a>
-        <a href="/categories/">カテゴリ一覧</a>
-      </div>
-      
-      <div style="margin-bottom: 2rem;">
-        {paginatedPosts.map(post => (
-          <article style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
-            <h2 style="margin: 0 0 0.5rem 0;">
-              <a href={`/blog/${post.data.slug}/`} style="text-decoration: none; color: #333;">
-                {post.data.title}
-              </a>
-            </h2>
-            {post.data.pubDate && (
-              <p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem;">
-                公開日: {post.data.pubDate}
-              </p>
-            )}
-            {post.data.description && (
-              <p style="margin: 0 0 0.5rem 0; color: #555;">
-                {post.data.description}
-              </p>
-            )}
-            <div style="margin-top: 0.5rem;">
-              {post.data.tags && post.data.tags.length > 0 && (
-                <div style="margin-bottom: 0.5rem;">
-                  <strong>タグ:</strong>
-                  {post.data.tags.map(tag => (
-                    <a href={`/tags/${encodeURIComponent(tag)}/`} style="margin-left: 0.5rem; color: #007bff; text-decoration: none;">
-                      #{tag}
-                    </a>
-                  ))}
-                </div>
-              )}
-              {post.data.category && (
-                <div>
-                  <strong>カテゴリ:</strong>
-                  <a href={`/categories/${encodeURIComponent(post.data.category)}/`} style="margin-left: 0.5rem; color: #007bff; text-decoration: none;">
-                    {post.data.category}
-                  </a>
-                </div>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
-      
-      {totalPages > 1 && (
-        <nav style="text-align: center; margin-top: 2rem;">
-          {currentPage > 1 && (
-            <a href="/blog/" style="margin-right: 1rem; padding: 0.5rem 1rem; background: #f8f9fa; border: 1px solid #dee2e6; text-decoration: none; color: #007bff; border-radius: 4px;">
-              前のページ
-            </a>
-          )}
-          <span style="margin: 0 1rem; color: #666;">
-            ページ {currentPage} / {totalPages}
-          </span>
-          {currentPage < totalPages && (
-            <a href="/blog/page/2/" style="margin-left: 1rem; padding: 0.5rem 1rem; background: #f8f9fa; border: 1px solid #dee2e6; text-decoration: none; color: #007bff; border-radius: 4px;">
-              次のページ
-            </a>
-          )}
-        </nav>
+      <p><a href="/tags/">タグ一覧</a>　<a href="/categories/">カテゴリ一覧</a></p>
+
+      {posts.length === 0 ? (
+        <p>まだ記事がありません。ローカルで <code>npm run wxr:convert</code> を実行し、<code>src/content/blog</code> と <code>public/images</code> をコミット＆プッシュしてください。</p>
+      ) : (
+        <ul>
+          {posts.map(p => (
+            <li>
+              <a href={`/blog/${p.slug}/`}>{p.data.title}</a>
+              {p.data.pubDate && <small>（{p.data.pubDate}）</small>}
+            </li>
+          ))}
+        </ul>
       )}
     </main>
   </body>
