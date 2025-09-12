@@ -46,15 +46,18 @@ async function main() {
       const link = item.link?.[0] || '';
       const pubDate = item.pubDate?.[0] || '';
       
-      // 日付をフォーマット
+      // 日付をフォーマット（文字列として）
       let formattedDate = '';
       if (pubDate) {
         try {
           const date = new Date(pubDate);
-          formattedDate = date.toISOString().split('T')[0];
+          formattedDate = `"${date.toISOString().split('T')[0]}"`;
         } catch (e) {
           log(`日付の解析に失敗: ${pubDate}`, 'error');
+          formattedDate = '""';
         }
+      } else {
+        formattedDate = '""';
       }
       
       // slugを生成（重複を避ける）
