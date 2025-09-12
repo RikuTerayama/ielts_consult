@@ -12,27 +12,26 @@ export async function getStaticPaths() {
   });
   
   return Array.from(categorySet).map(category => ({
-    params: { cat: encodeURIComponent(category) }
+    params: { cat: category }
   }));
 }
 
 const { cat } = Astro.params;
-const decodedCategory = decodeURIComponent(cat);
 const posts = await getCollection('blog');
 const filteredPosts = posts
-  .filter(post => post.data.category === decodedCategory)
+  .filter(post => post.data.category === cat)
   .sort((a, b) => (b.data.pubDate || '').localeCompare(a.data.pubDate || ''));
 ---
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <title>カテゴリ: {decodedCategory} - IELTS Blog</title>
+    <title>カテゴリ: {cat} - IELTS Blog</title>
     <link rel="canonical" href={new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString()} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
     <main style="max-width: 920px; margin: 2rem auto; padding: 0 1rem;">
-      <h1>カテゴリ: {decodedCategory}</h1>
+      <h1>カテゴリ: {cat}</h1>
       <div style="margin-bottom: 2rem;">
         <a href="/blog/" style="margin-right: 1rem;">← ブログ一覧</a>
         <a href="/tags/" style="margin-right: 1rem;">タグ一覧</a>
@@ -47,7 +46,7 @@ const filteredPosts = posts
         {filteredPosts.map(post => (
           <article style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
             <h2 style="margin: 0 0 0.5rem 0;">
-              <a href={`/blog/${post.data.slug}/`} style="text-decoration: none; color: #333;">
+              <a href={`/blog/${post.slug}/`} style="text-decoration: none; color: #333;">
                 {post.data.title}
               </a>
             </h2>
@@ -75,7 +74,7 @@ const filteredPosts = posts
               {post.data.category && (
                 <div>
                   <strong>カテゴリ:</strong>
-                  <a href={`/categories/${encodeURIComponent(post.data.category)}/`} style={`margin-left: 0.5rem; color: ${post.data.category === decodedCategory ? '#dc3545' : '#007bff'}; text-decoration: none; font-weight: ${post.data.category === decodedCategory ? 'bold' : 'normal'};`}>
+                  <a href={`/categories/${encodeURIComponent(post.data.category)}/`} style={`margin-left: 0.5rem; color: ${post.data.category === cat ? '#dc3545' : '#007bff'}; text-decoration: none; font-weight: ${post.data.category === cat ? 'bold' : 'normal'};`}>
                     {post.data.category}
                   </a>
                 </div>
