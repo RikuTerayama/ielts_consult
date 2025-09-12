@@ -1,56 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
-
 const posts = await getCollection('blog');
-const categoryCounts = {};
-
-// カテゴリの使用回数をカウント
-posts.forEach(post => {
-  if (post.data.category) {
-    categoryCounts[post.data.category] = (categoryCounts[post.data.category] || 0) + 1;
-  }
-});
-
-// カテゴリをアルファベット順にソート
-const sortedCategories = Object.entries(categoryCounts)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([category, count]) => ({ category, count }));
+const cats = Array.from(new Set(posts.map(p => p.data.category).filter(Boolean)));
 ---
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>カテゴリ一覧 - IELTS Blog</title>
-    <link rel="canonical" href={new URL(Astro.url, import.meta.env?.SITE || import.meta.env?.PUBLIC_SITE_URL || 'https://<your-site>.netlify.app').toString()} />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
+  <head><meta charset="utf-8" /><title>カテゴリ一覧</title></head>
   <body>
-    <main style="max-width: 920px; margin: 2rem auto; padding: 0 1rem;">
+    <main style="max-width:920px;margin:2rem auto;padding:0 1rem;">
       <h1>カテゴリ一覧</h1>
-      <div style="margin-bottom: 2rem;">
-        <a href="/blog/" style="margin-right: 1rem;">← ブログ一覧</a>
-        <a href="/tags/">タグ一覧</a>
-      </div>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
-        {sortedCategories.map(({ category, count }) => (
-          <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 8px; text-align: center;">
-            <h3 style="margin: 0 0 0.5rem 0;">
-              <a href={`/categories/${encodeURIComponent(category)}/`} style="text-decoration: none; color: #333;">
-                {category}
-              </a>
-            </h3>
-            <p style="margin: 0; color: #666; font-size: 0.9rem;">
-              {count}件の記事
-            </p>
-          </div>
-        ))}
-      </div>
-      
-      {sortedCategories.length === 0 && (
-        <p style="text-align: center; color: #666; margin-top: 2rem;">
-          カテゴリが設定された記事がありません。
-        </p>
-      )}
+      <p><a href="/blog/">← ブログ一覧</a>　<a href="/tags/">タグ一覧</a></p>
+      {cats.length === 0 ? <p>カテゴリが設定された記事がありません。まず記事を追加してください。</p> :
+        <ul>{cats.map(c => <li><a href={`/categories/${encodeURIComponent(c)}/`}>{c}</a></li>)}</ul>}
     </main>
   </body>
 </html>
