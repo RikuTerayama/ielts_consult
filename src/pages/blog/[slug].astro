@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import { Markdown } from 'astro/components';
 import PostLayout from '../../layouts/PostLayout.astro';
 
 export async function getStaticPaths() {
@@ -14,5 +13,5 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 ---
 <PostLayout {...post.data}>
-  <Markdown content={post.body} />
+  <Fragment set:html={post.body} />
 </PostLayout>
