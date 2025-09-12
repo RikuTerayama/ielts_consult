@@ -34,6 +34,12 @@ function parseArgs() {
       case '--images':
         options.imagesDir = value;
         break;
+      case '--include':
+        options.includePattern = value;
+        break;
+      case '--exclude':
+        options.excludePattern = value;
+        break;
       default:
         console.warn(`Unknown option: ${key}`);
     }
@@ -147,6 +153,30 @@ function generateCanonical(slug) {
   return `/blog/${slug}/`;
 }
 
+// アイテムがフィルタ条件にマッチするかチェック
+function matchesFilter(item, includePattern, excludePattern) {
+  const title = item.title?.[0] || '';
+  const postName = item['wp:post_name']?.[0] || '';
+  const searchText = `${title} ${postName}`.toLowerCase();
+  
+  // 除外パターンが指定されている場合
+  if (excludePattern) {
+    const excludeRegex = new RegExp(excludePattern, 'i');
+    if (excludeRegex.test(searchText)) {
+      return false;
+    }
+  }
+  
+  // 包含パターンが指定されている場合
+  if (includePattern) {
+    const includeRegex = new RegExp(includePattern, 'i');
+    return includeRegex.test(searchText);
+  }
+  
+  // パターンが指定されていない場合は全てマッチ
+  return true;
+}
+
 // メイン処理
 async function main() {
   const options = parseArgs();
@@ -214,6 +244,13 @@ async function main() {
         const postId = item['wp:post_id']?.[0];
         const postType = item['wp:post_type']?.[0];
         const updatedDate = item['wp:post_modified']?.[0];
+        
+        // フィルタ条件をチェック
+        if (!matchesFilter(item, options.includePattern, options.excludePattern)) {
+          log(`スキップ: ${title} (フィルタ条件にマッチしません)`);
+          skippedCount++;
+          continue;
+        }
         
         // カテゴリとタグを抽出
         const categories = item.category || [];
@@ -307,7 +344,8 @@ async function main() {
         log(`保存完了: ${outputPath}`);
         
       } catch (error) {
-        log(`エラー: ${title} - ${error.message}`, 'error');
+        const itemTitle = item.title?.[0] || '無題';
+        log(`エラー: ${itemTitle} - ${error.message}`, 'error');
         skippedCount++;
       }
     }
