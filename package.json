@@ -2,9 +2,14 @@
   "name": "ielts-consult-blog",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@9.10.0",
+  "engines": {
+    "node": ">=20.0.0 <21"
+  },
   "scripts": {
+    "preinstall": "corepack enable || true",
     "dev": "next dev",
-    "prebuild": "tsx scripts/generate-sitemap.ts && tsx scripts/generate-rss.ts",
+    "prebuild": "bash ./scripts/print-env.sh && tsx scripts/generate-sitemap.ts && tsx scripts/generate-rss.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
