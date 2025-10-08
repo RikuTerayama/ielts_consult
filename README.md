@@ -2,14 +2,20 @@
 
 IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログサイトです。
 
+## 🎨 デザインコンセプト
+
+- **ミニマル白ベース**: 読みやすさを重視したクリーンなデザイン
+- **indigoアクセント**: 信頼感と洗練さを表現するindigoカラー
+- **日本語最適化**: 禁則処理、行間、可読幅を最適化
+
 ## 🚀 技術スタック
 
 - **Framework**: Next.js 14 (App Router)
 - **言語**: TypeScript
-- **スタイリング**: Tailwind CSS
+- **スタイリング**: Tailwind CSS（indigoアクセント）
 - **UI Components**: shadcn/ui
 - **デプロイ**: Netlify
-- **SEO**: next-seo, sitemap.xml, robots.txt
+- **SEO**: Metadata API, sitemap.xml, robots.txt, RSS
 - **検索**: FlexSearch（クライアントサイド全文検索）
 
 ## 📦 セットアップ
@@ -172,7 +178,37 @@ import { AmazonProductCard } from "@/components/amazon-product-card";
 
 ### カスタムドメインの設定
 
-Netlify のダッシュボードから独自ドメインを設定できます。
+Netlify のダッシュボードから独自ドメインを設定できます。デフォルトは `ielts-consult.netlify.app` です。
+
+## 🗂️ サイドバー分類
+
+### 学習ステップ（5段階）
+
+- **はじめに**: IELTS入門・基礎知識
+- **基礎**: 基本的な対策と学習法
+- **中級**: スコア6.0〜7.0を目指す
+- **上級**: スコア7.0以上を目指す
+- **試験直前**: 直前対策とテクニック
+
+### 技能別（4種類）
+
+- 🎧 **Listening**: リスニング対策
+- 📖 **Reading**: リーディング対策
+- ✍️ **Writing**: ライティング対策
+- 🗣️ **Speaking**: スピーキング対策
+
+分類は `config/categories.ts` で管理されており、記事のタイトルとタグから自動推定されます。
+
+## 📝 noteへのCTA
+
+### 表示位置
+
+1. **サイドバー**: 全ページで表示（コンパクト版）
+2. **記事詳細**: 記事末尾に表示（詳細版）
+
+### カスタマイズ
+
+`components/note-cta.tsx` でURLとテキストを編集できます。
 
 ## 📊 アクセス解析（オプション）
 
