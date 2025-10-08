@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import sanitizeHtml from 'sanitize-html';
 import { JSDOM } from 'jsdom';
+import { inferLearningStep, inferSkill } from '../config/categories';
 
 const NOTE_POSTS_DIR = path.join(process.cwd(), 'ielts_consult');
 const CONTENT_DIR = path.join(process.cwd(), 'content/posts');
@@ -16,6 +17,8 @@ interface Post {
   tags: string[];
   hero: string;
   content: string;
+  categoryStep: string | null;
+  categorySkill: string | null;
 }
 
 // HTMLのサニタイズ設定
@@ -108,6 +111,10 @@ async function importPosts() {
       const firstImage = document.querySelector('img');
       const hero = firstImage?.getAttribute('src')?.replace('assets/', '/assets/') || '';
 
+      // 学習ステップとスキルを推定
+      const categoryStep = inferLearningStep(title, tags);
+      const categorySkill = inferSkill(title, tags);
+
       // MDXファイルとして保存
       const post: Post = {
         slug,
@@ -117,6 +124,8 @@ async function importPosts() {
         tags,
         hero,
         content,
+        categoryStep,
+        categorySkill,
       };
 
       await savePost(post);
@@ -175,6 +184,8 @@ description: "${post.description.replace(/"/g, '\\"')}"
 tags: ${JSON.stringify(post.tags)}
 hero: "${post.hero}"
 slug: "${post.slug}"
+${post.categoryStep ? `categoryStep: "${post.categoryStep}"` : ''}
+${post.categorySkill ? `categorySkill: "${post.categorySkill}"` : ''}
 ---
 
 `;
