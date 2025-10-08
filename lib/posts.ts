@@ -12,6 +12,8 @@ export interface Post {
   hero?: string;
   content: string;
   readingTime: string;
+  categoryStep?: string;
+  categorySkill?: string;
 }
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
@@ -40,6 +42,8 @@ export async function getAllPosts(): Promise<Post[]> {
         hero: data.hero || '',
         content,
         readingTime: readingTime(content).text,
+        categoryStep: data.categoryStep || null,
+        categorySkill: data.categorySkill || null,
       } as Post;
     });
 
