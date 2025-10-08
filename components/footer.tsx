@@ -58,6 +58,11 @@ export function Footer() {
                   免責事項
                 </Link>
               </li>
+              <li>
+                <Link href="/affiliate-disclosure" className="text-muted-foreground hover:text-primary transition-colors">
+                  アフィリエイト表示
+                </Link>
+              </li>
             </ul>
           </div>
 
