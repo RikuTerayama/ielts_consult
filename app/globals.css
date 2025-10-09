@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ミニマル白ベース × indigoアクセント */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 239 84% 67%; /* indigo-500 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 239 84% 67%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 239 84% 67%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 239 84% 67%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 239 84% 67%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "palt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* 日本語フォント最適化 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 
+    'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 見出しの禁則処理 */
+h1, h2, h3, h4, h5, h6 {
+  line-break: strict;
+  word-wrap: break-word;
+  font-feature-settings: "palt" 1;
+}
+
+/* リンクのアクセシビリティ */
+a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}
+
+/* 記事本文の可読性向上 */
+.prose {
+  @apply max-w-none;
+}
+
+.prose p {
+  @apply leading-relaxed tracking-wide;
+}
+
+/* 広告スロット用のプレースホルダースタイル */
+.ad-slot {
+  @apply border-2 border-dashed border-muted bg-muted/10 rounded-lg flex items-center justify-center min-h-[250px] text-muted-foreground text-sm;
+}
+
+/* スキップリンク（アクセシビリティ） */
+.skip-link {
+  @apply absolute left-0 top-0 -translate-y-full focus:translate-y-0 bg-primary text-primary-foreground px-4 py-2 z-50;
+}
+
