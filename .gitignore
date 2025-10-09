@@ -36,8 +36,12 @@ next-env.d.ts
 /content/posts/*.mdx
 /content/posts/*.md
 
-# public assets (copied from note_posts)
-/public/assets
+# public assets (copied from import script)
+/public/assets/*.png
+/public/assets/*.jpg
+/public/assets/*.jpeg
+/public/assets/*.gif
+/public/assets/*.webp
 
 # Node version files (managed via netlify.toml)
 # .nvmrc
