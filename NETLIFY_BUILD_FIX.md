@@ -15,31 +15,13 @@ Version '20
 
 ## Solution Applied
 
-### 1. Fixed `.nvmrc` (LF only, no BOM, no trailing spaces)
+### 1. Removed `.nvmrc` and `.node-version`
 
-**Before:**
-```
-20\r\n
-```
+**Reason:** These files conflict with Netlify's build process on newer images (Ubuntu 24.04/noble).
 
-**After:**
-```
-20
-```
+**Solution:** Use `netlify.toml` environment variables exclusively for Node.js version management.
 
-- Recreated file from scratch to eliminate invisible characters
-- Set to major version `20` (Netlify auto-selects latest available 20.x)
-- Ensured LF line endings only
-
-### 2. Added `.node-version`
-
-Created `.node-version` file for compatibility with other Node version managers:
-
-```
-20
-```
-
-### 3. Hardened `netlify.toml`
+### 2. Configured `netlify.toml`
 
 Updated build configuration to explicitly set Node version:
 
@@ -124,18 +106,18 @@ And the build should complete successfully.
 
 To prevent this issue from recurring:
 
-1. **Use `.editorconfig`-aware editors** (VS Code, IntelliJ, etc.)
-2. **Check line endings** before committing version files
+1. **Use `netlify.toml` exclusively** for Node.js version on Netlify
+2. **Avoid `.nvmrc` files** when deploying to Netlify (causes conflicts)
 3. **Monitor Netlify build logs** for the environment verification output
-4. **Keep Node version pinned** in both `.nvmrc` and `netlify.toml`
+4. **Keep Node version pinned** in `netlify.toml` only
 
 ## Rollback Plan
 
 If issues persist:
 
-1. **Option A**: Remove `.nvmrc` and rely solely on `netlify.toml` NODE_VERSION
-2. **Option B**: Set `NODE_VERSION=20` in Netlify dashboard environment variables
-3. **Note**: Always use major version only (`20`) for Netlify compatibility
+1. **Option A**: ✅ **Already applied** - Removed `.nvmrc` and using `netlify.toml` only
+2. **Option B**: Set `NODE_VERSION=20` in Netlify dashboard environment variables (overrides toml)
+3. **Note**: Netlify's newer build images have issues with `.nvmrc` files
 
 ## References
 
