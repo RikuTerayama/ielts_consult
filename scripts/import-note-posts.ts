@@ -4,10 +4,11 @@ import sanitizeHtml from 'sanitize-html';
 import { JSDOM } from 'jsdom';
 import { inferLearningStep, inferSkill } from '../config/categories';
 
-const NOTE_POSTS_DIR = path.join(process.cwd(), 'ielts_consult');
+// HTMLファイルとassetsはプロジェクトルートに配置されている
+const NOTE_POSTS_DIR = process.cwd(); // ルートディレクトリ
 const CONTENT_DIR = path.join(process.cwd(), 'content/posts');
 const PUBLIC_ASSETS_DIR = path.join(process.cwd(), 'public/assets');
-const SOURCE_ASSETS_DIR = path.join(NOTE_POSTS_DIR, 'assets');
+const SOURCE_ASSETS_DIR = path.join(process.cwd(), 'assets');
 
 interface Post {
   slug: string;
