@@ -24,11 +24,11 @@ Version '20
 
 **After:**
 ```
-20.18.1
+20
 ```
 
 - Recreated file from scratch to eliminate invisible characters
-- Pinned to stable Node 20.x version (20.18.1)
+- Set to major version `20` (Netlify auto-selects latest available 20.x)
 - Ensured LF line endings only
 
 ### 2. Added `.node-version`
@@ -36,7 +36,7 @@ Version '20
 Created `.node-version` file for compatibility with other Node version managers:
 
 ```
-20.18.1
+20
 ```
 
 ### 3. Hardened `netlify.toml`
@@ -45,11 +45,11 @@ Updated build configuration to explicitly set Node version:
 
 ```toml
 [build.environment]
-  NODE_VERSION = "20.18.1"
+  NODE_VERSION = "20"
   COREPACK_ENABLE_DOWNLOAD_PROMPT = "0"
 ```
 
-- `NODE_VERSION`: Explicitly sets Node.js version for Netlify
+- `NODE_VERSION`: Sets Node.js major version (Netlify uses latest available 20.x)
 - `COREPACK_ENABLE_DOWNLOAD_PROMPT`: Ensures pnpm availability via Corepack
 
 ### 4. Updated `package.json`
@@ -113,7 +113,7 @@ After deploying these changes, the Netlify build log should show:
 
 ```
 === Build Environment ===
-Node.js: v20.18.1
+Node.js: v20.x.x (latest available on Netlify)
 pnpm: 9.10.0
 =========================
 ```
@@ -134,7 +134,8 @@ To prevent this issue from recurring:
 If issues persist:
 
 1. **Option A**: Remove `.nvmrc` and rely solely on `netlify.toml` NODE_VERSION
-2. **Option B**: Set `NODE_VERSION=20.18.1` in Netlify dashboard environment variables
+2. **Option B**: Set `NODE_VERSION=20` in Netlify dashboard environment variables
+3. **Note**: Always use major version only (`20`) for Netlify compatibility
 
 ## References
 
