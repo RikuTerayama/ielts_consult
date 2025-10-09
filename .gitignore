@@ -38,3 +38,7 @@ next-env.d.ts
 # public assets (copied from note_posts)
 /public/assets
 
+# Node version files (managed via netlify.toml)
+# .nvmrc
+# .node-version
+
