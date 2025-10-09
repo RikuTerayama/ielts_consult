@@ -22,7 +22,7 @@ interface Post {
 }
 
 // HTMLのサニタイズ設定
-const sanitizeOptions = {
+const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([
     'img',
     'figure',
@@ -41,7 +41,7 @@ const sanitizeOptions = {
     '*': ['id', 'name', 'class'],
   },
   allowedSchemes: ['http', 'https', 'mailto'],
-  disallowedTagsMode: 'discard',
+  disallowedTagsMode: 'discard' as const,
 };
 
 // 記事をインポート
