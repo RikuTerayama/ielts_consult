@@ -8,7 +8,7 @@
   publish = "out"
 
 [build.environment]
-  NODE_VERSION = "20.18.1"
+  NODE_VERSION = "20"
   NEXT_PUBLIC_ENABLE_ADS = "false"
   COREPACK_ENABLE_DOWNLOAD_PROMPT = "0"
   # 本番環境で以下の環境変数を設定してください：
