@@ -14,6 +14,7 @@ export interface Post {
   readingTime: string;
   categoryStep?: string;
   categorySkill?: string;
+  order?: number; // スキル別ページでの表示順序
 }
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
@@ -44,6 +45,7 @@ export async function getAllPosts(): Promise<Post[]> {
         readingTime: readingTime(content).text,
         categoryStep: data.categoryStep || null,
         categorySkill: data.categorySkill || null,
+        order: data.order || null,
       } as Post;
     });
 
