@@ -12,7 +12,18 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
   return (
     <Link href={`/posts/${post.slug}`}>
-      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        {/* ヒーロー画像 */}
+        {post.hero && (
+          <div className="aspect-video w-full overflow-hidden bg-muted">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={post.hero} 
+              alt={post.title} 
+              className="h-full w-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
         <CardHeader>
           <div className="flex flex-wrap gap-2 mb-2">
             {post.tags.slice(0, 3).map((tag) => (
