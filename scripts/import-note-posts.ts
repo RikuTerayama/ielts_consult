@@ -3,6 +3,7 @@ import path from 'path';
 import sanitizeHtml from 'sanitize-html';
 import { JSDOM } from 'jsdom';
 import { inferLearningStep, inferSkill } from '../config/categories';
+import { SKILL_ARTICLE_MAPPINGS } from '../config/skill-article-mapping';
 
 // HTMLファイルとassetsはプロジェクトルートに配置されている
 const NOTE_POSTS_DIR = process.cwd(); // ルートディレクトリ
@@ -20,6 +21,7 @@ interface Post {
   content: string;
   categoryStep: string | null;
   categorySkill: string | null;
+  order: number | null;
 }
 
 // HTMLのサニタイズ設定
@@ -114,7 +116,24 @@ async function importPosts() {
 
       // 学習ステップとスキルを推定
       const categoryStep = inferLearningStep(title, tags);
-      const categorySkill = inferSkill(title, tags);
+      
+      // 手動マッピングからスキルと順序を取得
+      let categorySkill = null;
+      let order = null;
+      
+      for (const [skillId, mappings] of Object.entries(SKILL_ARTICLE_MAPPINGS)) {
+        const mapping = mappings.find(m => m.slug === slug);
+        if (mapping) {
+          categorySkill = skillId;
+          order = mapping.order;
+          break; // 最初に見つかったスキルを使用
+        }
+      }
+      
+      // 手動マッピングにない場合は自動推定
+      if (!categorySkill) {
+        categorySkill = inferSkill(title, tags);
+      }
 
       // MDXファイルとして保存
       const post: Post = {
@@ -127,6 +146,7 @@ async function importPosts() {
         content,
         categoryStep,
         categorySkill,
+        order,
       };
 
       await savePost(post);
@@ -187,6 +207,7 @@ hero: "${post.hero}"
 slug: "${post.slug}"
 ${post.categoryStep ? `categoryStep: "${post.categoryStep}"` : ''}
 ${post.categorySkill ? `categorySkill: "${post.categorySkill}"` : ''}
+${post.order !== null ? `order: ${post.order}` : ''}
 ---
 
 `;
