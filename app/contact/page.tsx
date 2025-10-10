@@ -16,9 +16,6 @@ export default function ContactPage() {
           </p>
           <h2>お問い合わせ先</h2>
           <p>
-            メールアドレス: <a href="mailto:info@example.com">info@example.com</a>
-          </p>
-          <p>
             Twitter（X）: <a href="https://twitter.com/ielts_consult" target="_blank" rel="noopener noreferrer">@ielts_consult</a>
           </p>
           <p className="text-muted-foreground text-sm mt-8">
