@@ -7,7 +7,7 @@ export function HeroSection() {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-            あなたの英語力を底上げして、<br />キャリアを実現させよう
+            英語力を底上げして、<br />キャリアを実現させよう
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground">
             IELTS対策からビジネス英語まで、実践的なノウハウを発信
