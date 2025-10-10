@@ -40,6 +40,10 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
+        {/* Google Search Console 所有権確認 */}
+        <meta name="google-site-verification" content="-2QsIzhYv3k2G7Pnh5aNPbQt-NerXL5Cwny4wOcOPwE" />
+        
+        {/* Google AdSense */}
         {process.env.NEXT_PUBLIC_ENABLE_ADS === "true" && process.env.NEXT_PUBLIC_ADSENSE_CLIENT && (
           <script
             async
