@@ -37,11 +37,13 @@ next-env.d.ts
 /content/posts/*.md
 
 # public assets (copied from import script)
-/public/assets/*.png
-/public/assets/*.jpg
-/public/assets/*.jpeg
-/public/assets/*.gif
-/public/assets/*.webp
+# Note: If images aren't displaying on Netlify, comment out the lines below
+# and commit the assets/ directory to Git
+# /public/assets/*.png
+# /public/assets/*.jpg
+# /public/assets/*.jpeg
+# /public/assets/*.gif
+# /public/assets/*.webp
 
 # Node version files (managed via netlify.toml)
 # .nvmrc
