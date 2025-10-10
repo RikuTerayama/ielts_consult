@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { AdSlot } from "@/components/ad-slot";
+import { NoteCTA } from "@/components/note-cta";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -99,33 +100,44 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* 記事末広告 */}
         <AdSlot className="mb-12" slot="article-bottom" format="horizontal" />
 
+        {/* noteへのCTA */}
+        <NoteCTA className="mb-12" />
+
         {/* シェアボタン */}
-        <div className="flex gap-4 mb-12 pb-12 border-b">
-          <span className="text-sm font-medium">シェア:</span>
+        <div className="flex items-center gap-4 mb-12 pb-12 border-b">
+          <span className="text-sm font-medium text-muted-foreground">シェア:</span>
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             asChild
+            title="Twitterでシェア"
           >
             <a
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://ielts-consult.netlify.app/posts/${post.slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Twitterでシェア"
             >
-              Twitter
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
             </a>
           </Button>
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             asChild
+            title="Facebookでシェア"
           >
             <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://ielts-consult.netlify.app/posts/${post.slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Facebookでシェア"
             >
-              Facebook
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 3.667h-3.533v7.98H9.101z"/>
+              </svg>
             </a>
           </Button>
         </div>
