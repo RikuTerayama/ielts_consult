@@ -5,6 +5,7 @@ const nextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;
