@@ -10,12 +10,13 @@ interface AdSlotProps {
 }
 
 export function AdSlot({ className, slot, format = "horizontal" }: AdSlotProps) {
-  const isAdsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADS === "true";
-  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  // AdSenseの設定（環境変数またはデフォルト値を使用）
+  const isAdsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADS !== "false"; // デフォルトでtrue
+  const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "ca-pub-4232725615106709";
   const adSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT;
 
   useEffect(() => {
-    if (isAdsEnabled && adClient && adSlot) {
+    if (isAdsEnabled && adClient) {
       try {
         // @ts-ignore
         (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -23,23 +24,23 @@ export function AdSlot({ className, slot, format = "horizontal" }: AdSlotProps) 
         console.error("AdSense error:", err);
       }
     }
-  }, [isAdsEnabled, adClient, adSlot]);
+  }, [isAdsEnabled, adClient]);
 
-  if (!isAdsEnabled || !adClient) {
-    // プレースホルダー表示
+  if (!isAdsEnabled) {
+    // 広告を無効化している場合のみプレースホルダー表示
     return (
       <div
         className={cn(
-          "ad-slot",
+          "ad-slot bg-muted/30 border border-dashed border-muted-foreground/30 rounded-lg flex items-center justify-center",
           format === "horizontal" && "min-h-[100px]",
           format === "vertical" && "min-h-[600px]",
           format === "rectangle" && "min-h-[250px]",
           className
         )}
         role="img"
-        aria-label="広告スペース（未設定）"
+        aria-label="広告スペース（無効）"
       >
-        <p>広告スペース（ENABLE_ADS=false）</p>
+        <p className="text-sm text-muted-foreground">広告スペース（ENABLE_ADS=false）</p>
       </div>
     );
   }
