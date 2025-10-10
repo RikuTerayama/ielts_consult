@@ -44,13 +44,11 @@ export default function RootLayout({
         <meta name="google-site-verification" content="dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8" />
         
         {/* Google AdSense */}
-        {process.env.NEXT_PUBLIC_ENABLE_ADS === "true" && process.env.NEXT_PUBLIC_ADSENSE_CLIENT && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}
-            crossOrigin="anonymous"
-          />
-        )}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <ThemeProvider
