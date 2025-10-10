@@ -18,6 +18,10 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-6">
+            <Link href="/search" className="text-sm font-medium hover:text-primary transition-colors">
+              <Search className="h-5 w-5" />
+              <span className="sr-only">検索</span>
+            </Link>
             <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
               ホーム
             </Link>
@@ -26,10 +30,6 @@ export function Header() {
             </Link>
             <Link href="/tags" className="text-sm font-medium hover:text-primary transition-colors">
               タグ
-            </Link>
-            <Link href="/search" className="text-sm font-medium hover:text-primary transition-colors">
-              <Search className="h-5 w-5" />
-              <span className="sr-only">検索</span>
             </Link>
             <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
               About
@@ -58,6 +58,13 @@ export function Header() {
 
         {isMenuOpen && (
           <nav className="md:hidden py-4 space-y-4">
+            <Link
+              href="/search"
+              className="block text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              検索
+            </Link>
             <Link
               href="/"
               className="block text-sm font-medium hover:text-primary transition-colors"
