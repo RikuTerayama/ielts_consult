@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>外資系コンサルの英語力底上げブログ</title>
+    <link>https://ielts-consult.netlify.app</link>
+    <description>IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ</description>
+    <language>ja</language>
+    <atom:link href="https://ielts-consult.netlify.app/rss.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>Fri, 10 Jan 2025 00:00:00 GMT</lastBuildDate>
+  </channel>
+</rss>
+
