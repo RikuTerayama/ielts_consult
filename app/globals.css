@@ -93,6 +93,19 @@ a:focus-visible {
   @apply leading-relaxed tracking-wide;
 }
 
+/* 記事内の画像を中央揃え */
+.prose img {
+  @apply mx-auto rounded-lg shadow-md;
+}
+
+.prose figure {
+  @apply text-center;
+}
+
+.prose figure img {
+  @apply mx-auto;
+}
+
 /* 広告スロット用のプレースホルダースタイル */
 .ad-slot {
   @apply border-2 border-dashed border-muted bg-muted/10 rounded-lg flex items-center justify-center min-h-[250px] text-muted-foreground text-sm;
