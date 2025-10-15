@@ -5,7 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ielts-consult.netlify.app"),
+  metadataBase: new URL("https://ieltsconsult.netlify.app"),
   title: {
     default: "外資系コンサルの英語力底上げブログ",
     template: "%s | 外資系コンサルの英語力底上げブログ",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ja_JP",
-    url: "https://ielts-consult.netlify.app",
+    url: "https://ieltsconsult.netlify.app",
     siteName: "外資系コンサルの英語力底上げブログ",
     title: "外資系コンサルの英語力底上げブログ",
     description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
