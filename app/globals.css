@@ -116,4 +116,13 @@ a:focus-visible {
   @apply absolute left-0 top-0 -translate-y-full focus:translate-y-0 bg-primary text-primary-foreground px-4 py-2 z-50;
 }
 
+/* 読書進捗バー */
+.reading-progress {
+  @apply fixed top-0 left-0 right-0 z-50 h-1 bg-muted/20;
+}
+
+.reading-progress-bar {
+  @apply h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-150 ease-out;
+}
+
 
