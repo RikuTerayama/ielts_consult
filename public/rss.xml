@@ -2,11 +2,247 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>外資系コンサルの英語力底上げブログ</title>
-    <link>https://ielts-consult.netlify.app</link>
+    <link>https://ieltsconsult.netlify.app</link>
     <description>IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ</description>
     <language>ja</language>
-    <atom:link href="https://ielts-consult.netlify.app/rss.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 10 Jan 2025 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://ieltsconsult.netlify.app/rss.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>Wed, 15 Oct 2025 09:42:24 GMT</lastBuildDate>
+    <item>
+      <title>IELTS ライティング Task 2：失点を防ぐ15の鉄則</title>
+      <link>https://ieltsconsult.netlify.app/posts/n1a971fb03450/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n1a971fb03450/</guid>
+      <description>IELTSのWriting Task 2は、学習者が見落としがちなポイントが多く、特に6.0～7.0レベルの学習者にとっては失点の原因になりやすい部分です。ここでは、公式サイトやIELTS専門家のアドバイスにもとづいて、「失点を防ぐ鉄則」をまとめました。 各ポイントには例文や戦略も挙げているので、実践的に対策できます。</description>
+      <pubDate>Fri, 10 Oct 2025 10:08:52 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Task 1</category>
+      <category>Task 2</category>
+      <category>語彙</category>
+      <category>文法</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>IELTS ライティング Task 2：問題タイプ別解き方完全ガイド</title>
+      <link>https://ieltsconsult.netlify.app/posts/n3f892dfe646d/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n3f892dfe646d/</guid>
+      <description>IELTS Writing Task 2では、与えられた設問の形式によって解答の方向性が変わります。</description>
+      <pubDate>Fri, 10 Oct 2025 10:08:52 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Task 1</category>
+      <category>Task 2</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>IELTS ライティング Task 2：得点を上げるための表現大全</title>
+      <link>https://ieltsconsult.netlify.app/posts/nbf4c2291a938/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/nbf4c2291a938/</guid>
+      <description>IELTSのライティングTask 2はエッセイ形式の問題で、論理的な構成や語彙の豊富さが得点に直結します。</description>
+      <pubDate>Fri, 10 Oct 2025 10:06:48 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Task 1</category>
+      <category>Task 2</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！「対比・比較」英語表現6選（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n9883aa545907/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n9883aa545907/</guid>
+      <description>IELTS Speaking Part 3で賛否が分かれるトピックが出ると、答えに詰まってしまう</description>
+      <pubDate>Fri, 10 Oct 2025 09:44:38 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Speaking</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>論理展開が苦手な人向け：日本語で「なぜなぜ分析」を身につける方法</title>
+      <link>https://ieltsconsult.netlify.app/posts/nee44497523d9/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/nee44497523d9/</guid>
+      <description>～IELTS Writing・Speakingで論理的に伝えるための思考トレーニング～</description>
+      <pubDate>Fri, 10 Oct 2025 08:38:33 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Speaking</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！加点につながる“追加情報”フレーズ集（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n9a303ab21106/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n9a303ab21106/</guid>
+      <description>IELTS Speakingで6.5〜7.5を狙っている</description>
+      <pubDate>Fri, 10 Oct 2025 07:59:30 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！加点につながる“結果表現”フレーズ集（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n535bf33165ca/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n535bf33165ca/</guid>
+      <description>IELTSスピーキングのPart 3でテクノロジーの発展による影響について質問されると答えに困ってしまう</description>
+      <pubDate>Fri, 10 Oct 2025 07:56:31 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】日本人学習者向け IELTSライティングスコアアップの決定版ガイド</title>
+      <link>https://ieltsconsult.netlify.app/posts/n15d8a98fb855/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n15d8a98fb855/</guid>
+      <description>IELTSのライティング（筆記）試験はTask 1とTask 2の2つの課題で構成され、与えられた時間60分で両方を完成させる必要があります。</description>
+      <pubDate>Fri, 10 Oct 2025 07:55:25 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Task 1</category>
+      <category>Task 2</category>
+      <category>語彙</category>
+      <category>文法</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！加点につながる“因果関係”フレーズ集（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n2cd779121111/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n2cd779121111/</guid>
+      <description>IELTS Speaking Part 3の「経済・社会問題系」に苦手意識がある</description>
+      <pubDate>Fri, 10 Oct 2025 07:55:25 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！意見を強調する英語表現6選（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n92beae39fd80/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n92beae39fd80/</guid>
+      <description>IELTSスピーキングで自分の意見にインパクトを持たせる伝え方に悩んでいる</description>
+      <pubDate>Fri, 10 Oct 2025 07:55:25 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>「英語脳」に頼らない！日本語思考力を武器にするIELTS Speaking攻略法</title>
+      <link>https://ieltsconsult.netlify.app/posts/n963baa68fcd3/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n963baa68fcd3/</guid>
+      <description>〜純ジャパがSpeaking 7.0を取るための実践的アプローチ〜</description>
+      <pubDate>Fri, 10 Oct 2025 07:55:25 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>英語学習</category>
+      <category>語彙</category>
+      <category>文法</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】日本人学習者向け IELTSスピーキングスコアアップの決定版ガイド</title>
+      <link>https://ieltsconsult.netlify.app/posts/ne68beb472a95/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/ne68beb472a95/</guid>
+      <description>IELTSスピーキングテストは3つのパート（Part1～3）から成り、合計11～14分ほどで行われます。試験官との面接形式で、流暢さ・一貫性（Coherence）、語彙力（Lexical Resource）、文法力（Grammatical Range &amp; Accuracy）、発音（Pronunciation）の4項目で評価されます。バンド7以上を目指すには、質問に対して詳細かつ論理的な回答展開を示</description>
+      <pubDate>Fri, 10 Oct 2025 07:52:53 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>語彙</category>
+      <category>文法</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！意見をやわらかく伝える英語表現6選（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n17e52d8f3cbe/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n17e52d8f3cbe/</guid>
+      <description>IELTSスピーキング Part 3で政治・社会問題系の質問に戸惑ってしまう人</description>
+      <pubDate>Fri, 10 Oct 2025 07:52:52 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>某有名外資系戦略コンサルに受かったVERSANT対策</title>
+      <link>https://ieltsconsult.netlify.app/posts/n380e29ddc2c0/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n380e29ddc2c0/</guid>
+      <description>「この方法でVersantスコア爆上がり！」某有名外資系戦略コンサルティングファームの選考で要求されたVERSANT（バーサント）テスト対策をご紹介します。</description>
+      <pubDate>Fri, 10 Oct 2025 07:52:52 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>Listening</category>
+      <category>外資系</category>
+      <category>語彙</category>
+      <category>文法</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>McKinseySolveゲーム（旧称PSG）第1ラウンド：Plant Defense と Ecosystem Buildingの攻略メモ</title>
+      <link>https://ieltsconsult.netlify.app/posts/nfabbeb0a262c/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/nfabbeb0a262c/</guid>
+      <description>私自身、転職活動でMcKinseyのデジタルアセスメント（Solveゲーム）を経験し、その際にPlant DefenseとEcosystem Buildingという2つのミニゲーム（思考力テスト）に取り組みました。</description>
+      <pubDate>Fri, 10 Oct 2025 07:52:52 GMT</pubDate>
+      <category>IELTS</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】日本人学習者向け IELTSリーディングスコアアップの決定版ガイド</title>
+      <link>https://ieltsconsult.netlify.app/posts/n019aaecea296/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n019aaecea296/</guid>
+      <description>IELTSのリーディングは「時間との戦い」と言われるほど、非ネイティブの日本人受験者にとって難関です。長文を読み切れず時間が足りなくなったり、見慣れない設問形式に戸惑った経験はありませんか？本稿では、TOEIC800〜900レベルの社会人・留学希望者を対象に、読み方・考え方・時間配分の3軸からIELTSリーディング攻略法を解説します。著者自身が独学でIELTS7.0（Readingは最高8.0）を</description>
+      <pubDate>Fri, 10 Oct 2025 07:51:18 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Reading</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】日本人学習者向け IELTSリスニングスコアアップの決定版ガイド</title>
+      <link>https://ieltsconsult.netlify.app/posts/nfd42ac687984/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/nfd42ac687984/</guid>
+      <description>IELTSリスニングで目標スコア6.5〜7.5を狙うなら、効果的な戦略と日々のトレーニングが欠かせません。本記事では、TOEIC800以上の社会人で留学やキャリアアップのためにIELTSを独学している初中級者に向けて、リスニング力を飛躍的に伸ばす攻略法を解説します。設問タイプ別の対策やスキル強化法、発音・聞き取りのポイントまで網羅し、具体例とTipsを豊富に盛り込みました。Section 1満点の</description>
+      <pubDate>Fri, 10 Oct 2025 07:51:18 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Listening</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>IELTS独学完全ロードマップ：TOEIC800社会人が6.5〜7.0を達成する総合ガイド</title>
+      <link>https://ieltsconsult.netlify.app/posts/n3200065ec76b/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n3200065ec76b/</guid>
+      <description>まず、本記事を手に取ってくださったあなたへ。忙しい社会人として働きながらIELTS6.5〜7.0を目指すのは、大きな挑戦ですよね。特にTOEICで800点以上をお持ちの方はリーディングやリスニングには自信があっても、実際の英会話やIELTSなどのスピーキングやライティング対策に不安を感じているかもしれません。私自身、仕事の傍ら独学でIELTS7.0を達成した経験があり、その過程で数多くの試行錯誤や</description>
+      <pubDate>Fri, 10 Oct 2025 07:51:18 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Writing</category>
+      <category>Speaking</category>
+      <category>Reading</category>
+      <category>Listening</category>
+      <category>Task 1</category>
+      <category>外資系</category>
+      <category>英語学習</category>
+      <category>語彙</category>
+      <category>文法</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！加点につながる“一般化”フレーズ集（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n70a885fec234/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n70a885fec234/</guid>
+      <description>IELTS Speakingで6.5〜7.5を狙っている</description>
+      <pubDate>Fri, 10 Oct 2025 07:51:18 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
+    <item>
+      <title>【保存版】IELTSスピーキング対策：そのまま使える！加点につながる“具体例”フレーズ集（Part1〜3共通）</title>
+      <link>https://ieltsconsult.netlify.app/posts/n5e563cd04240/</link>
+      <guid>https://ieltsconsult.netlify.app/posts/n5e563cd04240/</guid>
+      <description>スピーキングの旅行・体験トピックが苦手</description>
+      <pubDate>Fri, 10 Oct 2025 07:51:18 GMT</pubDate>
+      <category>IELTS</category>
+      <category>Speaking</category>
+      <category>語彙</category>
+      <category>表現</category>
+    </item>
   </channel>
 </rss>
-

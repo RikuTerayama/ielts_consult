@@ -9,8 +9,53 @@ export default async function Home() {
   const latestPosts = allPosts.slice(0, 6);
   const popularPosts = allPosts.slice(0, 3);
 
+  // WebSite構造化データ
+  const webSiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "外資系コンサルの英語力底上げブログ",
+    "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
+    "url": "https://ieltsconsult.netlify.app",
+    "publisher": {
+      "@type": "Organization",
+      "name": "IELTS Consult",
+      "url": "https://ieltsconsult.netlify.app"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://ieltsconsult.netlify.app/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": allPosts.length,
+      "itemListElement": latestPosts.map((post, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "Article",
+          "headline": post.title,
+          "description": post.description,
+          "url": `https://ieltsconsult.netlify.app/posts/${post.slug}/`,
+          "datePublished": post.date,
+          "author": {
+            "@type": "Person",
+            "name": "IELTS Consult"
+          }
+        }
+      }))
+    }
+  };
+
   return (
     <>
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webSiteSchema),
+        }}
+      />
       <HeroSection />
       
       <div className="container mx-auto px-4 py-12">

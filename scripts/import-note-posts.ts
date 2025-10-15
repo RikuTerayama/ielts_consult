@@ -135,6 +135,8 @@ async function importPosts() {
         categorySkill = inferSkill(title, tags);
       }
 
+      // noteのURLと切り取りポイントを抽出
+
       // MDXファイルとして保存
       const post: Post = {
         slug,
@@ -159,6 +161,7 @@ async function importPosts() {
 
   console.log(`\n🎉 ${processedCount}個の記事を正常にインポートしました！`);
 }
+
 
 // タグを抽出
 function extractTags(title: string, content: string): string[] {
