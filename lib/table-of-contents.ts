@@ -14,13 +14,16 @@ export interface TableOfContentsProps {
 
 /**
  * 記事のMDXコンテンツから見出しを抽出する
+ * Markdown形式（# ## ###）とHTML形式（<h1> <h2> <h3>）の両方に対応
  */
 export function extractHeadings(content: string): Heading[] {
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
   const headings: Heading[] = [];
+  
+  // Markdown形式の見出しを抽出
+  const markdownRegex = /^(#{1,6})\s+(.+)$/gm;
   let match;
-
-  while ((match = headingRegex.exec(content)) !== null) {
+  
+  while ((match = markdownRegex.exec(content)) !== null) {
     const level = match[1].length;
     const text = match[2].trim();
     const id = text
@@ -36,8 +39,36 @@ export function extractHeadings(content: string): Heading[] {
       element: `h${level}`,
     });
   }
+  
+  // HTML形式の見出しを抽出
+  const htmlRegex = /<h([1-6])(?:\s+[^>]*)?(?:\s+id="([^"]*)")?[^>]*>(.*?)<\/h[1-6]>/gi;
+  
+  while ((match = htmlRegex.exec(content)) !== null) {
+    const level = parseInt(match[1], 10);
+    const existingId = match[2];
+    const text = match[3].replace(/<[^>]*>/g, '').trim(); // HTMLタグを除去
+    
+    // 既存のIDがある場合はそれを使用、なければテキストから生成
+    const id = existingId || text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/^-+|-+$/g, '');
 
-  return headings;
+    headings.push({
+      level,
+      text,
+      id,
+      element: `h${level}`,
+    });
+  }
+
+  // 重複を除去（同じテキストの見出しがある場合）
+  const uniqueHeadings = headings.filter((heading, index, self) => 
+    index === self.findIndex(h => h.text === heading.text)
+  );
+
+  return uniqueHeadings;
 }
 
 /**
@@ -63,10 +94,18 @@ export function categorizeHeadings(
   // 切り取りポイントの位置を特定
   const cutoffPosition = Math.min(cutoffPoint, content.length);
   
-  // 各見出しの位置を取得
+  // 各見出しの位置を取得（Markdown形式とHTML形式の両方に対応）
   const headingsWithPosition = headings.map((heading) => {
-    const regex = new RegExp(`^#{1,6}\\s+${heading.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'gm');
-    const match = regex.exec(content);
+    // Markdown形式の見出しを検索
+    let markdownRegex = new RegExp(`^#{1,6}\\s+${heading.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'gm');
+    let match = markdownRegex.exec(content);
+    
+    // Markdown形式で見つからない場合はHTML形式を検索
+    if (!match) {
+      const htmlRegex = new RegExp(`<h[1-6][^>]*>${heading.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h[1-6]>`, 'gi');
+      match = htmlRegex.exec(content);
+    }
+    
     const position = match ? match.index : content.length;
     
     return {
