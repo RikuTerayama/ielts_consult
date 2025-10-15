@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { getAllPosts } from '../lib/posts';
 
-const SITE_URL = 'https://ielts-consult.netlify.app';
+const SITE_URL = 'https://ieltsconsult.netlify.app';
 const SITE_TITLE = '外資系コンサルの英語力底上げブログ';
 const SITE_DESCRIPTION = 'IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ';
 
