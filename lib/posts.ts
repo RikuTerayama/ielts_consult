@@ -15,6 +15,8 @@ export interface Post {
   categoryStep?: string;
   categorySkill?: string;
   order?: number; // スキル別ページでの表示順序
+  noteUrl?: string; // noteのURL
+  cutoffPoint?: number; // 切り取りポイント（文字数）
 }
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
@@ -46,6 +48,8 @@ export async function getAllPosts(): Promise<Post[]> {
         categoryStep: data.categoryStep || null,
         categorySkill: data.categorySkill || null,
         order: data.order || null,
+        noteUrl: data.noteUrl || null,
+        cutoffPoint: data.cutoffPoint || null,
       } as Post;
     });
 
