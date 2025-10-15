@@ -6,6 +6,7 @@ import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { AdSlot } from "@/components/ad-slot";
 import { NoteCTA } from "@/components/note-cta";
+import { ReadingProgress } from "@/components/reading-progress";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -91,16 +92,20 @@ export default async function PostPage({ params }: PostPageProps) {
   };
 
   return (
-    <article className="container mx-auto px-4 py-12">
-      {/* 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(blogPostingSchema),
-        }}
-      />
+    <>
+      {/* 読書進捗バー */}
+      <ReadingProgress />
       
-      <div className="max-w-4xl mx-auto">
+      <article className="container mx-auto px-4 py-12">
+        {/* 構造化データ */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(blogPostingSchema),
+          }}
+        />
+        
+        <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
@@ -221,7 +226,8 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </section>
         )}
-      </div>
-    </article>
+        </div>
+      </article>
+    </>
   );
 }
