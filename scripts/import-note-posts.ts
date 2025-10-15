@@ -22,6 +22,8 @@ interface Post {
   categoryStep: string | null;
   categorySkill: string | null;
   order: number | null;
+  noteUrl?: string | null;
+  cutoffPoint?: number | null;
 }
 
 // HTMLのサニタイズ設定
@@ -135,6 +137,10 @@ async function importPosts() {
         categorySkill = inferSkill(title, tags);
       }
 
+      // noteのURLと切り取りポイントを抽出
+      const noteUrl = extractNoteUrl(content);
+      const cutoffPoint = extractCutoffPoint(content);
+
       // MDXファイルとして保存
       const post: Post = {
         slug,
@@ -147,6 +153,8 @@ async function importPosts() {
         categoryStep,
         categorySkill,
         order,
+        noteUrl: noteUrl || null,
+        cutoffPoint: cutoffPoint || null,
       };
 
       await savePost(post);
@@ -158,6 +166,21 @@ async function importPosts() {
   }
 
   console.log(`\n🎉 ${processedCount}個の記事を正常にインポートしました！`);
+}
+
+// noteのURLを抽出
+function extractNoteUrl(content: string): string | null {
+  const noteUrlMatch = content.match(/href="(https:\/\/note\.com\/[^"]+)"/);
+  return noteUrlMatch ? noteUrlMatch[1] : null;
+}
+
+// 切り取りポイントを抽出（「続きはnoteで公開中！」の直前の位置）
+function extractCutoffPoint(content: string): number | null {
+  const cutoffMatch = content.match(/続きはnoteで公開中！/);
+  if (cutoffMatch) {
+    return cutoffMatch.index || null;
+  }
+  return null;
 }
 
 // タグを抽出
@@ -208,6 +231,8 @@ slug: "${post.slug}"
 ${post.categoryStep ? `categoryStep: "${post.categoryStep}"` : ''}
 ${post.categorySkill ? `categorySkill: "${post.categorySkill}"` : ''}
 ${post.order !== null ? `order: ${post.order}` : ''}
+${post.noteUrl ? `noteUrl: "${post.noteUrl}"` : ''}
+${post.cutoffPoint !== null ? `cutoffPoint: ${post.cutoffPoint}` : ''}
 ---
 
 `;
