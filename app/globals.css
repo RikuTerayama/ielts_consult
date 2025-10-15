@@ -116,3 +116,43 @@ a:focus-visible {
   @apply absolute left-0 top-0 -translate-y-full focus:translate-y-0 bg-primary text-primary-foreground px-4 py-2 z-50;
 }
 
+/* 見出しのスタイル（目次用のID追加） */
+h1, h2, h3, h4, h5, h6 {
+  scroll-margin-top: 2rem;
+}
+
+/* 目次のスタイル */
+.toc-container {
+  @apply bg-muted/30 border border-border rounded-lg p-6;
+}
+
+.toc-nav {
+  @apply space-y-1;
+}
+
+.toc-link {
+  @apply block py-2 px-3 rounded-md transition-colors text-sm;
+}
+
+.toc-level-1 {
+  @apply font-semibold text-foreground;
+}
+
+.toc-level-2 {
+  @apply font-medium text-foreground/90;
+}
+
+.toc-level-3 {
+  @apply font-normal text-foreground/80;
+}
+
+.toc-level-4,
+.toc-level-5,
+.toc-level-6 {
+  @apply font-normal text-foreground/70;
+}
+
+.toc-active {
+  @apply bg-primary text-primary-foreground font-medium;
+}
+
