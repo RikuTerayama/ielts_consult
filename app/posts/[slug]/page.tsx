@@ -6,6 +6,8 @@ import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { AdSlot } from "@/components/ad-slot";
 import { NoteCTA } from "@/components/note-cta";
+import { TableOfContents } from "@/components/table-of-contents";
+import { extractHeadings, categorizeHeadings } from "@/lib/table-of-contents";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -61,6 +63,14 @@ export default async function PostPage({ params }: PostPageProps) {
     .filter((p) => p.slug !== params.slug && p.tags.some((tag) => post.tags.includes(tag)))
     .slice(0, 3);
 
+  // 目次生成
+  const allHeadings = extractHeadings(post.content);
+  const { visibleHeadings, hiddenHeadings } = categorizeHeadings(
+    allHeadings,
+    post.content,
+    post.cutoffPoint
+  );
+
   // BlogPosting構造化データ
   const blogPostingSchema = {
     "@context": "https://schema.org",
@@ -98,7 +108,11 @@ export default async function PostPage({ params }: PostPageProps) {
           __html: JSON.stringify(blogPostingSchema),
         }}
       />
-      <div className="max-w-4xl mx-auto">
+      
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* メインコンテンツ */}
+        <div className="lg:col-span-8">
+          <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
@@ -219,6 +233,20 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </section>
         )}
+          </div>
+        </div>
+
+        {/* 目次サイドバー */}
+        <aside className="lg:col-span-4">
+          <div className="sticky top-8">
+            <TableOfContents
+              headings={visibleHeadings}
+              noteUrl={post.noteUrl || undefined}
+              cutoffPoint={post.cutoffPoint || undefined}
+              contentLength={post.content.length}
+            />
+          </div>
+        </aside>
       </div>
     </article>
   );
