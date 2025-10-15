@@ -10,8 +10,44 @@ export const metadata: Metadata = {
 export default async function PostsPage() {
   const posts = await getAllPosts();
 
+  // Article構造化データ
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "記事一覧",
+    "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための記事一覧",
+    "url": "https://ieltsconsult.netlify.app/posts/",
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": posts.length,
+      "itemListElement": posts.map((post, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "Article",
+          "headline": post.title,
+          "description": post.description,
+          "url": `https://ieltsconsult.netlify.app/posts/${post.slug}/`,
+          "datePublished": post.date,
+          "author": {
+            "@type": "Person",
+            "name": "IELTS Consult"
+          },
+          "keywords": post.tags.join(", ")
+        }
+      }))
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleSchema),
+        }}
+      />
       <h1 className="text-4xl font-bold mb-4">記事一覧</h1>
       <p className="text-muted-foreground mb-8">
         {posts.length > 0 ? `${posts.length}件の記事` : '記事を読み込んでいます...'}
