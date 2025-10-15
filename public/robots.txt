@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ielts-consult.netlify.app/sitemap.xml
+Sitemap: https://ieltsconsult.netlify.app/sitemap.xml
