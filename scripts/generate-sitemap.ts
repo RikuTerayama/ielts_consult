@@ -3,7 +3,7 @@ import path from 'path';
 import { getAllPosts, getAllTags } from '../lib/posts';
 import { getAllSteps, getAllSkills } from '../lib/categories';
 
-const SITE_URL = 'https://ielts-consult.netlify.app';
+const SITE_URL = 'https://ieltsconsult.netlify.app';
 
 async function generateSitemap() {
   console.log('🗺️  サイトマップを生成しています...');
