@@ -61,8 +61,43 @@ export default async function PostPage({ params }: PostPageProps) {
     .filter((p) => p.slug !== params.slug && p.tags.some((tag) => post.tags.includes(tag)))
     .slice(0, 3);
 
+  // BlogPosting構造化データ
+  const blogPostingSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.description,
+    "image": post.hero ? `https://ieltsconsult.netlify.app${post.hero}` : undefined,
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": {
+      "@type": "Person",
+      "name": "IELTS Consult"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "外資系コンサルの英語力底上げブログ",
+      "url": "https://ieltsconsult.netlify.app"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://ieltsconsult.netlify.app/posts/${post.slug}/`
+    },
+    "keywords": post.tags.join(", "),
+    "articleSection": post.categorySkill || "IELTS",
+    "wordCount": post.content.split(/\s+/).length,
+    "timeRequired": post.readingTime
+  };
+
   return (
     <article className="container mx-auto px-4 py-12">
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogPostingSchema),
+        }}
+      />
       <div className="max-w-4xl mx-auto">
         {/* ヘッダー */}
         <header className="mb-8">
