@@ -18,9 +18,9 @@ export function GiscusComments({ className, enabled = true }: GiscusCommentsProp
     const script = document.createElement("script");
     script.src = "https://giscus.app/client.js";
     script.setAttribute("data-repo", "RikuTerayama/ielts_consult");
-    script.setAttribute("data-repo-id", "R_kgDOKjQzWQ"); // リポジトリID（後で設定）
+    script.setAttribute("data-repo-id", "R_kgDOPuuejA");
     script.setAttribute("data-category", "General");
-    script.setAttribute("data-category-id", "DIC_kwDOKjQzWc4CbQzK"); // カテゴリID（後で設定）
+    script.setAttribute("data-category-id", "DIC_kwDOPuuejM4CwtUP");
     script.setAttribute("data-mapping", "pathname");
     script.setAttribute("data-strict", "0");
     script.setAttribute("data-reactions-enabled", "1");
