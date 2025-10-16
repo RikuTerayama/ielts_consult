@@ -47,6 +47,7 @@ export function OptimizedImage({
   // エラー時は元の画像を表示
   if (hasError) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
         alt={alt}
@@ -98,9 +99,6 @@ export function ResponsiveImage({
   quality = 80,
   ...props
 }: Omit<OptimizedImageProps, 'width' | 'height' | 'fill'>) {
-  const imageInfo = getOptimizedImageInfo(src, alt);
-  const srcSet = getImageSrcSet(src);
-  
   return (
     <OptimizedImage
       src={src}
@@ -108,7 +106,7 @@ export function ResponsiveImage({
       className={cn('w-full h-auto', className)}
       priority={priority}
       quality={quality}
-      sizes={imageInfo.sizes}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       {...props}
     />
   );
