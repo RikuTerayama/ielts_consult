@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { getOptimizedImageInfo, getImageSrcSet, imageExists } from '@/lib/image-utils';
 import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps {
@@ -32,17 +31,8 @@ export function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   
-  // 最適化された画像情報を取得
-  const imageInfo = getOptimizedImageInfo(src, alt);
-  
-  // 最適化された画像が存在するかチェック
-  const [optimizedExists, setOptimizedExists] = useState(true);
-  
-  useState(() => {
-    imageExists(imageInfo.src).then(exists => {
-      setOptimizedExists(exists);
-    });
-  });
+  // 最適化された画像パスを生成
+  const optimizedSrc = src.replace('/assets/', '/assets/optimized/').replace(/\.(png|jpg|jpeg)$/i, '.webp');
   
   // エラーハンドリング
   const handleError = () => {
@@ -55,7 +45,7 @@ export function OptimizedImage({
   };
   
   // エラー時は元の画像を表示
-  if (hasError || !optimizedExists) {
+  if (hasError) {
     return (
       <img
         src={src}
@@ -79,20 +69,18 @@ export function OptimizedImage({
       
       {/* 最適化された画像 */}
       <Image
-        src={imageInfo.src}
-        alt={imageInfo.alt}
+        src={optimizedSrc}
+        alt={alt}
         width={fill ? undefined : width}
         height={fill ? undefined : height}
         fill={fill}
         priority={priority}
         quality={quality}
-        sizes={sizes || imageInfo.sizes}
+        sizes={sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
         className={cn(
           'transition-opacity duration-300',
           isLoading ? 'opacity-0' : 'opacity-100'
         )}
-        placeholder={imageInfo.blurDataURL ? 'blur' : 'empty'}
-        blurDataURL={imageInfo.blurDataURL}
         onLoad={handleLoad}
         onError={handleError}
         {...props}
