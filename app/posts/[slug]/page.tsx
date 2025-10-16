@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/utils";
 import { AdSlot } from "@/components/ad-slot";
 import { NoteCTA } from "@/components/note-cta";
 import { ReadingProgress } from "@/components/reading-progress";
+import { GiscusComments } from "@/components/giscus-comments";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -226,6 +227,12 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </section>
         )}
+
+        {/* コメント機能 */}
+        <GiscusComments 
+          className="mt-12" 
+          enabled={process.env.NEXT_PUBLIC_ENABLE_COMMENTS !== "false"}
+        />
         </div>
       </article>
     </>
