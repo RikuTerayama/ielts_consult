@@ -8,12 +8,12 @@ interface GiscusCommentsProps {
 }
 
 export function GiscusComments({ className, enabled = true }: GiscusCommentsProps) {
-  if (!enabled) {
-    return null;
-  }
   const commentsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     // Giscusスクリプトを動的に読み込み
     const script = document.createElement("script");
     script.src = "https://giscus.app/client.js";
@@ -37,11 +37,16 @@ export function GiscusComments({ className, enabled = true }: GiscusCommentsProp
 
     return () => {
       // クリーンアップ
-      if (commentsRef.current) {
-        commentsRef.current.innerHTML = "";
+      const currentRef = commentsRef.current;
+      if (currentRef) {
+        currentRef.innerHTML = "";
       }
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) {
+    return null;
+  }
 
   return (
     <div className={className}>
