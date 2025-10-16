@@ -199,36 +199,17 @@ function extractTags(title: string, content: string): string[] {
   return [...new Set(tags)]; // 重複を除去
 }
 
-// 画像タグを最適化されたコンポーネントに変換
+// 画像タグを最適化されたパスに変換
 function optimizeImageTags(content: string): string {
-  // <img> タグを <OptimizedImage> コンポーネントに変換
+  // <img> タグのsrcを最適化されたパスに変換
   return content.replace(
     /<img([^>]+)src="([^"]+)"([^>]*)>/g,
     (match, before, src, after) => {
-      // alt属性を抽出
-      const altMatch = match.match(/alt="([^"]*)"/);
-      const alt = altMatch ? altMatch[1] : '';
+      // 最適化された画像パスに変換
+      const optimizedSrc = src.replace('/assets/', '/assets/optimized/').replace(/\.(png|jpg|jpeg)$/i, '.webp');
       
-      // width/height属性を抽出
-      const widthMatch = match.match(/width="([^"]*)"/);
-      const heightMatch = match.match(/height="([^"]*)"/);
-      const width = widthMatch ? widthMatch[1] : '';
-      const height = heightMatch ? heightMatch[1] : '';
-      
-      // className属性を抽出
-      const classMatch = match.match(/class="([^"]*)"/);
-      const className = classMatch ? classMatch[1] : '';
-      
-      // 最適化されたコンポーネントに変換
-      let component = `<OptimizedImage\n`;
-      component += `  src="${src}"\n`;
-      if (alt) component += `  alt="${alt}"\n`;
-      if (width) component += `  width={${width}}\n`;
-      if (height) component += `  height={${height}}\n`;
-      if (className) component += `  className="${className}"\n`;
-      component += `/>`;
-      
-      return component;
+      // 元のsrcを最適化されたsrcに置換
+      return match.replace(`src="${src}"`, `src="${optimizedSrc}"`);
     }
   );
 }
@@ -246,8 +227,6 @@ ${post.categoryStep ? `categoryStep: "${post.categoryStep}"` : ''}
 ${post.categorySkill ? `categorySkill: "${post.categorySkill}"` : ''}
 ${post.order !== null ? `order: ${post.order}` : ''}
 ---
-
-import { OptimizedImage } from '@/components/optimized-image';
 
 `;
 
