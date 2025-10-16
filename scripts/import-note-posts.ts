@@ -199,19 +199,10 @@ function extractTags(title: string, content: string): string[] {
   return [...new Set(tags)]; // 重複を除去
 }
 
-// 画像タグを最適化されたパスに変換（フォールバック付き）
+// 画像タグを元のパスのままにしておく（WebP配信問題のため）
 function optimizeImageTags(content: string): string {
-  // <img> タグのsrcを最適化されたパスに変換
-  return content.replace(
-    /<img([^>]+)src="([^"]+)"([^>]*)>/g,
-    (match, before, src, after) => {
-      // 最適化された画像パスに変換
-      const optimizedSrc = src.replace('/assets/', '/assets/optimized/').replace(/\.(png|jpg|jpeg)$/i, '.webp');
-      
-      // 元のsrcを最適化されたsrcに置換し、onerrorでフォールバックを追加
-      return match.replace(`src="${src}"`, `src="${optimizedSrc}" onerror="this.src='${src}'"`);
-    }
-  );
+  // 現在は元の画像パスをそのまま使用（WebP配信問題解決後に最適化を再開）
+  return content;
 }
 
 // 記事を保存
