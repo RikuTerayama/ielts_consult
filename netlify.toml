@@ -1,3 +1,4 @@
+# SPA用のフォールバック（静的ファイルが存在しない場合のみ）
 [[redirects]]
   from = "/*"
   to = "/index.html"
