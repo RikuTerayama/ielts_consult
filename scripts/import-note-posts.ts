@@ -199,7 +199,7 @@ function extractTags(title: string, content: string): string[] {
   return [...new Set(tags)]; // 重複を除去
 }
 
-// 画像タグを最適化されたパスに変換
+// 画像タグを最適化されたパスに変換（フォールバック付き）
 function optimizeImageTags(content: string): string {
   // <img> タグのsrcを最適化されたパスに変換
   return content.replace(
@@ -208,8 +208,8 @@ function optimizeImageTags(content: string): string {
       // 最適化された画像パスに変換
       const optimizedSrc = src.replace('/assets/', '/assets/optimized/').replace(/\.(png|jpg|jpeg)$/i, '.webp');
       
-      // 元のsrcを最適化されたsrcに置換
-      return match.replace(`src="${src}"`, `src="${optimizedSrc}"`);
+      // 元のsrcを最適化されたsrcに置換し、onerrorでフォールバックを追加
+      return match.replace(`src="${src}"`, `src="${optimizedSrc}" onerror="this.src='${src}'"`);
     }
   );
 }
