@@ -6,6 +6,9 @@ const nextConfig = {
   },
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
+  experimental: {
+    mdxRs: true,
+  },
 };
 
 export default nextConfig;
