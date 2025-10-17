@@ -8,6 +8,7 @@ import { AdSlot } from "@/components/ad-slot";
 import { NoteCTA } from "@/components/note-cta";
 import { ReadingProgress } from "@/components/reading-progress";
 import { GiscusComments } from "@/components/giscus-comments";
+import { Tooltip } from "@/components/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -194,34 +195,40 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* 前後記事ナビゲーション */}
         <nav className="flex justify-between mb-12 gap-4">
           {prevPost ? (
-            <Link href={`/posts/${prevPost.slug}`} className="flex-1 max-w-[45%]">
-              <Button 
-                variant="outline" 
-                className="w-full justify-start text-left h-auto py-3 px-4"
-                title={prevPost.title} // ホバー時に完全なタイトルを表示
-              >
-                <span className="truncate">
-                  ← <span className="sm:hidden">{truncateTitle(prevPost.title, true)}</span>
-                  <span className="hidden sm:inline">{truncateTitle(prevPost.title, false)}</span>
-                </span>
-              </Button>
-            </Link>
+            <div className="flex-1 max-w-[45%]">
+              <Tooltip content={prevPost.title} side="top" delay={300}>
+                <Link href={`/posts/${prevPost.slug}`} className="block">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start text-left h-auto py-3 px-4"
+                  >
+                    <span className="truncate">
+                      ← <span className="sm:hidden">{truncateTitle(prevPost.title, true)}</span>
+                      <span className="hidden sm:inline">{truncateTitle(prevPost.title, false)}</span>
+                    </span>
+                  </Button>
+                </Link>
+              </Tooltip>
+            </div>
           ) : (
             <div className="flex-1 max-w-[45%]" />
           )}
           {nextPost ? (
-            <Link href={`/posts/${nextPost.slug}`} className="flex-1 max-w-[45%]">
-              <Button 
-                variant="outline" 
-                className="w-full justify-end text-right h-auto py-3 px-4"
-                title={nextPost.title} // ホバー時に完全なタイトルを表示
-              >
-                <span className="truncate">
-                  <span className="sm:hidden">{truncateTitle(nextPost.title, true)}</span>
-                  <span className="hidden sm:inline">{truncateTitle(nextPost.title, false)}</span> →
-                </span>
-              </Button>
-            </Link>
+            <div className="flex-1 max-w-[45%]">
+              <Tooltip content={nextPost.title} side="top" delay={300}>
+                <Link href={`/posts/${nextPost.slug}`} className="block">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-end text-right h-auto py-3 px-4"
+                  >
+                    <span className="truncate">
+                      <span className="sm:hidden">{truncateTitle(nextPost.title, true)}</span>
+                      <span className="hidden sm:inline">{truncateTitle(nextPost.title, false)}</span> →
+                    </span>
+                  </Button>
+                </Link>
+              </Tooltip>
+            </div>
           ) : (
             <div className="flex-1 max-w-[45%]" />
           )}
