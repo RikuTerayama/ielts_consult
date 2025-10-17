@@ -27,6 +27,7 @@ export function GiscusComments({ className, enabled = true }: GiscusCommentsProp
     script.setAttribute("data-emit-metadata", "0");
     script.setAttribute("data-input-position", "bottom");
     script.setAttribute("data-theme", "preferred_color_scheme");
+    script.setAttribute("data-theme-id", "dark_dimmed");
     script.setAttribute("data-lang", "ja");
     script.setAttribute("data-loading", "lazy");
     script.async = true;
@@ -59,7 +60,14 @@ export function GiscusComments({ className, enabled = true }: GiscusCommentsProp
           <br />
           GitHubアカウントでログインしてコメントできます。
         </p>
-        <div ref={commentsRef} />
+        <div 
+          ref={commentsRef} 
+          className="giscus-container"
+          style={{
+            // ダークモードでの可読性を向上
+            colorScheme: 'light dark'
+          }}
+        />
       </div>
     </div>
   );
