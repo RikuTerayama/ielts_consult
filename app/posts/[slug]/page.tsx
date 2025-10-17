@@ -11,6 +11,12 @@ import { GiscusComments } from "@/components/giscus-comments";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+// レスポンシブな文字数制限のヘルパー関数
+function truncateTitle(title: string, isMobile: boolean = false): string {
+  const maxLength = isMobile ? 15 : 25; // スマホ: 15文字、PC: 25文字
+  return title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;
+}
+
 interface PostPageProps {
   params: {
     slug: string;
@@ -186,24 +192,38 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
 
         {/* 前後記事ナビゲーション */}
-        <nav className="flex justify-between mb-12">
+        <nav className="flex justify-between mb-12 gap-4">
           {prevPost ? (
-            <Link href={`/posts/${prevPost.slug}`}>
-              <Button variant="outline">
-                ← {prevPost.title}
+            <Link href={`/posts/${prevPost.slug}`} className="flex-1 max-w-[45%]">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-left h-auto py-3 px-4"
+                title={prevPost.title} // ホバー時に完全なタイトルを表示
+              >
+                <span className="truncate">
+                  ← <span className="sm:hidden">{truncateTitle(prevPost.title, true)}</span>
+                  <span className="hidden sm:inline">{truncateTitle(prevPost.title, false)}</span>
+                </span>
               </Button>
             </Link>
           ) : (
-            <div />
+            <div className="flex-1 max-w-[45%]" />
           )}
           {nextPost ? (
-            <Link href={`/posts/${nextPost.slug}`}>
-              <Button variant="outline">
-                {nextPost.title} →
+            <Link href={`/posts/${nextPost.slug}`} className="flex-1 max-w-[45%]">
+              <Button 
+                variant="outline" 
+                className="w-full justify-end text-right h-auto py-3 px-4"
+                title={nextPost.title} // ホバー時に完全なタイトルを表示
+              >
+                <span className="truncate">
+                  <span className="sm:hidden">{truncateTitle(nextPost.title, true)}</span>
+                  <span className="hidden sm:inline">{truncateTitle(nextPost.title, false)}</span> →
+                </span>
               </Button>
             </Link>
           ) : (
-            <div />
+            <div className="flex-1 max-w-[45%]" />
           )}
         </nav>
 
