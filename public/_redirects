@@ -1,0 +1,11 @@
+# URL正規化: HTTP -> HTTPS
+http://ieltsconsult.netlify.app/* https://ieltsconsult.netlify.app/:splat 301!
+http://www.ieltsconsult.netlify.app/* https://ieltsconsult.netlify.app/:splat 301!
+
+# URL正規化: www -> non-www
+https://www.ieltsconsult.netlify.app/* https://ieltsconsult.netlify.app/:splat 301!
+
+# index.html を除去してスラッシュへリダイレクト
+/index.html / 301
+/*/index.html /:splat 301
+
