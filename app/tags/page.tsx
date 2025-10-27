@@ -22,7 +22,10 @@ export default async function TagsPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">タグ一覧</h1>
+      <h1 className="text-4xl font-bold mb-4">IELTS対策・英語学習のタグ一覧</h1>
+      <p className="text-muted-foreground mb-8">
+        Writing、Reading、Speaking、Listeningなど、IELTS対策をカテゴリで探せます。
+      </p>
       <div className="flex flex-wrap gap-4">
         {tags.map((tag) => (
           <Link key={tag} href={`/tags/${tag}`}>

@@ -12,7 +12,10 @@ export default function AffiliateDisclosurePage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert">
-        <h1>アフィリエイトに関する表示</h1>
+        <h1>アフィリエイト収益に関する表示と方針</h1>
+        <p>
+          当サイトはAmazonアソシエイト・Google AdSenseなどのアフィリエイトプログラムに参加しています。収益の有無にかかわらず、読者にとって価値あるコンテンツを提供します。
+        </p>
         
         <p className="text-sm text-muted-foreground">
           最終更新日：{lastUpdated}

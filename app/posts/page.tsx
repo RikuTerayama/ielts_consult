@@ -48,9 +48,9 @@ export default async function PostsPage() {
           __html: JSON.stringify(articleSchema),
         }}
       />
-      <h1 className="text-4xl font-bold mb-4">記事一覧</h1>
+      <h1 className="text-4xl font-bold mb-4">IELTS対策・ビジネス英語の記事一覧</h1>
       <p className="text-muted-foreground mb-8">
-        {posts.length > 0 ? `${posts.length}件の記事` : '記事を読み込んでいます...'}
+        {posts.length > 0 ? `${posts.length}件の記事から、IELTS対策、ビジネス英語、外資系コンサルで役立つ内容をピックアップしています。` : '記事を読み込んでいます...'}
       </p>
       
       {posts.length === 0 ? (

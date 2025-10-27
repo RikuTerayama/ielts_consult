@@ -9,7 +9,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert">
-        <h1>このサイトについて</h1>
+        <h1>IELTS対策とビジネス英語学習をサポートするサイトについて</h1>
         
         <h2>サイトの目的</h2>
         <p>

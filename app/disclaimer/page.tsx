@@ -9,7 +9,10 @@ export default function DisclaimerPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert">
-        <h1>免責事項</h1>
+        <h1>免責事項：情報の正確性と責任範囲について</h1>
+        <p>
+          当サイトの情報は、できる限り正確な情報を提供するよう努めておりますが、正確性や安全性を保証するものではありません。
+        </p>
         
         <h2>当サイトの情報について</h2>
         <p>
