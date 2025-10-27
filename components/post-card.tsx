@@ -19,7 +19,10 @@ export function PostCard({ post }: PostCardProps) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src={post.hero} 
-              alt={post.title} 
+              alt={post.title}
+              width={640}
+              height={360}
+              loading="lazy"
               className="h-full w-full object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
