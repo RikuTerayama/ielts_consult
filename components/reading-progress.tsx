@@ -59,8 +59,10 @@ export function ReadingProgress({ className }: ReadingProgressProps) {
   return (
     <div
       className={cn(
-        "fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ease-out cursor-pointer group",
+        "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ease-out cursor-pointer group",
         "hover:scale-110 hover:shadow-xl hover:shadow-primary/20",
+        "touch-manipulation", // タッチ操作の最適化
+        "select-none", // テキスト選択を無効化
         isHovered && "scale-110 shadow-xl shadow-primary/20",
         className
       )}
@@ -72,6 +74,11 @@ export function ReadingProgress({ className }: ReadingProgressProps) {
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={{
+        // 画面外に出ないように制限
+        right: 'max(1rem, min(1.5rem, 4vw))',
+        bottom: 'max(1rem, min(1.5rem, 4vw))',
+      }}
     >
       {/* 円形プログレスバー */}
       <div className="relative w-full h-full">
@@ -131,7 +138,7 @@ export function ReadingProgress({ className }: ReadingProgressProps) {
                 animation: `custom-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`
               }}
             />
-          </div>
+          </div>　
         )}
         
         {/* 波紋効果 */}

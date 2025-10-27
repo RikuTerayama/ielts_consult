@@ -7,8 +7,16 @@ import { formatDate } from "@/lib/utils";
 import { AdSlot } from "@/components/ad-slot";
 import { NoteCTA } from "@/components/note-cta";
 import { ReadingProgress } from "@/components/reading-progress";
+import { GiscusComments } from "@/components/giscus-comments";
+import { Tooltip } from "@/components/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
+// レスポンシブな文字数制限のヘルパー関数
+function truncateTitle(title: string, isMobile: boolean = false): string {
+  const maxLength = isMobile ? 15 : 25; // スマホ: 15文字、PC: 25文字
+  return title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;
+}
 
 interface PostPageProps {
   params: {
@@ -29,19 +37,46 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   if (!post) {
     return {
       title: "記事が見つかりません",
+      description: "お探しの記事は見つかりませんでした",
     };
   }
+
+  const fullUrl = `https://ieltsconsult.netlify.app/posts/${post.slug}/`;
+  const imageUrl = post.hero 
+    ? `https://ieltsconsult.netlify.app${post.hero}` 
+    : "https://ieltsconsult.netlify.app/og-image.jpg";
 
   return {
     title: post.title,
     description: post.description,
+    alternates: {
+      canonical: fullUrl,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
       publishedTime: post.date,
+      modifiedTime: post.date,
       tags: post.tags,
+      url: fullUrl,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      siteName: "IELTS対策｜外資系コンサルの英語力底上げ",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description,
+      images: [imageUrl],
+    },
+    keywords: [...post.tags, "IELTS", "英語学習"],
   };
 }
 
@@ -78,8 +113,12 @@ export default async function PostPage({ params }: PostPageProps) {
     },
     "publisher": {
       "@type": "Organization",
-      "name": "外資系コンサルの英語力底上げブログ",
-      "url": "https://ieltsconsult.netlify.app"
+      "name": "IELTS Consult",
+      "url": "https://ieltsconsult.netlify.app",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://ieltsconsult.netlify.app/logo.png"
+      }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -88,7 +127,8 @@ export default async function PostPage({ params }: PostPageProps) {
     "keywords": post.tags.join(", "),
     "articleSection": post.categorySkill || "IELTS",
     "wordCount": post.content.split(/\s+/).length,
-    "timeRequired": post.readingTime
+    "timeRequired": post.readingTime,
+    "inLanguage": "ja-JP"
   };
 
   return (
@@ -185,24 +225,44 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
 
         {/* 前後記事ナビゲーション */}
-        <nav className="flex justify-between mb-12">
+        <nav className="flex justify-between mb-12 gap-4">
           {prevPost ? (
-            <Link href={`/posts/${prevPost.slug}`}>
-              <Button variant="outline">
-                ← {prevPost.title}
-              </Button>
-            </Link>
+            <div className="flex-1 max-w-[45%]">
+              <Tooltip content={prevPost.title} side="top" delay={300}>
+                <Link href={`/posts/${prevPost.slug}`} className="block">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start text-left h-auto py-3 px-4"
+                  >
+                    <span className="truncate">
+                      ← <span className="sm:hidden">{truncateTitle(prevPost.title, true)}</span>
+                      <span className="hidden sm:inline">{truncateTitle(prevPost.title, false)}</span>
+                    </span>
+                  </Button>
+                </Link>
+              </Tooltip>
+            </div>
           ) : (
-            <div />
+            <div className="flex-1 max-w-[45%]" />
           )}
           {nextPost ? (
-            <Link href={`/posts/${nextPost.slug}`}>
-              <Button variant="outline">
-                {nextPost.title} →
-              </Button>
-            </Link>
+            <div className="flex-1 max-w-[45%]">
+              <Tooltip content={nextPost.title} side="top" delay={300}>
+                <Link href={`/posts/${nextPost.slug}`} className="block">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-end text-right h-auto py-3 px-4"
+                  >
+                    <span className="truncate">
+                      <span className="sm:hidden">{truncateTitle(nextPost.title, true)}</span>
+                      <span className="hidden sm:inline">{truncateTitle(nextPost.title, false)}</span> →
+                    </span>
+                  </Button>
+                </Link>
+              </Tooltip>
+            </div>
           ) : (
-            <div />
+            <div className="flex-1 max-w-[45%]" />
           )}
         </nav>
 
@@ -226,6 +286,12 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </section>
         )}
+
+        {/* コメント機能 */}
+        <GiscusComments 
+          className="mt-12" 
+          enabled={process.env.NEXT_PUBLIC_ENABLE_COMMENTS !== "false"}
+        />
         </div>
       </article>
     </>

@@ -199,6 +199,12 @@ function extractTags(title: string, content: string): string[] {
   return [...new Set(tags)]; // 重複を除去
 }
 
+// 画像タグを元のパスのままにしておく（WebP配信問題のため）
+function optimizeImageTags(content: string): string {
+  // 現在は元の画像パスをそのまま使用（WebP配信問題解決後に最適化を再開）
+  return content;
+}
+
 // 記事を保存
 async function savePost(post: Post) {
   const frontmatter = `---
@@ -215,7 +221,9 @@ ${post.order !== null ? `order: ${post.order}` : ''}
 
 `;
 
-  const mdxContent = frontmatter + post.content;
+  // 画像タグを最適化
+  const optimizedContent = optimizeImageTags(post.content);
+  const mdxContent = frontmatter + optimizedContent;
   const outputPath = path.join(CONTENT_DIR, `${post.slug}.mdx`);
   await fs.writeFile(outputPath, mdxContent, 'utf-8');
 }
