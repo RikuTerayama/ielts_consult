@@ -4,7 +4,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "記事一覧",
-  description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための記事一覧",
+  description: "IELTS対策から実践的なビジネス英語まで、外資系コンサル向けの記事を総合掲載。書き方のコツや語彙力アップの方法が分かります。",
 };
 
 export default async function PostsPage() {

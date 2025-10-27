@@ -5,7 +5,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "タグ一覧",
-  description: "記事のタグ一覧",
+  description: "Writing、Reading、Speaking、Listeningなど、IELTS対策をカテゴリで探せるタグ一覧。目的別に記事が選べます。",
 };
 
 export default async function TagsPage() {

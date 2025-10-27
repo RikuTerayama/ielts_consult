@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "アフィリエイトに関する表示",
-  description: "当サイトのアフィリエイトプログラムに関する開示事項",
+  description: "AmazonアソシエイトやGoogle AdSenseなど、当サイトの収益源とアフィリエイト方針をご紹介します。",
 };
 
 export default function AffiliateDisclosurePage() {

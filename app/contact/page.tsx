@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "お問い合わせ",
-  description: "お問い合わせフォーム",
+  description: "IELTS対策やビジネス英語学習について、ご質問・ご意見をお寄せください。Twitter（X）からご連絡いただけます。",
 };
 
 export default function ContactPage() {

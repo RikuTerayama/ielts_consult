@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "このサイトについて",
-  description: "外資系コンサルの英語力底上げブログについて",
+  description: "外資系コンサルの英語力向上を支援するブログ。IELTS対策からビジネス実務まで、実体験ベースのノウハウを発信しています。",
 };
 
 export default function AboutPage() {

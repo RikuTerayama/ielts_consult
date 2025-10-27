@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "免責事項",
-  description: "免責事項",
+  description: "情報の正確性、外部リンクの責任範囲、著作権、商品紹介に関する免責事項を明記。ご利用前にご確認ください。",
 };
 
 export default function DisclaimerPage() {

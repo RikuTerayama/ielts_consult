@@ -17,9 +17,12 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
+  const tag = decodeURIComponent(params.tag);
+  const posts = await getPostsByTag(tag);
+  
   return {
-    title: `タグ: ${decodeURIComponent(params.tag)}`,
-    description: `${decodeURIComponent(params.tag)}に関する記事一覧`,
+    title: `タグ: ${tag}`,
+    description: `${tag}の記事${posts.length}件。IELTS対策や英語学習に役立つ実践的な内容をご覧ください。`,
   };
 }
 

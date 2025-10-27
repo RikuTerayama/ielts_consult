@@ -46,15 +46,28 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     ? `https://ieltsconsult.netlify.app${post.hero}` 
     : "https://ieltsconsult.netlify.app/og-image.jpg";
 
+  // descriptionを最適化（80-110文字以内）
+  let optimizedDescription = post.description;
+  
+  // 110文字を超える場合は切り詰める
+  if (optimizedDescription.length > 110) {
+    optimizedDescription = optimizedDescription.substring(0, 110).replace(/\s+[^\s]*$/, '') + '...';
+  }
+  
+  // 短すぎる場合（40文字未満）は補足を追加
+  if (optimizedDescription.length < 40) {
+    optimizedDescription = `${optimizedDescription}実践的なノウハウと具体例で学習をサポートします。`;
+  }
+
   return {
     title: post.title,
-    description: post.description,
+    description: optimizedDescription,
     alternates: {
       canonical: fullUrl,
     },
     openGraph: {
       title: post.title,
-      description: post.description,
+      description: optimizedDescription,
       type: "article",
       publishedTime: post.date,
       modifiedTime: post.date,
@@ -73,7 +86,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.description,
+      description: optimizedDescription,
       images: [imageUrl],
     },
     keywords: [...post.tags, "IELTS", "英語学習"],
