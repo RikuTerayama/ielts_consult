@@ -75,9 +75,9 @@ export default function RootLayout({
         {/* Google Search Console 所有権確認 */}
         <meta name="google-site-verification" content="dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8" />
         
-        {/* Google AdSense */}
+        {/* Google AdSense - defer読み込みでボトルネック回避 */}
         <script
-          async
+          defer
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
           crossOrigin="anonymous"
         />
