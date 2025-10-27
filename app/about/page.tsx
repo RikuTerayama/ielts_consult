@@ -2,14 +2,14 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "このサイトについて",
-  description: "外資系コンサルの英語力底上げブログについて",
+  description: "外資系コンサルの英語力向上を支援するブログ。IELTS対策からビジネス実務まで、実体験ベースのノウハウを発信しています。",
 };
 
 export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert">
-        <h1>このサイトについて</h1>
+        <h1>IELTS対策とビジネス英語学習をサポートするサイトについて</h1>
         
         <h2>サイトの目的</h2>
         <p>

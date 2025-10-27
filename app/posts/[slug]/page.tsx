@@ -11,6 +11,7 @@ import { GiscusComments } from "@/components/giscus-comments";
 import { Tooltip } from "@/components/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 // レスポンシブな文字数制限のヘルパー関数
 function truncateTitle(title: string, isMobile: boolean = false): string {
@@ -37,19 +38,59 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   if (!post) {
     return {
       title: "記事が見つかりません",
+      description: "お探しの記事は見つかりませんでした",
     };
+  }
+
+  const fullUrl = `https://ieltsconsult.netlify.app/posts/${post.slug}/`;
+  const imageUrl = post.hero 
+    ? `https://ieltsconsult.netlify.app${post.hero}` 
+    : "https://ieltsconsult.netlify.app/og-image.jpg";
+
+  // descriptionを最適化（80-110文字以内）
+  let optimizedDescription = post.description;
+  
+  // 110文字を超える場合は切り詰める
+  if (optimizedDescription.length > 110) {
+    optimizedDescription = optimizedDescription.substring(0, 110).replace(/\s+[^\s]*$/, '') + '...';
+  }
+  
+  // 短すぎる場合（40文字未満）は補足を追加
+  if (optimizedDescription.length < 40) {
+    optimizedDescription = `${optimizedDescription}実践的なノウハウと具体例で学習をサポートします。`;
   }
 
   return {
     title: post.title,
-    description: post.description,
+    description: optimizedDescription,
+    alternates: {
+      canonical: fullUrl,
+    },
     openGraph: {
       title: post.title,
-      description: post.description,
+      description: optimizedDescription,
       type: "article",
       publishedTime: post.date,
+      modifiedTime: post.date,
       tags: post.tags,
+      url: fullUrl,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      siteName: "IELTS対策｜外資系コンサルの英語力底上げ",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: optimizedDescription,
+      images: [imageUrl],
+    },
+    keywords: [...post.tags, "IELTS", "英語学習"],
   };
 }
 
@@ -86,8 +127,12 @@ export default async function PostPage({ params }: PostPageProps) {
     },
     "publisher": {
       "@type": "Organization",
-      "name": "外資系コンサルの英語力底上げブログ",
-      "url": "https://ieltsconsult.netlify.app"
+      "name": "IELTS Consult",
+      "url": "https://ieltsconsult.netlify.app",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://ieltsconsult.netlify.app/logo.png"
+      }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -96,7 +141,8 @@ export default async function PostPage({ params }: PostPageProps) {
     "keywords": post.tags.join(", "),
     "articleSection": post.categorySkill || "IELTS",
     "wordCount": post.content.split(/\s+/).length,
-    "timeRequired": post.readingTime
+    "timeRequired": post.readingTime,
+    "inLanguage": "ja-JP"
   };
 
   return (
@@ -114,6 +160,15 @@ export default async function PostPage({ params }: PostPageProps) {
         />
         
         <div className="max-w-4xl mx-auto">
+        {/* パンくずナビゲーション */}
+        <Breadcrumb
+          items={[
+            { label: "記事一覧", href: "/posts" },
+            { label: post.title, href: `/posts/${post.slug}` }
+          ]}
+          className="mb-6"
+        />
+
         {/* ヘッダー */}
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">

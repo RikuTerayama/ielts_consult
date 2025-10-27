@@ -2,14 +2,17 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "プライバシーポリシー",
-  description: "プライバシーポリシー",
+  description: "個人情報の取り扱い、アクセス解析ツール、広告表示に関する方針を掲載。プライバシー保護に配慮した運営方針です。",
 };
 
 export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert">
-        <h1>プライバシーポリシー</h1>
+        <h1>プライバシーポリシー：個人情報の取り扱いについて</h1>
+        <p>
+          当サイトでは、訪問者の個人情報を適切に取り扱います。
+        </p>
         
         <h2>個人情報の取り扱いについて</h2>
         <p>

@@ -9,11 +9,22 @@ export default async function Home() {
   const latestPosts = allPosts.slice(0, 6);
   const popularPosts = allPosts.slice(0, 3);
 
+  // Organization構造化データ
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "IELTS Consult",
+    "url": "https://ieltsconsult.netlify.app",
+    "logo": "https://ieltsconsult.netlify.app/logo.png",
+    "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを提供",
+    "sameAs": [],
+  };
+
   // WebSite構造化データ
   const webSiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "外資系コンサルの英語力底上げブログ",
+    "name": "IELTS対策｜外資系コンサルの英語力底上げ",
     "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
     "url": "https://ieltsconsult.netlify.app",
     "publisher": {
@@ -50,6 +61,12 @@ export default async function Home() {
   return (
     <>
       {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

@@ -7,28 +7,57 @@ import { Footer } from "@/components/footer";
 export const metadata: Metadata = {
   metadataBase: new URL("https://ieltsconsult.netlify.app"),
   title: {
-    default: "外資系コンサルの英語力底上げブログ",
-    template: "%s | 外資系コンサルの英語力底上げブログ",
+    default: "IELTS対策｜外資系コンサルの英語力底上げ",
+    template: "%s｜IELTS対策｜外資系コンサルの英語力底上げ",
   },
   description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
   keywords: ["IELTS", "英語学習", "外資系コンサル", "ビジネス英語", "英語力向上"],
-  authors: [{ name: "IELTS Consult" }],
+  authors: [{ name: "IELTS Consult", url: "https://ieltsconsult.netlify.app" }],
+  creator: "IELTS Consult",
+  publisher: "IELTS Consult",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "ja_JP",
     url: "https://ieltsconsult.netlify.app",
-    siteName: "外資系コンサルの英語力底上げブログ",
-    title: "外資系コンサルの英語力底上げブログ",
+    siteName: "IELTS対策｜外資系コンサルの英語力底上げ",
+    title: "IELTS対策｜外資系コンサルの英語力底上げ",
     description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "IELTS対策｜外資系コンサルの英語力底上げ",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "外資系コンサルの英語力底上げブログ",
+    title: "IELTS対策｜外資系コンサルの英語力底上げ",
     description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8",
   },
 };
 
@@ -46,9 +75,9 @@ export default function RootLayout({
         {/* Google Search Console 所有権確認 */}
         <meta name="google-site-verification" content="dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8" />
         
-        {/* Google AdSense */}
+        {/* Google AdSense - defer読み込みでボトルネック回避 */}
         <script
-          async
+          defer
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
           crossOrigin="anonymous"
         />
@@ -70,6 +99,18 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebPage",
+                "url": "https://ieltsconsult.netlify.app",
+                "name": "IELTS対策｜外資系コンサルの英語力底上げ",
+                "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
+              }),
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>
