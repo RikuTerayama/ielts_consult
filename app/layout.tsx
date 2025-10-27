@@ -59,6 +59,9 @@ export const metadata: Metadata = {
   verification: {
     google: "dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8",
   },
+  other: {
+    "google-adsense": "ca-pub-4232725615106709",
+  },
 };
 
 export default function RootLayout({
@@ -69,18 +72,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
-        {/* ビューポート設定 - スマホ表示最適化 */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-        
-        {/* Google Search Console 所有権確認 */}
-        <meta name="google-site-verification" content="dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8" />
-        
-        {/* Google AdSense - defer読み込みでボトルネック回避 */}
-        <script
-          defer
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
-          crossOrigin="anonymous"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <ThemeProvider
