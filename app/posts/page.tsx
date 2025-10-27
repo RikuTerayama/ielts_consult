@@ -1,6 +1,7 @@
 import { getAllPosts } from "@/lib/posts";
 import { PostCard } from "@/components/post-card";
 import { Metadata } from "next";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 export const metadata: Metadata = {
   title: "記事一覧",
@@ -47,6 +48,13 @@ export default async function PostsPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(articleSchema),
         }}
+      />
+      {/* パンくずナビゲーション */}
+      <Breadcrumb
+        items={[
+          { label: "記事一覧", href: "/posts" }
+        ]}
+        className="mb-6"
       />
       <h1 className="text-4xl font-bold mb-4">IELTS対策・ビジネス英語の記事一覧</h1>
       <p className="text-muted-foreground mb-8">

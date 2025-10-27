@@ -11,6 +11,7 @@ import { GiscusComments } from "@/components/giscus-comments";
 import { Tooltip } from "@/components/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 // レスポンシブな文字数制限のヘルパー関数
 function truncateTitle(title: string, isMobile: boolean = false): string {
@@ -159,6 +160,15 @@ export default async function PostPage({ params }: PostPageProps) {
         />
         
         <div className="max-w-4xl mx-auto">
+        {/* パンくずナビゲーション */}
+        <Breadcrumb
+          items={[
+            { label: "記事一覧", href: "/posts" },
+            { label: post.title, href: `/posts/${post.slug}` }
+          ]}
+          className="mb-6"
+        />
+
         {/* ヘッダー */}
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
