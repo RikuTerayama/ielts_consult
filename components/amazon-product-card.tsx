@@ -29,7 +29,14 @@ export function AmazonProductCard({
       {imageUrl && (
         <div className="aspect-video w-full overflow-hidden bg-muted">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            width={640}
+            height={360}
+            loading="lazy"
+            className="h-full w-full object-cover" 
+          />
         </div>
       )}
       <CardContent className="p-4">
