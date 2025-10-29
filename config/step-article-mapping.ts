@@ -100,8 +100,8 @@ export function getArticlesForStep(step: string): string[] {
 /**
  * 記事のステップ別表示順序を取得
  */
-export function getArticleOrder(step: string, slug: string): number | null {
+export function getArticleOrder(step: string, slug: string): number | undefined {
   const mappings = STEP_ARTICLE_MAPPINGS[step] || [];
   const mapping = mappings.find(m => m.slug === slug);
-  return mapping?.order || null;
+  return mapping?.order || undefined;
 }
