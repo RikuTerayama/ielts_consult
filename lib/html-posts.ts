@@ -42,6 +42,10 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
     // 説明文を生成（タイトルベース）
     const description = finalTitle ? `${finalTitle}の詳細な解説と実践的なノウハウを提供します。` : '';
     
+    // ヒーロー画像を抽出（最初の画像を取得）
+    const imgMatch = htmlContent.match(/<img[^>]+src="([^"]+)"/);
+    const hero = imgMatch ? (imgMatch[1].startsWith('assets/') ? `/assets/${imgMatch[1].replace('assets/', '')}` : imgMatch[1]) : '';
+
     // タグを推定（タイトルベース）
     const tags: string[] = [];
     if (finalTitle.includes('IELTS')) tags.push('IELTS');
@@ -70,7 +74,7 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
       date: new Date().toISOString(),
       description,
       tags,
-      hero: '',
+      hero,
       content: htmlContent,
       readingTime: '5分',
       categoryStep,
