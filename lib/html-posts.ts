@@ -62,9 +62,9 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
       hero: '',
       content: htmlContent,
       readingTime: '5分',
-      categoryStep: null,
-      categorySkill: null,
-      order: null,
+      categoryStep: undefined,
+      categorySkill: undefined,
+      order: undefined,
     };
   } catch (error) {
     console.error(`Error reading HTML file ${slug}:`, error);
