@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { getAllPosts } from '../lib/posts';
+import { getAllHtmlPosts } from '../lib/html-posts';
 
 const SITE_URL = 'https://ieltsconsult.netlify.app';
 const SITE_TITLE = '外資系コンサルの英語力底上げブログ';
@@ -9,7 +9,7 @@ const SITE_DESCRIPTION = 'IELTS対策、ビジネス英語、外資系コンサ�
 async function generateRSS() {
   console.log('📡 RSSフィードを生成しています...');
 
-  const posts = await getAllPosts();
+  const posts = await getAllHtmlPosts();
   const latestPosts = posts.slice(0, 20); // 最新20件
 
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
