@@ -1,4 +1,5 @@
-import { getAllSteps, getPostsByStep } from "@/lib/categories";
+import { getAllSteps } from "@/lib/categories";
+import { getPostsByStep } from "@/lib/html-posts";
 import { PostCard } from "@/components/post-card";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -41,6 +42,7 @@ export default async function StepPage({ params }: StepPageProps) {
     notFound();
   }
 
+  // HTMLファイルから記事を取得
   const posts = await getPostsByStep(params.step as LearningStepId);
 
   return (
