@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { getAllPosts, getAllTags } from '../lib/posts';
+import { getAllHtmlPosts, getAllValidTags } from '../lib/html-posts';
 import { getAllSteps, getAllSkills } from '../lib/categories';
 
 const SITE_URL = 'https://ieltsconsult.netlify.app';
@@ -8,8 +8,8 @@ const SITE_URL = 'https://ieltsconsult.netlify.app';
 async function generateSitemap() {
   console.log('🗺️  サイトマップを生成しています...');
 
-  const posts = await getAllPosts();
-  const tags = await getAllTags();
+  const posts = await getAllHtmlPosts();
+  const tags = await getAllValidTags();
   const steps = await getAllSteps();
   const skills = await getAllSkills();
 
