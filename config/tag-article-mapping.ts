@@ -150,10 +150,10 @@ export function getArticlesForTag(tag: string): string[] {
 /**
  * 記事のタグ別表示順序を取得
  */
-export function getArticleOrder(tag: string, slug: string): number | null {
+export function getArticleOrder(tag: string, slug: string): number | undefined {
   const mappings = TAG_ARTICLE_MAPPINGS[tag] || [];
   const mapping = mappings.find(m => m.slug === slug);
-  return mapping?.order || null;
+  return mapping?.order || undefined;
 }
 
 /**
