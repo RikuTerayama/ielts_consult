@@ -1,9 +1,10 @@
 import { getAllPosts, Post } from './posts';
+import { getAllHtmlPosts } from './html-posts';
 import { LEARNING_STEPS, SKILLS, LearningStepId, SkillId } from '@/config/categories';
 import { getArticlesForSkill } from '@/config/skill-article-mapping';
 
 export async function getPostsByStep(stepId: LearningStepId): Promise<Post[]> {
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllHtmlPosts();
   return allPosts.filter((post) => post.categoryStep === stepId);
 }
 
