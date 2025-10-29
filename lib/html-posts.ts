@@ -53,6 +53,17 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
     if (finalTitle.includes('表現')) tags.push('表現');
     if (finalTitle.includes('ガイド')) tags.push('ガイド');
     
+    // ステップマッピングから該当するステップを取得
+    const { STEP_ARTICLE_MAPPINGS } = await import('@/config/step-article-mapping');
+    let categoryStep: string | undefined = undefined;
+    
+    for (const [stepId, mappings] of Object.entries(STEP_ARTICLE_MAPPINGS)) {
+      if (mappings.some(m => m.slug === slug)) {
+        categoryStep = stepId;
+        break;
+      }
+    }
+    
     return {
       slug,
       title: finalTitle,
@@ -62,7 +73,7 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
       hero: '',
       content: htmlContent,
       readingTime: '5分',
-      categoryStep: undefined,
+      categoryStep,
       categorySkill: undefined,
       order: undefined,
     };
