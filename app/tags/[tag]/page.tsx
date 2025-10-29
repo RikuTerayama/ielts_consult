@@ -1,4 +1,4 @@
-import { getAllTags, getPostsByTag } from "@/lib/posts";
+import { getAllHtmlPosts, getPostsByTag } from "@/lib/html-posts";
 import { PostCard } from "@/components/post-card";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -11,7 +11,16 @@ interface TagPageProps {
 }
 
 export async function generateStaticParams() {
-  const tags = await getAllTags();
+  // 実際のHTMLファイルから抽出されたタグを取得
+  const posts = await getAllHtmlPosts();
+  const allTags = new Set<string>();
+  
+  posts.forEach(post => {
+    post.tags.forEach(tag => allTags.add(tag));
+  });
+  
+  const tags = Array.from(allTags);
+  
   return tags.map((tag) => ({
     tag: tag,
   }));
