@@ -1,4 +1,4 @@
-import { getAllPosts, getAllTags } from "@/lib/posts";
+import { getAllValidTags, getAllHtmlPosts } from "@/lib/html-posts";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -9,15 +9,21 @@ export const metadata: Metadata = {
 };
 
 export default async function TagsPage() {
-  const tags = await getAllTags();
-  const posts = await getAllPosts();
+  // 実際のHTMLファイルから抽出されたタグを取得
+  const posts = await getAllHtmlPosts();
+  const allTags = new Set<string>();
+  
+  posts.forEach(post => {
+    post.tags.forEach(tag => allTags.add(tag));
+  });
+  
+  const tags = Array.from(allTags).sort();
 
   // タグごとの記事数を計算
   const tagCounts = new Map<string, number>();
-  posts.forEach((post) => {
-    post.tags.forEach((tag) => {
-      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
-    });
+  tags.forEach((tag) => {
+    const count = posts.filter(post => post.tags.includes(tag)).length;
+    tagCounts.set(tag, count);
   });
 
   return (
