@@ -138,26 +138,15 @@ export async function getPostsByStep(stepId: string): Promise<Post[]> {
 }
 
 /**
- * タグ別に記事を取得
+ * タグ別に記事を取得（実際のHTMLファイルから抽出されたタグを使用）
  */
 export async function getPostsByTag(tag: string): Promise<Post[]> {
-  const { getArticlesForTag } = await import('@/config/tag-article-mapping');
-  const articleSlugs = getArticlesForTag(tag);
+  const allPosts = await getAllHtmlPosts();
   
-  const posts: Post[] = [];
+  // 指定されたタグを含む記事をフィルタリング
+  const filteredPosts = allPosts.filter(post => post.tags.includes(tag));
   
-  for (const slug of articleSlugs) {
-    const post = await getPostFromHtml(slug);
-    if (post) {
-      // タグ別の順序を設定
-      const { getArticleOrder } = await import('@/config/tag-article-mapping');
-      post.order = getArticleOrder(tag, slug);
-      posts.push(post);
-    }
-  }
-  
-  // 順序でソート
-  return posts.sort((a, b) => (a.order || 0) - (b.order || 0));
+  return filteredPosts;
 }
 
 /**
