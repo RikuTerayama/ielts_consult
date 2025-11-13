@@ -13,6 +13,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { ArticleSource } from "@/components/article-source";
+import { ArticleIntro } from "@/components/article-intro";
+import { ArticleInsights } from "@/components/article-insights";
 
 // レスポンシブな文字数制限のヘルパー関数
 function truncateTitle(title: string, isMobile: boolean = false): string {
@@ -207,25 +209,73 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* 出典表示（AdSenseポリシー準拠） */}
         <ArticleSource noteUrl={noteUrl} className="mb-6" />
 
-        {/* 記事の要点（要約セクション - オリジナル価値を追加） */}
+        {/* 記事本文前の導入セクション（独自の価値を追加） */}
+        <ArticleIntro 
+          title={post.title}
+          description={post.description}
+          tags={post.tags}
+          className="mb-6"
+        />
+
+        {/* 記事の要点（詳細な要約セクション - オリジナル価値を追加） */}
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg p-6 mb-8 border border-blue-200 dark:border-blue-800">
-          <h2 className="text-xl font-bold mb-3 text-blue-900 dark:text-blue-100">
-            📌 この記事の要点
+          <h2 className="text-xl font-bold mb-4 text-blue-900 dark:text-blue-100">
+            📌 この記事で学べる主要なポイント
           </h2>
-          <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
-              <span>{post.description}</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
-              <span>実践的なノウハウと具体例を交えて解説しています</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
-              <span>より詳しい内容や追加情報は元のnote記事をご覧ください</span>
-            </li>
-          </ul>
+          <div className="space-y-3">
+            <div className="bg-white/50 dark:bg-slate-900/30 rounded-lg p-4 border border-blue-100 dark:border-blue-900">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                1. 実践的なノウハウの習得
+              </h3>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                {post.description}
+              </p>
+            </div>
+            <div className="bg-white/50 dark:bg-slate-900/30 rounded-lg p-4 border border-blue-100 dark:border-blue-900">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                2. 具体的な表現とテクニック
+              </h3>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                記事内で紹介されている表現やテクニックは、IELTS試験でそのまま活用できる実践的な内容です。実際の使用例も含まれているため、理解しやすく応用しやすい構成になっています。
+              </p>
+            </div>
+            <div className="bg-white/50 dark:bg-slate-900/30 rounded-lg p-4 border border-blue-100 dark:border-blue-900">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                3. 効率的な学習方法の理解
+              </h3>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                この記事では、単なる知識の羅列ではなく、効率的に学習を進めるための方法論も解説されています。時間を有効活用しながらスコアアップを目指す方に特に役立つ内容です。
+              </p>
+            </div>
+            {post.tags.includes('Writing') && (
+              <div className="bg-white/50 dark:bg-slate-900/30 rounded-lg p-4 border border-blue-100 dark:border-blue-900">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                  4. ライティングスキルの向上
+                </h3>
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  ライティングセクションでは、適切な表現の選択と論理的な構成が重要です。この記事で紹介されているテクニックを実践することで、より高得点を目指すことができます。
+                </p>
+              </div>
+            )}
+            {post.tags.includes('Speaking') && (
+              <div className="bg-white/50 dark:bg-slate-900/30 rounded-lg p-4 border border-blue-100 dark:border-blue-900">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                  4. スピーキングの流暢さ向上
+                </h3>
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  スピーキングセクションでは、自然な表現と適切な接続詞の使用が評価のポイントとなります。この記事で紹介されている表現を練習することで、より自然な英語を話せるようになります。
+                </p>
+              </div>
+            )}
+            <div className="bg-white/50 dark:bg-slate-900/30 rounded-lg p-4 border border-blue-100 dark:border-blue-900">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                {post.tags.includes('Writing') || post.tags.includes('Speaking') ? '5' : '4'}. より深い理解のためのリソース
+              </h3>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                この記事は要約版です。より詳しい解説、追加の実践例、Q&A、学習スケジュールなどは、記事冒頭の出典リンクから元のnote記事でご覧いただけます。
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* 冒頭広告 */}
@@ -237,8 +287,30 @@ export default async function PostPage({ params }: PostPageProps) {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
+        {/* 記事本文後の補足説明（独自の価値を追加） */}
+        <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-6 mb-8 border border-slate-200 dark:border-slate-800">
+          <h3 className="text-lg font-semibold mb-3 text-slate-900 dark:text-slate-100">
+            💡 この記事の重要なポイント
+          </h3>
+          <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+            この記事で紹介されている内容は、IELTS対策において実践的で効果的なアプローチです。
+            特に、{post.tags.includes('Writing') ? 'ライティング' : post.tags.includes('Speaking') ? 'スピーキング' : post.tags.includes('Reading') ? 'リーディング' : post.tags.includes('Listening') ? 'リスニング' : 'IELTS'}セクションのスコアアップを目指す方にとって、すぐに活用できる内容となっています。
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            記事内で紹介されている表現やテクニックは、実際の試験で使用できる実践的なものです。
+            ぜひ、日々の学習に取り入れて、定期的に復習することで定着を図ってください。
+          </p>
+        </div>
+
         {/* 記事末広告 */}
         <AdSlot className="mb-12" slot="article-bottom" format="horizontal" />
+
+        {/* 記事末尾の洞察セクション（独自の価値を追加） */}
+        <ArticleInsights 
+          title={post.title}
+          tags={post.tags}
+          className="mb-12"
+        />
 
         {/* noteへのCTA */}
         <NoteCTA className="mb-12" />
