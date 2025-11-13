@@ -281,7 +281,17 @@ export default async function PostPage({ params }: PostPageProps) {
         {/* 冒頭広告 */}
         <AdSlot className="mb-8" slot="article-top" format="horizontal" />
 
-        {/* 記事本文 */}
+        {/* 記事本文（要約版） */}
+        <div className="mb-4">
+          <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
+            <p className="text-sm text-amber-900 dark:text-amber-100 font-medium mb-1">
+              📄 この記事について
+            </p>
+            <p className="text-xs text-amber-800 dark:text-amber-200">
+              以下は、noteで公開された記事の要約版です。記事の要点をまとめており、より詳しい解説や実践例については、記事冒頭の出典リンクから元のnote記事をご覧ください。
+            </p>
+          </div>
+        </div>
         <div
           className="prose prose-lg dark:prose-invert max-w-none mb-12"
           dangerouslySetInnerHTML={{ __html: post.content }}
