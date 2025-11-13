@@ -3,6 +3,13 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "アフィリエイトに関する表示",
   description: "AmazonアソシエイトやGoogle AdSenseなど、当サイトの収益源とアフィリエイト方針をご紹介します。",
+  alternates: {
+    canonical: "https://ieltsconsult.netlify.app/affiliate-disclosure/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function AffiliateDisclosurePage() {
