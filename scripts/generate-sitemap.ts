@@ -22,6 +22,8 @@ async function generateSitemap() {
     '/contact',
     '/privacy',
     '/disclaimer',
+    '/affiliate-disclosure',
+    '/steps',
   ];
 
   // 学習ステップ別ページ
