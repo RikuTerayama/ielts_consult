@@ -3,6 +3,13 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "お問い合わせ",
   description: "IELTS対策やビジネス英語学習について、ご質問・ご意見をお寄せください。Twitter（X）からご連絡いただけます。",
+  alternates: {
+    canonical: "https://ieltsconsult.netlify.app/contact/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function ContactPage() {
