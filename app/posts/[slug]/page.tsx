@@ -12,6 +12,7 @@ import { Tooltip } from "@/components/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { ArticleSource } from "@/components/article-source";
 
 // レスポンシブな文字数制限のヘルパー関数
 function truncateTitle(title: string, isMobile: boolean = false): string {
@@ -112,7 +113,10 @@ export default async function PostPage({ params }: PostPageProps) {
     .slice(0, 3);
 
 
-  // BlogPosting構造化データ
+  // note URLを取得（slugから推測、またはマッピングから取得）
+  const noteUrl = `https://note.com/ielts_consult/n/${post.slug}`;
+
+  // BlogPosting構造化データ（出典情報を含む）
   const blogPostingSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -142,7 +146,14 @@ export default async function PostPage({ params }: PostPageProps) {
     "articleSection": post.categorySkill || "IELTS",
     "wordCount": post.content.split(/\s+/).length,
     "timeRequired": post.readingTime,
-    "inLanguage": "ja-JP"
+    "inLanguage": "ja-JP",
+    // 出典情報を追加（AdSenseポリシー準拠）
+    "isBasedOn": {
+      "@type": "Article",
+      "url": noteUrl,
+      "name": post.title
+    },
+    "citation": noteUrl
   };
 
   return (
@@ -192,6 +203,30 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </div>
         </header>
+
+        {/* 出典表示（AdSenseポリシー準拠） */}
+        <ArticleSource noteUrl={noteUrl} className="mb-6" />
+
+        {/* 記事の要点（要約セクション - オリジナル価値を追加） */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg p-6 mb-8 border border-blue-200 dark:border-blue-800">
+          <h2 className="text-xl font-bold mb-3 text-blue-900 dark:text-blue-100">
+            📌 この記事の要点
+          </h2>
+          <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span>{post.description}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span>実践的なノウハウと具体例を交えて解説しています</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+              <span>より詳しい内容や追加情報は元のnote記事をご覧ください</span>
+            </li>
+          </ul>
+        </div>
 
         {/* 冒頭広告 */}
         <AdSlot className="mb-8" slot="article-top" format="horizontal" />
