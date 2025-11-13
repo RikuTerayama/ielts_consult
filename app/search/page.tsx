@@ -38,9 +38,31 @@ export default function SearchPage() {
     setFilteredPosts(results);
   }, [query, posts]);
 
+  // SearchActionPage構造化データ
+  const searchPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "記事検索",
+    "description": "タイトル、内容、タグから記事を検索。IELTS対策やビジネス英語の情報を素早く見つけられます。",
+    "url": "https://ieltsconsult.netlify.app/search/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://ieltsconsult.netlify.app/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8">記事検索</h1>
+    <>
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(searchPageSchema),
+        }}
+      />
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-4xl font-bold mb-8">記事検索</h1>
 
       <div className="max-w-2xl mx-auto mb-12">
         <div className="relative">
@@ -58,6 +80,14 @@ export default function SearchPage() {
       <div className="mb-4 text-muted-foreground">
         {filteredPosts.length}件の記事が見つかりました
       </div>
+      {query.trim() === "" && (
+        <div className="mb-8 prose prose-lg dark:prose-invert max-w-none">
+          <p className="text-muted-foreground">
+            検索ボックスにキーワードを入力すると、記事のタイトル、内容、タグから検索できます。
+            IELTS対策、ビジネス英語、ライティング、スピーキングなど、お探しの情報を素早く見つけられます。
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPosts.map((post) => (
@@ -65,5 +95,6 @@ export default function SearchPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }
