@@ -6,6 +6,13 @@ import { Breadcrumb } from "@/components/breadcrumb";
 export const metadata: Metadata = {
   title: "記事一覧",
   description: "IELTS対策から実践的なビジネス英語まで、外資系コンサル向けの記事を総合掲載。書き方のコツや語彙力アップの方法が分かります。",
+  alternates: {
+    canonical: "https://ieltsconsult.netlify.app/posts/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function PostsPage() {
