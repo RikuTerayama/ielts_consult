@@ -52,14 +52,23 @@ export function GiscusComments({ className, enabled = true }: GiscusCommentsProp
   return (
     <div className={className}>
       <div className="border-t border-border pt-8">
-        <h3 className="text-xl font-semibold mb-6 text-center">
-          💬 コメント・質問
+        <h3 className="text-xl font-semibold mb-4 text-center">
+          💬 コメント・質問・ディスカッション
         </h3>
-        <p className="text-sm text-muted-foreground text-center mb-6">
-          記事についてのご質問やご感想をお聞かせください。
-          <br />
-          GitHubアカウントでログインしてコメントできます。
-        </p>
+        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+          <p className="text-sm text-blue-900 dark:text-blue-100 mb-2 font-medium">
+            📝 この記事について議論しましょう
+          </p>
+          <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1 list-disc list-inside">
+            <li>記事の内容についてのご質問やご感想</li>
+            <li>実際に試してみた結果や体験談</li>
+            <li>追加のテクニックや関連情報の共有</li>
+            <li>学習方法についての意見交換</li>
+          </ul>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mt-3">
+            GitHubアカウントでログインしてコメントできます。皆さんの意見や経験を共有していただけると、他の読者の方々の学習にも役立ちます。
+          </p>
+        </div>
         <div 
           ref={commentsRef} 
           className="giscus-container"
