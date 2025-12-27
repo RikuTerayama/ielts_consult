@@ -38,6 +38,14 @@ export function Header() {
             <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
               About
             </Link>
+            <a 
+              href="https://ielts-training.onrender.com/home" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              🎯 トレーニングアプリ
+            </a>
             <ThemeToggle />
           </nav>
 
@@ -97,6 +105,15 @@ export function Header() {
             >
               About
             </Link>
+            <a
+              href="https://ielts-training.onrender.com/home"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              🎯 トレーニングアプリ
+            </a>
           </nav>
         )}
       </div>
