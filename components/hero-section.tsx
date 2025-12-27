@@ -14,6 +14,15 @@ export function HeroSection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <Button asChild size="lg">
+              <a 
+                href="https://ielts-training.onrender.com/home" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                🎯 IELTSトレーニングアプリを始める
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="lg">
               <Link href="/posts">記事を読む</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
