@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Post } from "@/lib/posts";
 import { AdSlot } from "@/components/ad-slot";
 import { NoteCTA } from "@/components/note-cta";
+import { TrainingAppCTA } from "@/components/training-app-cta";
 import { LEARNING_STEPS, SKILLS } from "@/config/categories";
 
 interface SidebarProps {
@@ -26,6 +27,9 @@ export function Sidebar({ posts }: SidebarProps) {
 
   return (
     <div className="space-y-6">
+      {/* IELTSトレーニングアプリへのCTA */}
+      <TrainingAppCTA variant="sidebar" />
+
       {/* noteへのCTA */}
       <NoteCTA variant="sidebar" />
 
