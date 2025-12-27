@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import { JSDOM } from 'jsdom';
 import sanitizeHtml from 'sanitize-html';
+import type { LearningStepId } from '@/config/categories';
 
 export interface Post {
   slug: string;
@@ -119,9 +120,9 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
     const { SKILL_ARTICLE_MAPPINGS } = await import('@/config/skill-article-mapping');
     const { STEP_ARTICLE_MAPPINGS } = await import('@/config/step-article-mapping');
     
-    let categoryStep = inferLearningStep(title, tags);
-    let categorySkill = null;
-    let order = null;
+    let categoryStep: LearningStepId | null = inferLearningStep(title, tags);
+    let categorySkill: string | null = null;
+    let order: number | null = null;
 
     // 手動マッピングからスキルと順序を取得
     for (const [skillId, mappings] of Object.entries(SKILL_ARTICLE_MAPPINGS)) {
@@ -138,10 +139,11 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
       categorySkill = inferSkill(title, tags);
     }
 
-    // ステップマッピングから取得
+    // ステップマッピングから取得（型アサーションを使用）
     for (const [stepId, mappings] of Object.entries(STEP_ARTICLE_MAPPINGS)) {
       if (mappings.some(m => m.slug === slug)) {
-        categoryStep = stepId;
+        // stepIdはSTEP_ARTICLE_MAPPINGSのキーなので、LearningStepId型に安全にキャストできる
+        categoryStep = stepId as LearningStepId;
         break;
       }
     }
