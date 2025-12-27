@@ -3,6 +3,7 @@ import { PostCard } from "@/components/post-card";
 import { HeroSection } from "@/components/hero-section";
 import { Sidebar } from "@/components/sidebar";
 import { AdSlot } from "@/components/ad-slot";
+import { TrainingAppCTA } from "@/components/training-app-cta";
 
 export default async function Home() {
   const allPosts = await getAllPosts();
@@ -87,6 +88,9 @@ export default async function Home() {
                 ))}
               </div>
             </section>
+
+            {/* IELTSトレーニングアプリCTA */}
+            <TrainingAppCTA className="mb-12" />
 
             {/* トップページ広告スロット */}
             <AdSlot 
