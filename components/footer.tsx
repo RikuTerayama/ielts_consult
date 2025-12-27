@@ -32,6 +32,16 @@ export function Footer() {
                   記事検索
                 </Link>
               </li>
+              <li>
+                <a 
+                  href="https://ielts-training.onrender.com/home" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  🎯 IELTSトレーニングアプリ
+                </a>
+              </li>
             </ul>
           </div>
 
