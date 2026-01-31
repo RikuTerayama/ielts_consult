@@ -1,4 +1,4 @@
-import { getPostBySlug, getPostAddition } from "@/lib/posts";
+import { getAllPosts, getPostBySlug, getPostAddition } from "@/lib/posts";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
@@ -26,27 +26,13 @@ interface PostPageProps {
   };
 }
 
-export async function generateStaticParams() {
-  // output: export モードでは generateStaticParams が必須
-  // エラーが発生しても必ず配列を返す必要がある
+export const dynamicParams = false;
+
+export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   try {
-    // getAllPosts を動的にインポートしてエラーを回避
-    const postsModule = await import('@/lib/posts').catch(() => null);
-    if (!postsModule || !postsModule.getAllPosts) {
-      return [];
-    }
-    
-    const posts = await postsModule.getAllPosts().catch(() => []);
-    if (!Array.isArray(posts)) {
-      return [];
-    }
-    
-    // output: export では空配列を返すことが許可されている
-    return posts.map((post) => ({
-      slug: post.slug,
-    }));
-  } catch (error) {
-    // エラーが発生した場合は空配列を返す（output: export では許可されている）
+    const posts = await getAllPosts();
+    return posts.map((post) => ({ slug: post.slug }));
+  } catch {
     return [];
   }
 }
@@ -120,7 +106,6 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
 
-  const { getAllPosts } = await import('@/lib/posts');
   const allPosts = await getAllPosts();
   const currentIndex = allPosts.findIndex((p) => p.slug === params.slug);
   const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
