@@ -17,7 +17,9 @@
     "import:note": "tsx scripts/import-note-posts.ts",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:rss": "tsx scripts/generate-rss.ts",
-    "optimize:images": "tsx scripts/optimize-images.ts"
+    "optimize:images": "tsx scripts/optimize-images.ts",
+    "remove:note-cta": "tsx scripts/remove-note-cta.ts",
+    "list:note-links": "tsx scripts/list-note-links.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
