@@ -10,23 +10,27 @@ interface TagPageProps {
   };
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
   try {
     // 公開記事から抽出されたタグを取得
     const posts = await getAllPosts();
     const allTags = new Set<string>();
     
     posts.forEach(post => {
-      post.tags.forEach(tag => allTags.add(tag));
+      if (post.tags && Array.isArray(post.tags)) {
+        post.tags.forEach(tag => allTags.add(tag));
+      }
     });
     
     const tags = Array.from(allTags);
     
+    // output: export では空配列を返すことが許可されている
     return tags.map((tag) => ({
       tag: encodeURIComponent(tag),
     }));
   } catch (error) {
     console.error('Error generating static params for tags:', error);
+    // エラー時も空配列を返す（output: export では許可されている）
     return [];
   }
 }
