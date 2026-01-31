@@ -15,21 +15,26 @@ export async function generateStaticParams() {
   // エラーが発生しても必ず配列を返す必要がある
   try {
     // getAllPosts を動的にインポートしてエラーを回避
-    const { getAllPosts } = await import('@/lib/posts');
-    const posts = await getAllPosts();
-    const allTags = new Set<string>();
-    
-    if (Array.isArray(posts)) {
-      posts.forEach(post => {
-        if (post && post.tags && Array.isArray(post.tags)) {
-          post.tags.forEach(tag => {
-            if (typeof tag === 'string' && tag.trim()) {
-              allTags.add(tag.trim());
-            }
-          });
-        }
-      });
+    const postsModule = await import('@/lib/posts').catch(() => null);
+    if (!postsModule || !postsModule.getAllPosts) {
+      return [];
     }
+    
+    const posts = await postsModule.getAllPosts().catch(() => []);
+    if (!Array.isArray(posts)) {
+      return [];
+    }
+    
+    const allTags = new Set<string>();
+    posts.forEach(post => {
+      if (post && post.tags && Array.isArray(post.tags)) {
+        post.tags.forEach(tag => {
+          if (typeof tag === 'string' && tag.trim()) {
+            allTags.add(tag.trim());
+          }
+        });
+      }
+    });
     
     const tags = Array.from(allTags);
     
@@ -39,7 +44,6 @@ export async function generateStaticParams() {
     }));
   } catch (error) {
     // エラーが発生した場合は空配列を返す（output: export では許可されている）
-    console.warn('Error in generateStaticParams for tags:', error);
     return [];
   }
 }
