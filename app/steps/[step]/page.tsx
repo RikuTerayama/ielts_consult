@@ -11,7 +11,7 @@ interface StepPageProps {
   };
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ step: string }>> {
   try {
     const steps = await getAllSteps();
     return steps.map((step) => ({
