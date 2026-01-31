@@ -11,10 +11,15 @@ interface SkillPageProps {
 }
 
 export async function generateStaticParams() {
-  const skills = await getAllSkills();
-  return skills.map((skill) => ({
-    skill: skill.id,
-  }));
+  try {
+    const skills = await getAllSkills();
+    return skills.map((skill) => ({
+      skill: skill.id,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for skills:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: SkillPageProps): Promise<Metadata> {
