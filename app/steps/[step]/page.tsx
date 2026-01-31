@@ -12,10 +12,15 @@ interface StepPageProps {
 }
 
 export async function generateStaticParams() {
-  const steps = await getAllSteps();
-  return steps.map((step) => ({
-    step: step.id,
-  }));
+  try {
+    const steps = await getAllSteps();
+    return steps.map((step) => ({
+      step: step.id,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for steps:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: StepPageProps): Promise<Metadata> {
