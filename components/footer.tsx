@@ -54,6 +54,16 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/about-author" className="text-muted-foreground hover:text-primary transition-colors">
+                  筆者について
+                </Link>
+              </li>
+              <li>
+                <Link href="/editorial-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                  編集方針
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
                   お問い合わせ
                 </Link>
@@ -61,6 +71,11 @@ export function Footer() {
               <li>
                 <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                   プライバシーポリシー
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookie-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Cookieポリシー
                 </Link>
               </li>
               <li>
