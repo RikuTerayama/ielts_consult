@@ -27,9 +27,18 @@ export async function generateMetadata({ params }: SkillPageProps): Promise<Meta
     };
   }
 
+  const posts = await getPostsBySkill(params.skill as SkillId);
+  
+  // 記事が1件のみの場合はnoindex
+  const shouldIndex = posts.length > 1;
+  
   return {
     title: `${skill.label} | 技能別`,
     description: skill.description,
+    robots: {
+      index: shouldIndex,
+      follow: shouldIndex,
+    },
   };
 }
 
@@ -51,7 +60,14 @@ export default async function SkillPage({ params }: SkillPageProps) {
           <h1 className="text-4xl font-bold">{skill.label}</h1>
         </div>
         <p className="text-lg text-muted-foreground">{skill.description}</p>
-        <p className="text-sm text-muted-foreground mt-2">{posts.length}件の記事</p>
+        <p className="text-sm text-muted-foreground mt-2">
+          {posts.length}件の記事
+        </p>
+        {posts.length === 1 && (
+          <p className="text-sm text-muted-foreground mt-2">
+            このスキルには1件の記事があります。関連する他のスキルもご覧ください。
+          </p>
+        )}
       </div>
 
       {posts.length === 0 ? (
