@@ -11,19 +11,29 @@ interface TagPageProps {
 }
 
 export async function generateStaticParams() {
-  // 実際のHTMLファイルから抽出されたタグを取得
-  const posts = await getAllHtmlPosts();
-  const allTags = new Set<string>();
-  
-  posts.forEach(post => {
-    post.tags.forEach(tag => allTags.add(tag));
-  });
-  
-  const tags = Array.from(allTags);
-  
-  return tags.map((tag) => ({
-    tag: tag,
-  }));
+  try {
+    // 実際のHTMLファイルから抽出されたタグを取得
+    const posts = await getAllHtmlPosts();
+    const allTags = new Set<string>();
+    
+    posts.forEach(post => {
+      post.tags.forEach(tag => allTags.add(tag));
+    });
+    
+    const tags = Array.from(allTags);
+    
+    // output: export では空配列を返すとエラーになるため、少なくとも空のオブジェクトを返す
+    if (tags.length === 0) {
+      return [];
+    }
+    
+    return tags.map((tag) => ({
+      tag: encodeURIComponent(tag),
+    }));
+  } catch (error) {
+    console.error('Error generating static params for tags:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
