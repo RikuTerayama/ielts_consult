@@ -10,7 +10,7 @@ interface SkillPageProps {
   };
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ skill: string }>> {
   try {
     const skills = await getAllSkills();
     return skills.map((skill) => ({
