@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { PUBLIC_POST_SET } from '@/config/content-gate';
+import { PAID_POST_SLUG_SET } from '@/config/paid-articles';
 
 export interface Post {
   slug: string;
@@ -88,7 +90,7 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
 }
 
 /**
- * すべてのHTML記事を取得
+ * すべてのHTML記事を取得（公開記事のみ）
  */
 export async function getAllHtmlPosts(): Promise<Post[]> {
   const posts: Post[] = [];
@@ -99,6 +101,10 @@ export async function getAllHtmlPosts(): Promise<Post[]> {
   
   for (const file of htmlFiles) {
     const slug = file.replace('.html', '');
+    // 有料記事と非公開記事を除外
+    if (PAID_POST_SLUG_SET.has(slug) || !PUBLIC_POST_SET.has(slug)) {
+      continue;
+    }
     const post = await getPostFromHtml(slug);
     if (post) {
       posts.push(post);
