@@ -1,4 +1,4 @@
-import { getAllHtmlPosts, getPostsByTag } from "@/lib/html-posts";
+import { getAllPosts, getPostsByTag } from "@/lib/posts";
 import { PostCard } from "@/components/post-card";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,8 +12,8 @@ interface TagPageProps {
 
 export async function generateStaticParams() {
   try {
-    // 実際のHTMLファイルから抽出されたタグを取得
-    const posts = await getAllHtmlPosts();
+    // 公開記事から抽出されたタグを取得
+    const posts = await getAllPosts();
     const allTags = new Set<string>();
     
     posts.forEach(post => {
@@ -21,11 +21,6 @@ export async function generateStaticParams() {
     });
     
     const tags = Array.from(allTags);
-    
-    // output: export では空配列を返すとエラーになるため、少なくとも空のオブジェクトを返す
-    if (tags.length === 0) {
-      return [];
-    }
     
     return tags.map((tag) => ({
       tag: encodeURIComponent(tag),
