@@ -19,7 +19,8 @@
     "generate:rss": "tsx scripts/generate-rss.ts",
     "optimize:images": "tsx scripts/optimize-images.ts",
     "remove:note-cta": "tsx scripts/remove-note-cta.ts",
-    "list:note-links": "tsx scripts/list-note-links.ts"
+    "list:note-links": "tsx scripts/list-note-links.ts",
+    "audit:adsense": "tsx scripts/audit-adsense-readiness.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
@@ -33,11 +34,13 @@
     "jsdom": "^24.0.0",
     "lucide-react": "^0.344.0",
     "next": "14.2.0",
+    "next-mdx-remote": "^4.4.1",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reading-time": "^1.5.0",
     "remark": "^15.0.1",
+    "remark-gfm": "^4.0.0",
     "remark-html": "^16.0.1",
     "sanitize-html": "^2.12.1",
     "sharp": "^0.34.4",
