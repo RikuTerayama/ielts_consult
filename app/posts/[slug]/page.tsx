@@ -1,4 +1,5 @@
 import { getAllPosts, getPostBySlug, getPostAddition } from "@/lib/posts";
+import fs from "fs";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
@@ -30,8 +31,11 @@ export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   try {
-    const posts = await getAllPosts();
-    return posts.map((post) => ({ slug: post.slug }));
+    // 直接ファイルシステムにアクセスしてHTMLファイルのslugを取得
+    // getAllPosts()を呼び出すとPUBLIC_POST_SETのインポートでビルド時に問題が発生する可能性があるため
+    const files = fs.readdirSync(process.cwd());
+    const htmlFiles = files.filter((file) => file.startsWith('n') && file.endsWith('.html'));
+    return htmlFiles.map((file) => ({ slug: file.replace('.html', '') }));
   } catch {
     return [];
   }
