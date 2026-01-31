@@ -6,6 +6,7 @@ import { JSDOM } from 'jsdom';
 import sanitizeHtml from 'sanitize-html';
 import type { LearningStepId } from '@/config/categories';
 import { PAID_POST_SLUG_SET } from '@/config/paid-articles';
+import { PUBLIC_POST_SET } from '@/config/content-gate';
 
 export interface Post {
   slug: string;
@@ -21,7 +22,18 @@ export interface Post {
   order?: number; // スキル別ページでの表示順序
 }
 
+export interface PostAddition {
+  slug: string;
+  takeaways?: string[]; // この記事で得られること
+  practice?: string; // 実践パート
+  commonMistakes?: string[]; // よくある誤り
+  faq?: Array<{ question: string; answer: string }>; // FAQ
+  nextSteps?: Array<{ title: string; description: string; link?: string }>; // 次のステップ
+  content: string; // MDXコンテンツ
+}
+
 const postsDirectory = path.join(process.cwd(), 'content/posts');
+const additionsDirectory = path.join(process.cwd(), 'content/additions');
 
 // HTMLのサニタイズ設定
 const sanitizeOptions: sanitizeHtml.IOptions = {
@@ -281,8 +293,10 @@ export async function getAllPosts(): Promise<Post[]> {
     }
   }
 
-  // 有料記事を除外してから日付でソート
-  const filteredPosts = allPosts.filter(post => !PAID_POST_SLUG_SET.has(post.slug));
+  // 有料記事と非公開記事を除外してから日付でソート
+  const filteredPosts = allPosts.filter(post => 
+    !PAID_POST_SLUG_SET.has(post.slug) && PUBLIC_POST_SET.has(post.slug)
+  );
   
   return filteredPosts.sort((a, b) => {
     const dateA = new Date(a.date).getTime();
@@ -292,8 +306,8 @@ export async function getAllPosts(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  // 有料記事の場合は null を返す（notFound 扱い）
-  if (PAID_POST_SLUG_SET.has(slug)) {
+  // 有料記事または非公開記事の場合は null を返す（notFound 扱い）
+  if (PAID_POST_SLUG_SET.has(slug) || !PUBLIC_POST_SET.has(slug)) {
     return null;
   }
 
@@ -343,3 +357,31 @@ export async function getAllTags(): Promise<string[]> {
   return Array.from(tagsSet).sort();
 }
 
+/**
+ * 記事の追加コンテンツ（オリジナル付加価値）を取得
+ */
+export async function getPostAddition(slug: string): Promise<PostAddition | null> {
+  const additionPath = path.join(additionsDirectory, `${slug}.mdx`);
+  
+  if (!fs.existsSync(additionPath)) {
+    return null;
+  }
+
+  try {
+    const fileContents = fs.readFileSync(additionPath, 'utf8');
+    const { data, content } = matter(fileContents);
+
+    return {
+      slug,
+      takeaways: data.takeaways || [],
+      practice: data.practice || '',
+      commonMistakes: data.commonMistakes || [],
+      faq: data.faq || [],
+      nextSteps: data.nextSteps || [],
+      content,
+    };
+  } catch (error) {
+    console.error(`Error reading addition file ${slug}:`, error);
+    return null;
+  }
+}
