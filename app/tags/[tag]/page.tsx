@@ -1,67 +1,34 @@
-import { getPostsByTag } from "@/lib/posts";
-import { PostCard } from "@/components/post-card";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Breadcrumb } from "@/components/breadcrumb";
+import { getAllPosts, getPostsByTag } from "@/lib/posts";
+import { PostCard } from "@/components/post-card";
 
-interface TagPageProps {
-  params: {
-    tag: string;
-  };
-}
+type TagPageProps = {
+  params: { tag: string };
+};
 
-export async function generateStaticParams() {
-  // output: export モードでは generateStaticParams が必須
-  // エラーが発生しても必ず配列を返す必要がある
+export const dynamicParams = false;
+
+export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
   try {
-    // getAllPosts を動的にインポートしてエラーを回避
-    const postsModule = await import('@/lib/posts').catch(() => null);
-    if (!postsModule || !postsModule.getAllPosts) {
-      return [];
+    const posts = await getAllPosts();
+    const tagSet = new Set<string>();
+
+    for (const post of posts) {
+      for (const t of post.tags ?? []) tagSet.add(t);
     }
-    
-    const posts = await postsModule.getAllPosts().catch(() => []);
-    if (!Array.isArray(posts)) {
-      return [];
-    }
-    
-    const allTags = new Set<string>();
-    posts.forEach(post => {
-      if (post && post.tags && Array.isArray(post.tags)) {
-        post.tags.forEach(tag => {
-          if (typeof tag === 'string' && tag.trim()) {
-            allTags.add(tag.trim());
-          }
-        });
-      }
-    });
-    
-    const tags = Array.from(allTags);
-    
-    // output: export では空配列を返すことが許可されている
-    return tags.map((tag) => ({
-      tag: encodeURIComponent(tag),
-    }));
-  } catch (error) {
-    // エラーが発生した場合は空配列を返す（output: export では許可されている）
+
+    return Array.from(tagSet).map((t) => ({ tag: encodeURIComponent(t) }));
+  } catch {
     return [];
   }
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const tag = decodeURIComponent(params.tag);
-  const posts = await getPostsByTag(tag);
-  
-  // 記事が1件のみの場合はnoindex
-  const shouldIndex = posts.length > 1;
-  
   return {
-    title: `タグ: ${tag}`,
-    description: `${tag}の記事${posts.length}件。IELTS対策や英語学習に役立つ実践的な内容をご覧ください。`,
-    robots: {
-      index: shouldIndex,
-      follow: shouldIndex,
-    },
+    title: `Tag: ${tag}`,
+    description: `Posts tagged with ${tag}`,
   };
 }
 
@@ -69,30 +36,12 @@ export default async function TagPage({ params }: TagPageProps) {
   const tag = decodeURIComponent(params.tag);
   const posts = await getPostsByTag(tag);
 
-  if (posts.length === 0) {
-    notFound();
-  }
+  if (!posts || posts.length === 0) notFound();
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* パンくずナビゲーション */}
-      <Breadcrumb
-        items={[
-          { label: "タグ一覧", href: "/tags" },
-          { label: tag, href: `/tags/${tag}` }
-        ]}
-        className="mb-6"
-      />
-      <h1 className="text-4xl font-bold mb-2">タグ: {tag}</h1>
-      <p className="text-muted-foreground mb-4">
-        {posts.length}件の記事
-      </p>
-      {posts.length === 1 && (
-        <p className="text-sm text-muted-foreground mb-8">
-          このタグには1件の記事があります。関連する他のタグもご覧ください。
-        </p>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+      <h1 className="text-2xl font-bold">{tag}</h1>
+      <div className="space-y-4">
         {posts.map((post) => (
           <PostCard key={post.slug} post={post} />
         ))}
