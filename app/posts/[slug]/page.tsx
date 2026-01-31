@@ -26,7 +26,7 @@ interface PostPageProps {
   };
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   try {
     const posts = await getAllPosts();
     // output: export では空配列を返すことが許可されている
@@ -35,6 +35,7 @@ export async function generateStaticParams() {
     }));
   } catch (error) {
     console.error('Error generating static params for posts:', error);
+    // エラー時も空配列を返す（output: export では許可されている）
     return [];
   }
 }
