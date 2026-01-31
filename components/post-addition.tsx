@@ -1,11 +1,11 @@
-import { PostAddition } from "@/lib/posts";
+import type { PostAddition as PostAdditionType } from "@/lib/posts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, AlertCircle, HelpCircle, ArrowRight, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
 interface PostAdditionProps {
-  addition: PostAddition;
+  addition: PostAdditionType;
   className?: string;
   showTakeawaysOnly?: boolean;
 }
