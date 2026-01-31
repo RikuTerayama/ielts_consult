@@ -4,20 +4,17 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SkillId } from "@/config/categories";
 
-interface SkillPageProps {
-  params: {
-    skill: string;
-  };
-}
+type SkillPageProps = {
+  params: { skill: string };
+};
+
+export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Array<{ skill: string }>> {
   try {
     const skills = await getAllSkills();
-    return skills.map((skill) => ({
-      skill: skill.id,
-    }));
-  } catch (error) {
-    console.error('Error generating static params for skills:', error);
+    return skills.map((skill) => ({ skill: skill.id }));
+  } catch {
     return [];
   }
 }
