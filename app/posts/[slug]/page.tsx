@@ -27,17 +27,25 @@ interface PostPageProps {
 }
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
+  // output: export モードでは generateStaticParams が必須
+  // エラーが発生しても必ず配列を返す必要がある
+  let posts: Awaited<ReturnType<typeof getAllPosts>> = [];
+  
   try {
-    const posts = await getAllPosts();
-    // output: export では空配列を返すことが許可されている
-    return posts.map((post) => ({
-      slug: post.slug,
-    }));
+    posts = await getAllPosts();
   } catch (error) {
-    console.error('Error generating static params for posts:', error);
-    // エラー時も空配列を返す（output: export では許可されている）
+    // エラーが発生した場合は空配列を使用
+    console.warn('Failed to load posts in generateStaticParams:', error);
+  }
+  
+  if (!Array.isArray(posts)) {
     return [];
   }
+  
+  // output: export では空配列を返すことが許可されている
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
