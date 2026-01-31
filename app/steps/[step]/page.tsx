@@ -5,20 +5,17 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LearningStepId } from "@/config/categories";
 
-interface StepPageProps {
-  params: {
-    step: string;
-  };
-}
+type StepPageProps = {
+  params: { step: string };
+};
+
+export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Array<{ step: string }>> {
   try {
     const steps = await getAllSteps();
-    return steps.map((step) => ({
-      step: step.id,
-    }));
-  } catch (error) {
-    console.error('Error generating static params for steps:', error);
+    return steps.map((step) => ({ step: step.id }));
+  } catch {
     return [];
   }
 }
