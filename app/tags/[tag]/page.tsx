@@ -10,17 +10,24 @@ interface TagPageProps {
   };
 }
 
-export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
+export async function generateStaticParams() {
+  // output: export モードでは generateStaticParams が必須
+  // エラーが発生しても必ず配列を返す必要がある
   try {
-    // 公開記事から抽出されたタグを取得
     const posts = await getAllPosts();
     const allTags = new Set<string>();
     
-    posts.forEach(post => {
-      if (post.tags && Array.isArray(post.tags)) {
-        post.tags.forEach(tag => allTags.add(tag));
-      }
-    });
+    if (Array.isArray(posts)) {
+      posts.forEach(post => {
+        if (post && post.tags && Array.isArray(post.tags)) {
+          post.tags.forEach(tag => {
+            if (typeof tag === 'string' && tag.trim()) {
+              allTags.add(tag.trim());
+            }
+          });
+        }
+      });
+    }
     
     const tags = Array.from(allTags);
     
@@ -29,8 +36,8 @@ export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
       tag: encodeURIComponent(tag),
     }));
   } catch (error) {
-    console.error('Error generating static params for tags:', error);
-    // エラー時も空配列を返す（output: export では許可されている）
+    // エラーが発生した場合は空配列を返す（output: export では許可されている）
+    console.warn('Error in generateStaticParams for tags:', error);
     return [];
   }
 }
