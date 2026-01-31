@@ -76,12 +76,14 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        {/* Google AdSense - All pages */}
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
-        />
+        {/* Google AdSense - All pages (審査モードでは読み込まない) */}
+        {process.env.NEXT_PUBLIC_REVIEW_MODE !== "true" && (
+          <Script
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+          />
+        )}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
