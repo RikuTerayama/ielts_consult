@@ -1,4 +1,4 @@
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getAllPosts, getPostBySlug, getPostAddition } from "@/lib/posts";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ import { Tooltip } from "@/components/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { PostAddition } from "@/components/post-addition";
+import { AuthorBox } from "@/components/author-box";
 
 // レスポンシブな文字数制限のヘルパー関数
 function truncateTitle(title: string, isMobile: boolean = false): string {
@@ -110,6 +112,9 @@ export default async function PostPage({ params }: PostPageProps) {
     .filter((p) => p.slug !== params.slug && p.tags.some((tag) => post.tags.includes(tag)))
     .slice(0, 3);
 
+  // 記事の追加コンテンツ（オリジナル付加価値）を取得
+  const addition = await getPostAddition(params.slug);
+
   // BlogPosting構造化データ
   const blogPostingSchema = {
     "@context": "https://schema.org",
@@ -191,6 +196,9 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </header>
 
+        {/* 記事冒頭: この記事で得られること（additionsから） */}
+        {addition && <PostAddition addition={addition} className="mb-8" showTakeawaysOnly />}
+
         {/* 冒頭広告 */}
         <AdSlot className="mb-8" slot="article-top" format="horizontal" />
 
@@ -202,6 +210,12 @@ export default async function PostPage({ params }: PostPageProps) {
 
         {/* 記事末広告 */}
         <AdSlot className="mb-12" slot="article-bottom" format="horizontal" />
+
+        {/* 記事末尾: 実践パート、よくある誤り、FAQ、次のステップ（additionsから） */}
+        {addition && <PostAddition addition={addition} className="mb-12" showTakeawaysOnly={false} />}
+
+        {/* 筆者情報ボックス */}
+        <AuthorBox className="mb-12" />
 
         {/* シェアボタン */}
         <div className="flex items-center gap-4 mb-12 pb-12 border-b">
