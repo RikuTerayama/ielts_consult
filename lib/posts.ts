@@ -5,6 +5,7 @@ import readingTime from 'reading-time';
 import { JSDOM } from 'jsdom';
 import sanitizeHtml from 'sanitize-html';
 import type { LearningStepId } from '@/config/categories';
+import { PAID_POST_SLUG_SET } from '@/config/paid-articles';
 
 export interface Post {
   slug: string;
@@ -221,6 +222,10 @@ async function getAllHtmlPosts(): Promise<Post[]> {
   
   for (const file of htmlFiles) {
     const slug = file.replace('.html', '');
+    // 有料記事を除外
+    if (PAID_POST_SLUG_SET.has(slug)) {
+      continue;
+    }
     const post = await getPostFromHtml(slug);
     if (post) {
       posts.push(post);
@@ -276,8 +281,10 @@ export async function getAllPosts(): Promise<Post[]> {
     }
   }
 
-  // 日付でソート
-  return allPosts.sort((a, b) => {
+  // 有料記事を除外してから日付でソート
+  const filteredPosts = allPosts.filter(post => !PAID_POST_SLUG_SET.has(post.slug));
+  
+  return filteredPosts.sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
     return dateB - dateA; // 新しい順
@@ -285,6 +292,11 @@ export async function getAllPosts(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
+  // 有料記事の場合は null を返す（notFound 扱い）
+  if (PAID_POST_SLUG_SET.has(slug)) {
+    return null;
+  }
+
   // まず、content/posts/ からMDXファイルを確認
   const mdxPath = path.join(postsDirectory, `${slug}.mdx`);
   const mdPath = path.join(postsDirectory, `${slug}.md`);
