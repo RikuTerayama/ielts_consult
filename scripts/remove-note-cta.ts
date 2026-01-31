@@ -48,7 +48,7 @@ function main() {
             elementsToRemove.push(currentElement);
             
             // 次の兄弟要素を取得
-            const nextSibling = currentElement.nextElementSibling;
+            const nextSibling: Element | null = currentElement.nextElementSibling;
             
             // 次の見出しに到達したら終了
             if (nextSibling && (nextSibling.tagName === 'H1' || nextSibling.tagName === 'H2' || 
