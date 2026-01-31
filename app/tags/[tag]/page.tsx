@@ -1,4 +1,4 @@
-import { getAllPosts, getPostsByTag } from "@/lib/posts";
+import { getPostsByTag } from "@/lib/posts";
 import { PostCard } from "@/components/post-card";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -14,6 +14,8 @@ export async function generateStaticParams() {
   // output: export モードでは generateStaticParams が必須
   // エラーが発生しても必ず配列を返す必要がある
   try {
+    // getAllPosts を動的にインポートしてエラーを回避
+    const { getAllPosts } = await import('@/lib/posts');
     const posts = await getAllPosts();
     const allTags = new Set<string>();
     
