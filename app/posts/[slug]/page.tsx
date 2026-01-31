@@ -27,10 +27,16 @@ interface PostPageProps {
 }
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  try {
+    const posts = await getAllPosts();
+    // output: export では空配列を返すことが許可されている
+    return posts.map((post) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for posts:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
