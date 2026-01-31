@@ -31,9 +31,12 @@ export async function generateStaticParams() {
   // エラーが発生しても必ず配列を返す必要がある
   try {
     // getAllPosts を動的にインポートしてエラーを回避
-    const { getAllPosts } = await import('@/lib/posts');
-    const posts = await getAllPosts();
+    const postsModule = await import('@/lib/posts').catch(() => null);
+    if (!postsModule || !postsModule.getAllPosts) {
+      return [];
+    }
     
+    const posts = await postsModule.getAllPosts().catch(() => []);
     if (!Array.isArray(posts)) {
       return [];
     }
@@ -44,7 +47,6 @@ export async function generateStaticParams() {
     }));
   } catch (error) {
     // エラーが発生した場合は空配列を返す（output: export では許可されている）
-    console.warn('Error in generateStaticParams for posts:', error);
     return [];
   }
 }
