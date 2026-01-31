@@ -10,8 +10,11 @@ interface AdSlotProps {
 }
 
 export function AdSlot({ className, slot, format = "horizontal" }: AdSlotProps) {
+  // 審査モード: NEXT_PUBLIC_REVIEW_MODE=true のときは広告を一切表示しない
+  const isReviewMode = process.env.NEXT_PUBLIC_REVIEW_MODE === "true";
+  
   // AdSenseの設定（環境変数またはデフォルト値を使用）
-  const isAdsEnabled = process.env.NEXT_PUBLIC_ENABLE_ADS !== "false"; // デフォルトでtrue
+  const isAdsEnabled = !isReviewMode && process.env.NEXT_PUBLIC_ENABLE_ADS !== "false"; // デフォルトでtrue
   const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "ca-pub-4232725615106709";
   const adSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT;
 
