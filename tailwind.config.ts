@@ -12,7 +12,12 @@ const config = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1.5rem",
+        sm: "2rem",
+        lg: "2.5rem",
+        xl: "3rem",
+      },
       screens: {
         "2xl": "1400px",
       },
@@ -60,6 +65,8 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "0.75rem", /* rounded-xl */
+        "2xl": "1rem", /* rounded-2xl */
       },
       keyframes: {
         "accordion-down": {
