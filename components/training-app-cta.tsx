@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+import { TRAINING_APP_URL } from "@/config/links";
 
 interface TrainingAppCTAProps {
   variant?: "default" | "sidebar";
@@ -8,7 +9,7 @@ interface TrainingAppCTAProps {
 }
 
 export function TrainingAppCTA({ variant = "default", className }: TrainingAppCTAProps) {
-  const appUrl = "https://ielts-training.onrender.com/home";
+  const appUrl = TRAINING_APP_URL;
   
   if (variant === "sidebar") {
     return (
