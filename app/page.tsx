@@ -1,9 +1,11 @@
 import { getAllPosts } from "@/lib/posts";
-import { PostCard } from "@/components/post-card";
+import { PostCardList } from "@/components/post-card-list";
 import { HeroSection } from "@/components/hero-section";
 import { Sidebar } from "@/components/sidebar";
 import { AdSlot } from "@/components/ad-slot";
 import { TrainingAppCTA } from "@/components/training-app-cta";
+import { FadeInHeading } from "@/components/anim/fade-in-heading";
+import { FadeInSection } from "@/components/anim/fade-in-section";
 
 export default async function Home() {
   const allPosts = await getAllPosts();
@@ -84,46 +86,56 @@ export default async function Home() {
           {/* メインコンテンツ */}
           <div className="lg:col-span-8">
             <section className="mb-16">
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">最新記事</h2>
+              <FadeInHeading className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">
+                最新記事
+              </FadeInHeading>
               {latestPosts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {latestPosts.map((post) => (
-                    <PostCard key={post.slug} post={post} />
-                  ))}
-                </div>
+                <PostCardList 
+                  posts={latestPosts}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                />
               ) : (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    記事を準備中です。しばらくお待ちください。
-                  </p>
-                </div>
+                <FadeInSection>
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">
+                      記事を準備中です。しばらくお待ちください。
+                    </p>
+                  </div>
+                </FadeInSection>
               )}
             </section>
 
             {/* IELTSトレーニングアプリCTA */}
-            <TrainingAppCTA className="mb-12" />
+            <FadeInSection delay={0.2}>
+              <TrainingAppCTA className="mb-12" />
+            </FadeInSection>
 
             {/* トップページ広告スロット */}
-            <AdSlot 
-              className="mb-12" 
-              slot="top-page-ad"
-              format="horizontal"
-            />
+            <FadeInSection delay={0.2}>
+              <AdSlot 
+                className="mb-12" 
+                slot="top-page-ad"
+                format="horizontal"
+              />
+            </FadeInSection>
 
             <section>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">人気記事</h2>
+              <FadeInHeading className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">
+                人気記事
+              </FadeInHeading>
               {popularPosts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {popularPosts.map((post) => (
-                    <PostCard key={post.slug} post={post} />
-                  ))}
-                </div>
+                <PostCardList 
+                  posts={popularPosts}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                />
               ) : (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    記事を準備中です。しばらくお待ちください。
-                  </p>
-                </div>
+                <FadeInSection>
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">
+                      記事を準備中です。しばらくお待ちください。
+                    </p>
+                  </div>
+                </FadeInSection>
               )}
             </section>
           </div>
