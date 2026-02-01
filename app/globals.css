@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Editorial Tech Minimal - Sophisticated Slate & Indigo */
+    /* ベース: ごく僅かにグレーがかった白 (HSL形式) */
+    --background: 210 40% 98%; /* slate-50 */
+    --foreground: 222 47% 11%; /* slate-900 */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 222 47% 11%; /* slate-900 */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    /* プライマリ: 落ち着いたIndigo */
+    --primary: 239 84% 67%; /* indigo-600 */
+    --primary-foreground: 0 0% 100%;
+    /* セカンダリ: 背景に溶け込むSlate */
+    --secondary: 210 40% 96%; /* slate-100 */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%; /* slate-100 */
+    --muted-foreground: 215 16% 47%; /* slate-500 */
+    --accent: 239 84% 67%; /* indigo-600 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%; /* red-500 */
+    --destructive-foreground: 0 0% 100%;
+    /* ボーダー: 繊細な境界線 */
+    --border: 214 32% 91%; /* slate-200 */
+    --input: 214 32% 91%;
+    --ring: 239 84% 67%; /* indigo-600 */
+    --radius: 0.75rem; /* rounded-xl */
+  }
+
+  .dark {
+    /* ダークモード: 深みのある黒ベース (HSL形式) */
+    --background: 222 47% 11%; /* slate-950相当 */
+    --foreground: 210 40% 98%; /* slate-50 */
+    --card: 222 47% 11%; /* slate-900 */
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    /* プライマリ: 明るめのIndigo */
+    --primary: 239 84% 67%; /* indigo-400相当 */
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%; /* slate-800 */
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%; /* slate-400 */
+    --accent: 239 84% 67%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%; /* slate-800 */
+    --input: 217 33% 17%;
+    --ring: 239 84% 67%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    overflow-x: hidden;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "palt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+}
+
+/* タイポグラフィ: Interまたはsystem-ui */
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+    'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  line-height: 1.75; /* leading-relaxed */
+  letter-spacing: 0.01em;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 見出し: 太字にしすぎず、文字詰めを適用 */
+h1, h2, h3, h4, h5, h6 {
+  line-break: strict;
+  word-wrap: break-word;
+  font-feature-settings: "palt" 1;
+  letter-spacing: -0.02em; /* tracking-tight */
+  font-weight: 600; /* 太字にしすぎない */
+}
+
+/* 見出し内のstrongタグを通常の太字に変換 */
+h1 strong, h2 strong, h3 strong, h4 strong, h5 strong, h6 strong {
+  font-weight: 700;
+}
+
+/* 中央寄せ用のユーティリティクラス */
+.text-center {
+  text-align: center;
+}
+
+/* リンクのアクセシビリティ */
+a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}
+
+/* 記事本文の可読性向上 */
+.prose {
+  @apply max-w-none;
+}
+
+.prose p {
+  @apply leading-relaxed;
+}
+
+/* リンクのスタイル */
+.prose a {
+  @apply text-primary underline underline-offset-4 decoration-1 hover:decoration-2 transition-colors;
+}
+
+/* 引用のデザイン: 左側に太いアクセントライン */
+.prose blockquote {
+  @apply border-l-4 border-primary pl-6 italic text-muted-foreground;
+  border-left-color: hsl(var(--primary));
+}
+
+/* リストのマーカー */
+.prose ul li::marker,
+.prose ol li::marker {
+  @apply text-primary;
+}
+
+/* 記事内の画像: 影を排除、角丸を大きく */
+.prose img {
+  @apply mx-auto rounded-xl;
+}
+
+.prose figure {
+  @apply text-center;
+}
+
+.prose figure img {
+  @apply mx-auto;
+}
+
+/* 広告スロット: 影を排除、繊細な境界線 */
+.ad-slot {
+  @apply border border-slate-200 dark:border-slate-800 bg-muted/10 rounded-xl flex items-center justify-center min-h-[250px] text-muted-foreground text-sm;
+}
+
+/* スキップリンク（アクセシビリティ） */
+.skip-link {
+  @apply absolute left-0 top-0 -translate-y-full focus:translate-y-0 bg-primary text-primary-foreground px-4 py-2 z-50;
+}
+
+/* 読書進捗バー - 画面上部の細いライン */
+.reading-progress {
+  @apply fixed top-0 left-0 right-0 z-50 h-1 bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-500;
+  transform-origin: left;
+  transition: transform 0.1s ease-out;
+}
+
+/* カスタムパルスアニメーション */
+@keyframes custom-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+/* ネオン効果 */
+@keyframes neon-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 30px rgba(59, 130, 246, 0.6));
+  }
+}
+
+/* 波紋効果 */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* プログレスバーのホバー効果 */
+.reading-progress-group:hover .progress-circle {
+  animation: neon-glow 2s ease-in-out infinite;
+}
+
+/* クリック時の波紋効果 */
+.ripple-effect {
+  animation: ripple 0.6s ease-out;
+}
+
+/* Giscusコメントのダークモード対応 */
+.giscus-container {
+  color-scheme: light dark;
+}
+
+/* ダークモードでのGiscusスタイル調整 */
+.dark .giscus-container {
+  --giscus-text-color: #e5e7eb;
+  --giscus-text-secondary-color: #9ca3af;
+  --giscus-background-color: #1f2937;
+  --giscus-border-color: #374151;
+  --giscus-button-background-color: #374151;
+  --giscus-button-hover-background-color: #4b5563;
+}
+
+/* スマホ表示での横幅固定強化 */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    position: relative;
+  }
+  
+  /* すべての要素が画面幅を超えないように制限 */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* コンテナ要素の横幅制限 */
+  .container {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  /* プログレスバーのスマホ最適化（上部ラインはそのまま） */
+}
+
+

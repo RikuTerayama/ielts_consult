@@ -1,0 +1,55 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "プライバシーポリシー",
+  description: "個人情報の取り扱い、アクセス解析ツール、広告表示に関する方針を掲載。プライバシー保護に配慮した運営方針です。",
+  alternates: {
+    canonical: "https://ieltsconsult.netlify.app/privacy/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export default function PrivacyPage() {
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="max-w-3xl mx-auto prose prose-lg dark:prose-invert">
+        <h1>プライバシーポリシー：個人情報の取り扱いについて</h1>
+        <p>
+          当サイトでは、訪問者の個人情報を適切に取り扱います。
+        </p>
+        
+        <h2>個人情報の取り扱いについて</h2>
+        <p>
+          当サイト「外資系コンサルの英語力底上げブログ」では、訪問者の個人情報を適切に取り扱います。
+        </p>
+
+        <h2>アクセス解析ツールについて</h2>
+        <p>
+          当サイトでは、Googleアナリティクスを使用してアクセス解析を行っています。これはトラフィックデータの収集のためにCookieを使用しています。このトラフィックデータは匿名で収集されており、個人を特定するものではありません。
+        </p>
+
+        <h2>広告について</h2>
+        <p>
+          当サイトでは、第三者配信の広告サービス（Google AdSense、Amazonアソシエイト等）を利用しています。広告配信事業者は、ユーザーの興味に応じた広告を表示するためにCookieを使用することがあります。
+        </p>
+
+        <h2>免責事項</h2>
+        <p>
+          当サイトの情報は、一般的な情報提供を目的としています。当サイトの情報を利用したことによって生じたいかなる損害についても、当サイトは一切の責任を負いません。
+        </p>
+
+        <h2>プライバシーポリシーの変更</h2>
+        <p>
+          当サイトは、個人情報に関して適用される日本の法令を遵守するとともに、本ポリシーの内容を適宜見直し、その改善に努めます。
+        </p>
+
+        <p className="text-sm text-muted-foreground">
+          最終更新日: 2025年1月
+        </p>
+      </div>
+    </div>
+  );
+}

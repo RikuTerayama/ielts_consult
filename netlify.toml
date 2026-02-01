@@ -1,0 +1,27 @@
+# SPA用のフォールバック（静的ファイルが存在しない場合のみ）
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+  command = "pnpm run import:note && pnpm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_PUBLIC_ENABLE_ADS = "true"
+  NEXT_PUBLIC_ADSENSE_CLIENT = "ca-pub-4232725615106709"
+  NEXT_PUBLIC_ENABLE_COMMENTS = "true"
+  COREPACK_ENABLE_DOWNLOAD_PROMPT = "0"
+  # オプション：個別の広告スロットIDを設定する場合
+  # NEXT_PUBLIC_ADSENSE_SLOT = "XXXXXXXXXX"
+  # NEXT_PUBLIC_AMAZON_AFFILIATE_TAG = "your-affiliate-tag"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
