@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { TRAINING_APP_URL } from "@/config/links";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t bg-muted/40">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+      <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">外資系コンサルの英語力底上げブログ</h3>
@@ -34,7 +35,7 @@ export function Footer() {
               </li>
               <li>
                 <a 
-                  href="https://ielts-training.onrender.com/home" 
+                  href={TRAINING_APP_URL} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-primary transition-colors"
