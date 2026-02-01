@@ -170,7 +170,7 @@ export default async function PostPage({ params }: PostPageProps) {
           }}
         />
         
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         {/* パンくずナビゲーション */}
         <Breadcrumb
           items={[
@@ -191,7 +191,7 @@ export default async function PostPage({ params }: PostPageProps) {
               </Link>
             ))}
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{post.title}</h1>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight mb-4">{post.title}</h1>
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
