@@ -7,8 +7,11 @@ import { TrainingAppCTA } from "@/components/training-app-cta";
 
 export default async function Home() {
   const allPosts = await getAllPosts();
+  // 最新記事: 日付順で上位6件（既にgetAllPostsでソート済み）
   const latestPosts = allPosts.slice(0, 6);
-  const popularPosts = allPosts.slice(0, 3);
+  // 人気記事: 現時点では人気指標がないため、最新記事の上位3件にフォールバック
+  // 将来的に人気指標（viewCount等）が追加されたら、それに基づいてソートする
+  const popularPosts = allPosts.length > 0 ? allPosts.slice(0, 3) : [];
 
   // Organization構造化データ
   const organizationSchema = {
@@ -76,17 +79,25 @@ export default async function Home() {
       />
       <HeroSection />
       
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* メインコンテンツ */}
           <div className="lg:col-span-8">
-            <section className="mb-12">
-              <h2 className="text-3xl font-bold mb-6">最新記事</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {latestPosts.map((post) => (
-                  <PostCard key={post.slug} post={post} />
-                ))}
-              </div>
+            <section className="mb-16">
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">最新記事</h2>
+              {latestPosts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {latestPosts.map((post) => (
+                    <PostCard key={post.slug} post={post} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">
+                    記事を準備中です。しばらくお待ちください。
+                  </p>
+                </div>
+              )}
             </section>
 
             {/* IELTSトレーニングアプリCTA */}
@@ -100,12 +111,20 @@ export default async function Home() {
             />
 
             <section>
-              <h2 className="text-3xl font-bold mb-6">人気記事</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {popularPosts.map((post) => (
-                  <PostCard key={post.slug} post={post} />
-                ))}
-              </div>
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">人気記事</h2>
+              {popularPosts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {popularPosts.map((post) => (
+                    <PostCard key={post.slug} post={post} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">
+                    記事を準備中です。しばらくお待ちください。
+                  </p>
+                </div>
+              )}
             </section>
           </div>
 
