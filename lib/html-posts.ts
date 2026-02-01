@@ -99,10 +99,17 @@ export async function getAllHtmlPosts(): Promise<Post[]> {
   const files = fs.readdirSync(process.cwd());
   const htmlFiles = files.filter(file => file.startsWith('n') && file.endsWith('.html'));
   
+  // PUBLIC_POST_SETが空の場合は、すべての記事を表示（フォールバック）
+  const isPublicGateEnabled = PUBLIC_POST_SET.size > 0;
+  
   for (const file of htmlFiles) {
     const slug = file.replace('.html', '');
-    // 有料記事と非公開記事を除外
-    if (PAID_POST_SLUG_SET.has(slug) || !PUBLIC_POST_SET.has(slug)) {
+    // 有料記事は常に除外
+    if (PAID_POST_SLUG_SET.has(slug)) {
+      continue;
+    }
+    // PUBLIC_POST_SETが空の場合は、すべての記事を表示
+    if (isPublicGateEnabled && !PUBLIC_POST_SET.has(slug)) {
       continue;
     }
     const post = await getPostFromHtml(slug);
