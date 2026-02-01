@@ -294,9 +294,21 @@ export async function getAllPosts(): Promise<Post[]> {
   }
 
   // 有料記事と非公開記事を除外してから日付でソート
-  const filteredPosts = allPosts.filter(post => 
-    !PAID_POST_SLUG_SET.has(post.slug) && PUBLIC_POST_SET.has(post.slug)
-  );
+  // PUBLIC_POST_SETが空の場合は、すべての記事を表示する（フォールバック）
+  const isPublicGateEnabled = PUBLIC_POST_SET.size > 0;
+  
+  const filteredPosts = allPosts.filter(post => {
+    // 有料記事は常に除外
+    if (PAID_POST_SLUG_SET.has(post.slug)) {
+      return false;
+    }
+    // PUBLIC_POST_SETが空の場合は、すべての記事を表示
+    if (!isPublicGateEnabled) {
+      return true;
+    }
+    // PUBLIC_POST_SETが設定されている場合は、公開記事のみ表示
+    return PUBLIC_POST_SET.has(post.slug);
+  });
   
   return filteredPosts.sort((a, b) => {
     const dateA = new Date(a.date).getTime();
@@ -306,8 +318,13 @@ export async function getAllPosts(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  // 有料記事または非公開記事の場合は null を返す（notFound 扱い）
-  if (PAID_POST_SLUG_SET.has(slug) || !PUBLIC_POST_SET.has(slug)) {
+  // 有料記事は常に除外
+  if (PAID_POST_SLUG_SET.has(slug)) {
+    return null;
+  }
+  // PUBLIC_POST_SETが空の場合は、すべての記事を表示（フォールバック）
+  const isPublicGateEnabled = PUBLIC_POST_SET.size > 0;
+  if (isPublicGateEnabled && !PUBLIC_POST_SET.has(slug)) {
     return null;
   }
 
