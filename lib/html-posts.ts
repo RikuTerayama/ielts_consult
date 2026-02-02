@@ -59,6 +59,13 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
     if (finalTitle.includes('表現')) tags.push('表現');
     if (finalTitle.includes('ガイド')) tags.push('ガイド');
     
+    // 本文から最初のh1タグを削除（タイトルが重複表示されるのを防ぐ）
+    let processedContent = htmlContent;
+    if (h1Match) {
+      // 最初のh1タグを削除
+      processedContent = processedContent.replace(/<h1[^>]*>.*?<\/h1>/i, '');
+    }
+    
     // ステップマッピングから該当するステップを取得
     const { STEP_ARTICLE_MAPPINGS } = await import('@/config/step-article-mapping');
     let categoryStep: string | undefined = undefined;
@@ -77,7 +84,7 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
       description,
       tags,
       hero,
-      content: htmlContent,
+      content: processedContent,
       readingTime: '5分',
       categoryStep,
       categorySkill: undefined,
