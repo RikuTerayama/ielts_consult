@@ -62,8 +62,8 @@ export async function getPostFromHtml(slug: string): Promise<Post | null> {
     // 本文から最初のh1タグを削除（タイトルが重複表示されるのを防ぐ）
     let processedContent = htmlContent;
     if (h1Match) {
-      // 最初のh1タグを削除
-      processedContent = processedContent.replace(/<h1[^>]*>.*?<\/h1>/i, '');
+      // 最初のh1タグを削除（改行や空白も含む、大文字小文字を区別しない）
+      processedContent = processedContent.replace(/<h1[^>]*>.*?<\/h1>\s*/is, '');
     }
     
     // ステップマッピングから該当するステップを取得
