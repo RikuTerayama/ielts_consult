@@ -85,6 +85,14 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
     const bodyElement = document.querySelector('body');
     let content = bodyElement?.innerHTML || '';
 
+    // 最初のh1タグを削除（タイトルが重複表示されるのを防ぐ）
+    const firstH1 = document.querySelector('body h1');
+    if (firstH1) {
+      firstH1.remove();
+      // h1を削除した後、再度innerHTMLを取得
+      content = bodyElement?.innerHTML || '';
+    }
+
     // 画像パスを修正（assets/... → /assets/...）
     content = content.replace(/src="assets\//g, 'src="/assets/');
 
