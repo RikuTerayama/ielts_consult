@@ -97,12 +97,20 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
     // フォールバック: 正規表現でも確実に最初のh1タグを削除
     // [\s\S]を使用して改行を含むすべての文字にマッチ（.*?では改行にマッチしない場合がある）
     content = content.replace(/<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
-
+    
+    // 広告関連の要素を削除（ad-container, adsbygoogle等）
+    content = content.replace(/<div[^>]*class="[^"]*ad-container[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    content = content.replace(/<ins[^>]*class="[^"]*adsbygoogle[^"]*"[^>]*>[\s\S]*?<\/ins>/gi, '');
+    content = content.replace(/<div[^>]*class="[^"]*ad-slot[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    
     // 画像パスを修正（assets/... → /assets/...）
     content = content.replace(/src="assets\//g, 'src="/assets/');
-
+    
     // HTMLをサニタイズ
     content = sanitizeHtml(content, sanitizeOptions);
+    
+    // サニタイズ後もH1が残っている可能性があるため、再度削除
+    content = content.replace(/<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
 
     // 日付を取得（ファイルの更新日時を使用）
     const stats = fs.statSync(htmlPath);
