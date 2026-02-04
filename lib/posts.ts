@@ -83,20 +83,20 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
 
     // 本文を取得（bodyの内容）
     const bodyElement = document.querySelector('body');
-    let content = bodyElement?.innerHTML || '';
-
+    
     // 最初のh1タグを削除（タイトルが重複表示されるのを防ぐ）
-    // JSDOMで削除
+    // JSDOMでDOM操作を行い、確実に削除
     const firstH1 = document.querySelector('body h1');
     if (firstH1) {
       firstH1.remove();
-      // h1を削除した後、再度innerHTMLを取得
-      content = bodyElement?.innerHTML || '';
     }
     
-    // 正規表現でも確実に最初のh1タグを削除（念のため）
-    // bodyタグ内の最初のh1タグのみを削除（改行や空白も含む）
-    content = content.replace(/<h1[^>]*>.*?<\/h1>\s*/is, '');
+    // H1削除後のinnerHTMLを取得
+    let content = bodyElement?.innerHTML || '';
+    
+    // フォールバック: 正規表現でも確実に最初のh1タグを削除
+    // [\s\S]を使用して改行を含むすべての文字にマッチ（.*?では改行にマッチしない場合がある）
+    content = content.replace(/<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
 
     // 画像パスを修正（assets/... → /assets/...）
     content = content.replace(/src="assets\//g, 'src="/assets/');
