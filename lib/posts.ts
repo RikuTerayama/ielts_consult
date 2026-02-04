@@ -36,12 +36,14 @@ const postsDirectory = path.join(process.cwd(), 'content/posts');
 const additionsDirectory = path.join(process.cwd(), 'content/additions');
 
 // HTMLのサニタイズ設定
+// 注意: h1はallowedTagsから除外（記事本文内のH1を削除するため）
+// H2-H6は許可（記事本文内の見出しとして使用）
 const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([
     'img',
     'figure',
     'figcaption',
-    'h1',
+    // 'h1', // 記事本文内のH1は削除するため、許可しない
     'h2',
     'h3',
     'h4',
@@ -94,14 +96,23 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
     // H1削除後のinnerHTMLを取得
     let content = bodyElement?.innerHTML || '';
     
-    // フォールバック: 正規表現でも確実に最初のh1タグを削除
-    // [\s\S]を使用して改行を含むすべての文字にマッチ（.*?では改行にマッチしない場合がある）
+    // 複数の方法で確実にH1タグを削除
+    // 方法1: 標準的なH1タグ（属性あり/なし、改行あり/なし）
     content = content.replace(/<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+    // 方法2: H1タグの前後に空白や改行がある場合
+    content = content.replace(/\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+    // 方法3: コンテンツの先頭にH1がある場合
+    content = content.replace(/^<h1[^>]*>[\s\S]*?<\/h1>\s*/im, '');
     
     // 広告関連の要素を削除（ad-container, adsbygoogle等）
+    // より包括的なパターンで削除
     content = content.replace(/<div[^>]*class="[^"]*ad-container[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
-    content = content.replace(/<ins[^>]*class="[^"]*adsbygoogle[^"]*"[^>]*>[\s\S]*?<\/ins>/gi, '');
     content = content.replace(/<div[^>]*class="[^"]*ad-slot[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    content = content.replace(/<ins[^>]*class="[^"]*adsbygoogle[^"]*"[^>]*>[\s\S]*?<\/ins>/gi, '');
+    // class属性にad-が含まれる要素も削除
+    content = content.replace(/<div[^>]*class="[^"]*ad-[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    // adsbygoogleを含むすべての要素を削除
+    content = content.replace(/<[^>]*adsbygoogle[^>]*>[\s\S]*?<\/[^>]+>/gi, '');
     
     // 画像パスを修正（assets/... → /assets/...）
     content = content.replace(/src="assets\//g, 'src="/assets/');
@@ -109,8 +120,31 @@ async function getPostFromHtml(slug: string): Promise<Post | null> {
     // HTMLをサニタイズ
     content = sanitizeHtml(content, sanitizeOptions);
     
-    // サニタイズ後もH1が残っている可能性があるため、再度削除
+    // サニタイズ後もH1が残っている可能性があるため、再度複数の方法で削除
     content = content.replace(/<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+    content = content.replace(/\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
+    content = content.replace(/^<h1[^>]*>[\s\S]*?<\/h1>\s*/im, '');
+    
+    // サニタイズ後も広告要素が残っている可能性があるため、再度削除
+    content = content.replace(/<div[^>]*class="[^"]*ad-container[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    content = content.replace(/<div[^>]*class="[^"]*ad-slot[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    content = content.replace(/<ins[^>]*class="[^"]*adsbygoogle[^"]*"[^>]*>[\s\S]*?<\/ins>/gi, '');
+    content = content.replace(/<div[^>]*class="[^"]*ad-[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
+    content = content.replace(/<[^>]*adsbygoogle[^>]*>[\s\S]*?<\/[^>]+>/gi, '');
+    
+    // デバッグ用: 開発環境でのみログを出力
+    if (process.env.NODE_ENV === 'development') {
+      const h1Count = (content.match(/<h1[^>]*>/gi) || []).length;
+      const adContainerCount = (content.match(/ad-container/gi) || []).length;
+      const adsbygoogleCount = (content.match(/adsbygoogle/gi) || []).length;
+      if (h1Count > 0 || adContainerCount > 0 || adsbygoogleCount > 0) {
+        console.warn(`[${slug}] 警告: H1タグ(${h1Count}個)、ad-container(${adContainerCount}個)、adsbygoogle(${adsbygoogleCount}個)が残っています`);
+        if (h1Count > 0) {
+          const h1Matches = content.match(/<h1[^>]*>[\s\S]*?<\/h1>/gi);
+          console.warn('残っているH1:', h1Matches);
+        }
+      }
+    }
 
     // 日付を取得（ファイルの更新日時を使用）
     const stats = fs.statSync(htmlPath);
