@@ -8,8 +8,9 @@ type TagPageProps = {
 
 export const dynamicParams = false;
 
+// output: 'export' では 0 件だとビルドエラーになるため 1 件返す
 export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
-  return [];
+  return [{ tag: "_" }];
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
