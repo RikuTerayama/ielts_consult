@@ -10,8 +10,9 @@ interface PostPageProps {
 
 export const dynamicParams = false;
 
+// output: 'export' では generateStaticParams が必須。0件だとビルドエラーになるため1件返す
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  return [];
+  return [{ slug: "_" }];
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
