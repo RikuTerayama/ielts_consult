@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
@@ -60,9 +59,6 @@ export const metadata: Metadata = {
   verification: {
     google: "dcmOoLbM8zJ_79cLiGo_qTXDmO27gGdVD-RvyG4FWf8",
   },
-  other: {
-    "google-adsense": "ca-pub-4232725615106709",
-  },
 };
 
 export default function RootLayout({
@@ -76,14 +72,6 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        {/* Google AdSense - All pages (審査モードでは読み込まない) */}
-        {process.env.NEXT_PUBLIC_REVIEW_MODE !== "true" && (
-          <Script
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4232725615106709"
-            strategy="afterInteractive"
-            crossOrigin="anonymous"
-          />
-        )}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
