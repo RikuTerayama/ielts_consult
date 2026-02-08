@@ -67,9 +67,8 @@ async function main() {
       const additionPath = path.join(additionsDir, `${slug}.mdx`);
       const hasAddition = hasAdditionsDir && fs.existsSync(additionPath);
       
-      // PUBLIC_POST_SLUGSを確認（簡易版）
-      const { PUBLIC_POST_SET } = await import('../config/content-gate');
-      const isPublic = PUBLIC_POST_SET.has(slug);
+      // 構造のみモードでは公開セットなし
+      const isPublic = false;
       
       // 薄いコンテンツフラグ
       const reasons: string[] = [];

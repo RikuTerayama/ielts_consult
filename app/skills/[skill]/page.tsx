@@ -1,5 +1,4 @@
 import { getAllSkills, getPostsBySkill } from "@/lib/categories";
-import { PostCard } from "@/components/post-card";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SkillId } from "@/config/categories";
@@ -29,17 +28,12 @@ export async function generateMetadata({ params }: SkillPageProps): Promise<Meta
     };
   }
 
-  const posts = await getPostsBySkill(params.skill as SkillId);
-  
-  // 記事が1件のみの場合はnoindex
-  const shouldIndex = posts.length > 1;
-  
   return {
     title: `${skill.label} | 技能別`,
     description: skill.description,
     robots: {
-      index: shouldIndex,
-      follow: shouldIndex,
+      index: true,
+      follow: true,
     },
   };
 }
@@ -65,24 +59,12 @@ export default async function SkillPage({ params }: SkillPageProps) {
         <p className="text-sm text-muted-foreground mt-2">
           {posts.length}件の記事
         </p>
-        {posts.length === 1 && (
-          <p className="text-sm text-muted-foreground mt-2">
-            このスキルには1件の記事があります。関連する他のスキルもご覧ください。
-          </p>
-        )}
       </div>
-
-      {posts.length === 0 ? (
-        <p className="text-center text-muted-foreground py-12">
+      <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
+        <p className="text-muted-foreground">
           このスキルの記事は準備中です。
         </p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <PostCard key={post.slug} post={post} />
-          ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 }
