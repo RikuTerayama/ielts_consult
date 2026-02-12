@@ -65,7 +65,23 @@ pnpm run import:note
 - `content/posts/*.mdx` として保存
 - `ielts_consult/assets` を `public/assets` にコピー
 
-### 3. 開発サーバーの起動
+### 3. WordPress Export 形式の item XML から HTML 記事を生成
+
+WordPress Export 形式の `<item>...</item>` XML から、公開用 HTML 記事ファイルを生成できます。
+
+```bash
+# ファイルから読み込む場合
+pnpm run convert:single item.xml
+
+# 標準入力から読み込む場合
+pnpm run convert:single < item.xml
+```
+
+出力先: `content/posts/<slug>.html`（slug は `wp:post_name` を URL デコードした値）
+
+テスト用サンプル: `scripts/test-item.xml` を指定して実行すると、`content/posts/自己紹介と英語学習変遷.html` が生成されます。
+
+### 4. 開発サーバーの起動
 
 ```bash
 pnpm run dev
@@ -73,7 +89,7 @@ pnpm run dev
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開いてサイトを確認できます。
 
-### 4. 本番ビルド
+### 5. 本番ビルド
 
 ```bash
 pnpm run build

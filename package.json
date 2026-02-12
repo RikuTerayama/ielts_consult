@@ -20,15 +20,21 @@
     "optimize:images": "tsx scripts/optimize-images.ts",
     "remove:note-cta": "tsx scripts/remove-note-cta.ts",
     "list:note-links": "tsx scripts/list-note-links.ts",
-    "audit:adsense": "tsx scripts/audit-adsense-readiness.ts"
+    "audit:adsense": "tsx scripts/audit-adsense-readiness.ts",
+    "convert:single": "tsx scripts/convert-single-item-to-html.ts",
+    "audit:assets": "tsx scripts/audit-assets.ts",
+    "assets:delete-unused": "node scripts/delete-unused-assets.mjs",
+    "assets:delete-unused:apply": "node scripts/delete-unused-assets.mjs --apply"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-slot": "^1.0.2",
+    "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",
+    "fast-xml-parser": "^4.5.3",
     "flexsearch": "^0.7.43",
     "framer-motion": "^11.11.17",
     "gray-matter": "^4.0.3",
