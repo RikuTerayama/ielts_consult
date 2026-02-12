@@ -4,12 +4,19 @@ import { TrainingAppCTA } from "@/components/training-app-cta";
 import { PostCard } from "@/components/post-card";
 import { FadeInHeading } from "@/components/anim/fade-in-heading";
 import { FadeInSection } from "@/components/anim/fade-in-section";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, getAllTags } from "@/lib/posts";
+
+const SIDEBAR_LATEST_N = 6;
+const SIDEBAR_POPULAR_TAGS_M = 10;
 
 export default async function Home() {
   const posts = await getAllPosts();
   const latestPosts = posts.slice(0, 5);
   const popularPosts = posts.slice(0, 5);
+
+  const allTags = await getAllTags(posts);
+  const popularTags = allTags.slice(0, SIDEBAR_POPULAR_TAGS_M);
+  const sidebarLatestPosts = posts.slice(0, SIDEBAR_LATEST_N);
 
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -102,7 +109,10 @@ export default async function Home() {
           </div>
 
           <aside className="lg:col-span-4">
-            <Sidebar />
+            <Sidebar
+              latestPosts={sidebarLatestPosts}
+              popularTags={popularTags}
+            />
           </aside>
         </div>
       </div>

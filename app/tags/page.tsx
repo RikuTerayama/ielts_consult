@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Metadata } from "next";
+import { getAllTags } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "タグ一覧",
@@ -13,6 +15,8 @@ export const metadata: Metadata = {
 };
 
 export default async function TagsPage() {
+  const allTags = await getAllTags();
+
   const collectionPageSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -34,9 +38,25 @@ export default async function TagsPage() {
         <p className="text-muted-foreground mb-8">
           Writing、Reading、Speaking、Listeningなど、IELTS対策をカテゴリで探せます。
         </p>
-        <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
-          <p className="text-muted-foreground">タグ一覧を準備中です。しばらくお待ちください。</p>
-        </div>
+        {allTags.length > 0 ? (
+          <ul className="flex flex-wrap gap-3">
+            {allTags.map(({ tag, count }) => (
+              <li key={tag}>
+                <Link
+                  href={`/tags/${encodeURIComponent(tag)}/`}
+                  className="inline-block px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors text-muted-foreground hover:text-primary"
+                >
+                  {tag}
+                  <span className="ml-2 text-sm opacity-70">({count})</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
+            <p className="text-muted-foreground">タグがありません。</p>
+          </div>
+        )}
       </div>
     </>
   );
