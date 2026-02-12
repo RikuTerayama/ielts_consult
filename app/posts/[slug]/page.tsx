@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/breadcrumb";
 import Link from "next/link";
 import { SITE_URL } from "@/config/site";
 import { getPostBySlug, getAllPosts, resolveHeroSrc } from "@/lib/posts";
+import { encodePostSlugForPath } from "@/lib/url";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -20,7 +21,7 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
-  const encodedSlug = encodeURIComponent(params.slug);
+  const encodedSlug = encodePostSlugForPath(params.slug);
   const canonicalUrl = `${SITE_URL}/posts/${encodedSlug}/`;
 
   if (!post) {
@@ -73,7 +74,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <Breadcrumb
         items={[
           { label: "記事一覧", href: "/posts" },
-          { label: post.title, href: `/posts/${encodeURIComponent(post.slug)}/` },
+          { label: post.title, href: `/posts/${encodePostSlugForPath(post.slug)}/` },
         ]}
         className="mb-6"
       />

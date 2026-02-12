@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { resolveHeroSrc } from "@/lib/posts";
 import type { Post } from "@/lib/posts";
+import { encodePostSlugForPath } from "@/lib/url";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -11,7 +12,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const heroSrc = resolveHeroSrc(post.hero);
-  const href = `/posts/${encodeURIComponent(post.slug)}/`;
+  const href = `/posts/${encodePostSlugForPath(post.slug)}/`;
 
   return (
     <Link

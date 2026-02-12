@@ -2,6 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import { SITE_URL } from "../config/site";
 import { getAllPosts } from "../lib/posts";
+import { encodePostSlugForPath } from "../lib/url";
 
 const SITE_TITLE = "外資系コンサルの英語力底上げブログ";
 const SITE_DESCRIPTION =
@@ -31,7 +32,7 @@ async function generateRSS() {
 
   const items = posts
     .map((post) => {
-      const link = `${SITE_URL}/posts/${encodeURIComponent(post.slug)}/`;
+      const link = `${SITE_URL}/posts/${encodePostSlugForPath(post.slug)}/`;
       const title = escapeXml(post.title);
       const desc = escapeXml(post.description || "");
       const pubDate = toRfc2822(post.date || "");
