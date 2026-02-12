@@ -12,3 +12,8 @@
  * このURLに遷移する必要があります。
  */
 export const TRAINING_APP_URL = "https://ielts-training.onrender.com/";
+
+/**
+ * Note（記事一覧）のURL
+ */
+export const NOTE_URL = "https://note.com/ielts_consult";
