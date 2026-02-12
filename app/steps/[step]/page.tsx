@@ -32,6 +32,10 @@ export async function generateMetadata({ params }: StepPageProps): Promise<Metad
   return {
     title: `${step.label} | 学習ステップ`,
     description: step.description,
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

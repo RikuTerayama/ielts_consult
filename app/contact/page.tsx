@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-2xl mx-auto">
@@ -25,6 +27,11 @@ export default function ContactPage() {
           <p>
             Twitter（X）: <a href="https://twitter.com/ielts_consult" target="_blank" rel="noopener noreferrer">@ielts_consult</a>
           </p>
+          {contactEmail && (
+            <p>
+              メール: <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+            </p>
+          )}
           <p className="text-muted-foreground text-sm mt-8">
             ※ お返事までに数日いただく場合がございます。予めご了承ください。
           </p>

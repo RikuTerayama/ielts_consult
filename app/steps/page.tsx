@@ -10,8 +10,8 @@ export const metadata: Metadata = {
     canonical: "https://ieltsconsult.netlify.app/steps/",
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
   },
 };
 

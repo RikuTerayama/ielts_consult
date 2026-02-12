@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
-import Link from "next/link";
+import { PostCard } from "@/components/post-card";
 import { SITE_URL } from "@/config/site";
-import { getPostBySlug, getAllPosts, resolveHeroSrc } from "@/lib/posts";
+import { getPostBySlug, getAllPosts, getRelatedPosts, resolveHeroSrc } from "@/lib/posts";
 import { encodePostSlugForPath } from "@/lib/url";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -69,6 +69,9 @@ export default async function PostPage({ params }: PostPageProps) {
   const post = await getPostBySlug(params.slug);
   if (!post) notFound();
 
+  const allPosts = await getAllPosts();
+  const relatedPosts = getRelatedPosts(post.slug, allPosts, 4);
+
   return (
     <div className="container mx-auto px-4 py-12">
       <Breadcrumb
@@ -95,6 +98,18 @@ export default async function PostPage({ params }: PostPageProps) {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>
+      {relatedPosts.length > 0 && (
+        <section className="mt-16 pt-12 border-t" aria-labelledby="related-heading">
+          <h2 id="related-heading" className="text-2xl font-semibold mb-6">
+            関連記事
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {relatedPosts.map((p) => (
+              <PostCard key={p.slug} post={p} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

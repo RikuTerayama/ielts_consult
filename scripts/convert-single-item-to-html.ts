@@ -46,29 +46,25 @@ const ALLOWED_TAGS = new Set([
   'img',
   'figcaption',
   'a',
+  'blockquote',
 ]);
-
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isUuidLike(value: string): boolean {
-  return UUID_REGEX.test(value);
-}
 
 function extractText(html: string): string {
   const $ = load(html, DECODE_ENTITIES_FALSE);
   return $.text().trim();
 }
 
-function sanitizeContent(html: string, articleTitle: string): string {
+export function sanitizeContent(html: string, articleTitle: string): string {
   // b を strong に統一（許可タグに strong があるため）
   let normalized = html.replace(/<b\b/gi, '<strong').replace(/<\/b>/gi, '</strong>');
-  const $ = load(normalized, DECODE_ENTITIES_FALSE);
+  // フラグメントの場合 cheerio が body を生成しないため、div でラップ
+  const wrapped = `<div id="__sanitize-root">${normalized}</div>`;
+  const $ = load(wrapped, DECODE_ENTITIES_FALSE);
+  const $root = $('#__sanitize-root');
 
   // 許可タグ以外はテキストのみ残してタグを剥がす（内側から処理するため逆順）
-  // cheerio が html/head/body でラップするため、これらはスキップ（body の中身を返すため）
-  const SKIP_TAGS = new Set(['html', 'head', 'body']);
-  const elements = $('*').toArray();
+  const SKIP_TAGS = new Set(['html', 'head', 'body', 'div']);
+  const elements = $root.find('*').addBack().toArray();
   for (let i = elements.length - 1; i >= 0; i--) {
     const el = elements[i];
     const tagName = (el as Element).tagName?.toLowerCase();
@@ -83,17 +79,10 @@ function sanitizeContent(html: string, articleTitle: string): string {
     }
   }
 
-  // name, id 属性を削除（UUID っぽいものは削除、有用な id は残す）
-  $('[name], [id]').each((_, el) => {
-    const $el = $(el);
-    const name = $el.attr('name');
-    const id = $el.attr('id');
-    if (name) $el.removeAttr('name');
-    if (id && isUuidLike(id)) $el.removeAttr('id');
-  });
+  // name, id は許可（アンカー用・セマンティクス用）。危険な value は除去しないが、スクリプト系は後段で弾かれる
 
   // img の整形
-  $('img').each((_, el) => {
+  $root.find('img').each((_, el) => {
     const $el = $(el);
     $el.attr('loading', 'lazy');
     $el.attr('decoding', 'async');
@@ -108,31 +97,30 @@ function sanitizeContent(html: string, articleTitle: string): string {
   });
 
   // 空の figcaption を削除
-  $('figcaption').each((_, el) => {
+  $root.find('figcaption').each((_, el) => {
     const $el = $(el);
     if (!extractText($el.html() || '').trim()) {
       $el.remove();
     }
   });
 
-  // a タグ: target を削除、必要なら rel="nofollow noopener"
-  $('a').each((_, el) => {
+  // a タグ: target, rel を保持（target="_blank" rel="nofollow noopener" 等）。外部リンクに noopener がなければ付与
+  $root.find('a').each((_, el) => {
     const $el = $(el);
-    $el.removeAttr('target');
-    // 外部リンクは rel="noopener noreferrer" を付与（安全のため）
     const href = $el.attr('href') || '';
     if (href.startsWith('http://') || href.startsWith('https://')) {
       const existingRel = $el.attr('rel') || '';
       const relSet = new Set(existingRel.split(/\s+/).filter(Boolean));
       relSet.add('noopener');
-      relSet.add('noreferrer');
+      if (!relSet.has('noreferrer')) relSet.add('noreferrer');
       $el.attr('rel', Array.from(relSet).join(' '));
     }
+    // target はそのまま保持（target="_blank" 等）
   });
 
   // 連続する hr を 1 つに畳む
   let prevWasHr = false;
-  $('body')
+  $root
     .children()
     .each((_, el) => {
       const tagName = (el as Element).tagName?.toLowerCase();
@@ -144,7 +132,7 @@ function sanitizeContent(html: string, articleTitle: string): string {
     });
 
   // p の中にリンク URL だけがある場合は class="link" を付ける
-  $('p').each((_, el) => {
+  $root.find('p').each((_, el) => {
     const $el = $(el);
     const html = $el.html() || '';
     const $inner = load(html, DECODE_ENTITIES_FALSE);
@@ -163,7 +151,7 @@ function sanitizeContent(html: string, articleTitle: string): string {
     }
   });
 
-  return $('body').html() || '';
+  return $root.html() || '';
 }
 
 function toIsoDate(dateStr: string): string {
@@ -195,6 +183,10 @@ export interface ParsedItem {
   contentEncoded: string;
   postName: string;
   postDate: string;
+  /** wp:status。空の場合は publish 扱い */
+  status?: string;
+  /** wp:post_type。空の場合は post 扱い */
+  postType?: string;
 }
 
 function extractTagContent(xml: string, tagName: string): string {
@@ -230,9 +222,14 @@ export function parseItemXml(xmlString: string): ParsedItem | null {
   });
 
   // content:encoded は正規表現で抽出（内部 HTML がパースされないように）
-  const contentEncoded = extractTagContent(xml, 'content:encoded');
+  let contentEncoded = extractTagContent(xml, 'content:encoded');
+  if (contentEncoded.startsWith('<![CDATA[') && contentEncoded.endsWith(']]>')) {
+    contentEncoded = contentEncoded.slice(9, -3);
+  }
   const postName = extractTagContent(xml, 'wp:post_name');
   const postDate = extractTagContent(xml, 'wp:post_date');
+  const status = extractTagContent(xml, 'wp:status');
+  const postType = extractTagContent(xml, 'wp:post_type');
 
   // その他は fast-xml-parser で取得（ content:encoded を除いた簡易 XML で解析）
   const wrapped = xml.startsWith('<item') ? `<root>${xml}</root>` : xml;
@@ -268,12 +265,15 @@ export function parseItemXml(xmlString: string): ParsedItem | null {
     contentEncoded,
     postName,
     postDate,
+    status: status || undefined,
+    postType: postType || undefined,
   };
 }
 
 export function convertItemToHtml(
   xmlString: string,
-  outDir: string = CONTENT_POSTS_DIR
+  outDir: string = CONTENT_POSTS_DIR,
+  dryRun?: boolean
 ): { slug: string; filePath: string } | null {
   const parsed = parseItemXml(xmlString);
   if (!parsed) return null;
@@ -291,8 +291,12 @@ export function convertItemToHtml(
   }
   if (!slug) slug = guid || 'untitled';
 
-  // ファイル名用にサニタイズ（スラッシュ等进行を除去）
-  const safeSlug = slug.replace(/[/\\?%*:|"<>]/g, '-').replace(/\s+/g, '-');
+  // ファイル名用にサニタイズ（スラッシュ等进行を除去）。長すぎる場合は短縮、空なら guid を fallback
+  const MAX_SLUG_LEN = 80;
+  let safeSlug = slug.replace(/[/\\?%*:|"<>]/g, '-').replace(/\s+/g, '-');
+  if (safeSlug.length > MAX_SLUG_LEN) {
+    safeSlug = safeSlug.slice(0, MAX_SLUG_LEN).replace(/-+$/, '') || guid || 'untitled';
+  }
 
   const sanitizedBody = sanitizeContent(contentEncoded, title);
   const firstImgSrc = getFirstImageSrc(contentEncoded);
@@ -333,9 +337,10 @@ ${indentHtml(sanitizedBody)}
 `;
 
   const filePath = path.join(outDir, `${safeSlug}.html`);
-  fs.ensureDirSync(outDir);
-  fs.writeFileSync(filePath, html, 'utf-8');
-
+  if (!dryRun) {
+    fs.ensureDirSync(outDir);
+    fs.writeFileSync(filePath, html, 'utf-8');
+  }
   return { slug: safeSlug, filePath };
 }
 

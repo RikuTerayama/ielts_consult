@@ -32,8 +32,8 @@ export async function generateMetadata({ params }: SkillPageProps): Promise<Meta
     title: `${skill.label} | 技能別`,
     description: skill.description,
     robots: {
-      index: true,
-      follow: true,
+      index: false,
+      follow: false,
     },
   };
 }

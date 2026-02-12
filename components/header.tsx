@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { Search, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useState } from "react";
@@ -24,13 +24,6 @@ export function Header() {
 
           <nav className="hidden md:flex items-center space-x-6">
             <Link 
-              href="/search" 
-              className="relative text-sm font-medium text-foreground/70 hover:text-primary transition-colors p-2 -m-2 rounded-lg"
-            >
-              <Search className="h-5 w-5" />
-              <span className="sr-only">検索</span>
-            </Link>
-            <Link 
               href="/" 
               className="relative text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2 group"
             >
@@ -42,13 +35,6 @@ export function Header() {
               className="relative text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2 group"
             >
               記事一覧
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-            <Link 
-              href="/tags" 
-              className="relative text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2 group"
-            >
-              タグ
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link 
@@ -81,12 +67,6 @@ export function Header() {
           </nav>
 
           <div className="flex md:hidden items-center space-x-2">
-            <Link href="/search">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-                <span className="sr-only">検索</span>
-              </Button>
-            </Link>
             <ThemeToggle />
             <Button
               variant="ghost"
@@ -102,13 +82,6 @@ export function Header() {
         {isMenuOpen && (
           <nav className="md:hidden py-4 space-y-4">
             <Link
-              href="/search"
-              className="block text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              検索
-            </Link>
-            <Link
               href="/"
               className="block text-sm font-medium hover:text-primary transition-colors"
               onClick={() => setIsMenuOpen(false)}
@@ -121,13 +94,6 @@ export function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               記事一覧
-            </Link>
-            <Link
-              href="/tags"
-              className="block text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              タグ
             </Link>
             <Link
               href="/about"

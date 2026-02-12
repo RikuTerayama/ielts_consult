@@ -18,6 +18,10 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   return {
     title: `Tag: ${tag}`,
     description: `タグ「${tag}」の記事一覧`,
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
