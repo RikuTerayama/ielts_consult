@@ -386,8 +386,16 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
 
     const audioSrc = resolveAudioSrcForTitle(title);
     if (audioSrc) {
-      const audioBlock = `<div class="post-audio" role="region" aria-label="音声"><audio controls preload="none" src="${audioSrc}"></audio></div>`;
-      contentHtml = audioBlock + contentHtml;
+      const audioBlock = `<div class="post-audio" role="region" aria-label="音声"><p class="post-audio__label">音声解説はこちら</p><p class="post-audio__hint">通勤中や作業中にも聴けます</p><audio controls preload="none" src="${audioSrc}"></audio></div>`;
+      const wrapped = `<div id="__audio-root">${contentHtml}</div>`;
+      const $aud = load(wrapped);
+      const firstFigure = $aud("#__audio-root figure").first();
+      if (firstFigure.length) {
+        firstFigure.after(audioBlock);
+      } else {
+        $aud("#__audio-root").prepend(audioBlock);
+      }
+      contentHtml = $aud("#__audio-root").html() ?? contentHtml;
     }
 
     const plainText = $("body").text().replace(/\s+/g, " ").trim();
