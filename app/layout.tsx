@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SITE_URL } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ieltsconsult.netlify.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "IELTS対策｜外資系コンサルの英語力底上げ",
     template: "%s｜IELTS対策｜外資系コンサルの英語力底上げ",
   },
   description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
   keywords: ["IELTS", "英語学習", "外資系コンサル", "ビジネス英語", "英語力向上"],
-  authors: [{ name: "IELTS Consult", url: "https://ieltsconsult.netlify.app" }],
+  authors: [{ name: "IELTS Consult", url: SITE_URL }],
   creator: "IELTS Consult",
   publisher: "IELTS Consult",
   formatDetection: {
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ja_JP",
-    url: "https://ieltsconsult.netlify.app",
+    url: SITE_URL,
     siteName: "IELTS対策｜外資系コンサルの英語力底上げ",
     title: "IELTS対策｜外資系コンサルの英語力底上げ",
     description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
@@ -94,7 +95,7 @@ export default function RootLayout({
               __html: JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "WebPage",
-                "url": "https://ieltsconsult.netlify.app",
+                "url": SITE_URL,
                 "name": "IELTS対策｜外資系コンサルの英語力底上げ",
                 "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
               }),
