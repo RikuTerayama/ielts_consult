@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
 import Link from "next/link";
+import { SITE_URL } from "@/config/site";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -19,15 +20,50 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
+  const encodedSlug = encodeURIComponent(params.slug);
+  const canonicalUrl = `${SITE_URL}/posts/${encodedSlug}/`;
+
   if (!post) {
     return {
       title: "記事 | IELTS対策",
       description: "お探しの記事は見つかりませんでした。",
     };
   }
+
+  const title = `${post.title} | IELTS対策`;
+  const description = post.description || undefined;
+
+  const ogImage =
+    post.hero && post.hero.startsWith("/")
+      ? `${SITE_URL}${post.hero}`
+      : `${SITE_URL}/og-image.jpg`;
+
   return {
-    title: `${post.title} | IELTS対策`,
-    description: post.description || undefined,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      type: "article",
+      url: canonicalUrl,
+      title,
+      description,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 
