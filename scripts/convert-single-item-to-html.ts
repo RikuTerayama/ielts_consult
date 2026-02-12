@@ -22,7 +22,12 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { XMLParser } from 'fast-xml-parser';
-import * as cheerio from 'cheerio';
+import { load } from 'cheerio/slim';
+import type { CheerioOptions } from 'cheerio/slim';
+import type { Element } from 'domhandler';
+
+/** htmlparser2 の decodeEntities オプション（CheerioOptions に含まれるが型定義で欠けているため） */
+const DECODE_ENTITIES_FALSE = { decodeEntities: false } as CheerioOptions;
 
 const CONTENT_POSTS_DIR = path.join(process.cwd(), 'content/posts');
 
@@ -51,14 +56,14 @@ function isUuidLike(value: string): boolean {
 }
 
 function extractText(html: string): string {
-  const $ = cheerio.load(html, { decodeEntities: false });
+  const $ = load(html, DECODE_ENTITIES_FALSE);
   return $.text().trim();
 }
 
 function sanitizeContent(html: string, articleTitle: string): string {
   // b を strong に統一（許可タグに strong があるため）
   let normalized = html.replace(/<b\b/gi, '<strong').replace(/<\/b>/gi, '</strong>');
-  const $ = cheerio.load(normalized, { decodeEntities: false });
+  const $ = load(normalized, DECODE_ENTITIES_FALSE);
 
   // 許可タグ以外はテキストのみ残してタグを剥がす（内側から処理するため逆順）
   // cheerio が html/head/body でラップするため、これらはスキップ（body の中身を返すため）
@@ -66,7 +71,7 @@ function sanitizeContent(html: string, articleTitle: string): string {
   const elements = $('*').toArray();
   for (let i = elements.length - 1; i >= 0; i--) {
     const el = elements[i];
-    const tagName = (el as cheerio.Element).tagName?.toLowerCase();
+    const tagName = (el as Element).tagName?.toLowerCase();
     if (
       tagName &&
       !ALLOWED_TAGS.has(tagName) &&
@@ -130,7 +135,7 @@ function sanitizeContent(html: string, articleTitle: string): string {
   $('body')
     .children()
     .each((_, el) => {
-      const tagName = (el as cheerio.Element).tagName?.toLowerCase();
+      const tagName = (el as Element).tagName?.toLowerCase();
       const isHr = tagName === 'hr';
       if (isHr && prevWasHr) {
         $(el).remove();
@@ -142,11 +147,11 @@ function sanitizeContent(html: string, articleTitle: string): string {
   $('p').each((_, el) => {
     const $el = $(el);
     const html = $el.html() || '';
-    const $inner = cheerio.load(html, { decodeEntities: false });
+    const $inner = load(html, DECODE_ENTITIES_FALSE);
     const children = $inner('body').children();
     if (children.length === 1) {
       const child = children.eq(0);
-      const childTag = (child[0] as cheerio.Element)?.tagName?.toLowerCase();
+      const childTag = (child[0] as Element)?.tagName?.toLowerCase();
       if (childTag === 'a') {
         const href = child.attr('href') || '';
         const text = extractText(child.html() || '').trim();
@@ -172,7 +177,7 @@ function toIsoDate(dateStr: string): string {
 }
 
 function getFirstImageSrc(html: string): string | null {
-  const $ = cheerio.load(html, { decodeEntities: false });
+  const $ = load(html, DECODE_ENTITIES_FALSE);
   const img = $('img').first();
   return img.attr('src') || null;
 }
