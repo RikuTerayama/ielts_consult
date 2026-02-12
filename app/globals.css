@@ -124,17 +124,24 @@ a:focus-visible {
 
 /* アフィリエイトリンクカード（URL単体行をカード化） */
 .prose .affiliate-card {
-  @apply block no-underline my-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-foreground;
-  @apply transition-all duration-200 hover:border-primary/50 hover:shadow-lg hover:shadow-slate-900/5 dark:hover:shadow-slate-950/50;
+  @apply block no-underline my-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900/80 text-foreground;
+  @apply transition-all duration-200 ease-out;
   @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
-  @apply relative flex flex-col sm:flex-row overflow-hidden min-h-[100px];
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+  @apply relative flex flex-col sm:flex-row overflow-hidden min-h-[112px] sm:min-h-[120px];
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+}
+.prose .affiliate-card:hover,
+.prose .affiliate-card:focus-visible {
+  @apply border-primary/40 dark:border-primary/50 bg-slate-50 dark:bg-slate-800/70;
+  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 6px -2px rgb(0 0 0 / 0.04);
+  transform: translateY(-1px);
 }
 .dark .prose .affiliate-card {
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.2);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.25);
 }
-.prose .affiliate-card:hover {
-  @apply bg-slate-50 dark:bg-slate-800/50;
+.dark .prose .affiliate-card:hover,
+.dark .prose .affiliate-card:focus-visible {
+  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.35);
 }
 
 /* 共通: ラベル */
@@ -142,9 +149,9 @@ a:focus-visible {
   @apply absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-md bg-slate-200/90 dark:bg-slate-600/90 text-slate-600 dark:text-slate-300;
 }
 
-/* 共通: メディア枠（固定幅・CLS対策） */
+/* 共通: メディア枠（3:4・CLS対策・画像なしでも同サイズ） */
 .prose .affiliate-card .affiliate-card__media {
-  @apply shrink-0 w-[80px] sm:w-[100px] aspect-[3/4] sm:aspect-[3/4] bg-slate-200 dark:bg-slate-700 rounded-t-xl sm:rounded-t-none sm:rounded-l-xl overflow-hidden;
+  @apply shrink-0 w-[84px] sm:w-[100px] aspect-[3/4] bg-slate-200 dark:bg-slate-700 rounded-t-xl sm:rounded-t-none sm:rounded-l-xl overflow-hidden;
 }
 .prose .affiliate-card .affiliate-card__img {
   @apply w-full h-full object-cover;
@@ -155,21 +162,22 @@ a:focus-visible {
 
 /* リッチ: メディア幅を広め */
 .prose .affiliate-card--rich .affiliate-card__media {
-  @apply w-[100px] sm:w-[120px];
+  @apply w-[96px] sm:w-[120px];
 }
 
-/* 共通: ボディ */
+/* 共通: ボディ（モバイルタップ領域確保） */
 .prose .affiliate-card .affiliate-card__body {
-  @apply flex-1 p-4 sm:p-5 flex flex-col gap-1.5 min-w-0 justify-between;
+  @apply flex-1 p-4 sm:p-5 flex flex-col gap-1.5 min-w-0 justify-between min-h-[72px];
 }
+/* タイポ階層: title 強・subtitle 控えめ・url さらに控えめ */
 .prose .affiliate-card .affiliate-card__title {
-  @apply font-medium text-foreground line-clamp-2 text-[15px] sm:text-base leading-snug;
+  @apply font-semibold text-foreground line-clamp-2 text-[15px] sm:text-base leading-snug;
 }
 .prose .affiliate-card .affiliate-card__subtitle {
-  @apply text-sm text-muted-foreground line-clamp-1;
+  @apply text-sm text-muted-foreground line-clamp-2 leading-relaxed;
 }
 .prose .affiliate-card .affiliate-card__url {
-  @apply text-xs text-muted-foreground/80 truncate;
+  @apply text-[11px] sm:text-xs text-muted-foreground/70 dark:text-muted-foreground/80 truncate;
 }
 .prose .affiliate-card .affiliate-card__cta {
   @apply text-sm text-primary font-medium mt-auto pt-2 flex items-center gap-1.5 w-fit self-end;
