@@ -10,6 +10,7 @@ import type { AnyNode } from "domhandler";
 
 import affiliateMeta from "@/content/affiliate-meta.json";
 import { inferLearningStep, inferSkill } from "@/config/categories";
+import { extractTags } from "@/lib/tagging";
 
 // --- アフィリエイトメタ（リッチカード用） -----------------------------------------
 
@@ -276,12 +277,14 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
     const readingMinutes = Math.max(1, Math.ceil(wordCount / 400));
     const readingTime = `${readingMinutes} 分`;
 
+    const tags = extractTags(title, plainText);
+
     return {
       slug,
       title,
       date,
       description,
-      tags: [],
+      tags,
       content: contentHtml,
       readingTime,
       hero,
@@ -356,10 +359,28 @@ export async function getPostAddition(_slug: string): Promise<PostAddition | nul
   return null;
 }
 
-export async function getPostsByTag(_tag: string): Promise<Post[]> {
-  return [];
+export type TagWithCount = { tag: string; count: number };
+
+export async function getPostsByTag(tagParam: string): Promise<Post[]> {
+  const tag = decodeURIComponent(tagParam);
+  const posts = await getAllPosts();
+  return posts.filter((p) => p.tags.includes(tag));
 }
 
-export async function getAllTags(): Promise<string[]> {
-  return [];
+export async function getAllTags(posts?: Post[]): Promise<TagWithCount[]> {
+  const targetPosts = posts ?? (await getAllPosts());
+  const countMap = new Map<string, number>();
+
+  for (const post of targetPosts) {
+    for (const tag of post.tags) {
+      countMap.set(tag, (countMap.get(tag) ?? 0) + 1);
+    }
+  }
+
+  return Array.from(countMap.entries())
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => {
+      if (b.count !== a.count) return b.count - a.count;
+      return a.tag.localeCompare(b.tag);
+    });
 }
