@@ -1,11 +1,18 @@
+import Link from "next/link";
 import { HeroSection } from "@/components/hero-section";
 import { Sidebar } from "@/components/sidebar";
 import { TrainingAppCTA } from "@/components/training-app-cta";
 import { FadeInHeading } from "@/components/anim/fade-in-heading";
 import { FadeInSection } from "@/components/anim/fade-in-section";
+import { getAllPosts } from "@/lib/posts";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 
 export default async function Home() {
-  // 構造のみ: 記事データは使用しない
+  const posts = await getAllPosts();
+  const latestPosts = posts.slice(0, 5);
+  const popularPosts = posts.slice(0, 5);
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -58,11 +65,32 @@ export default async function Home() {
                 最新記事
               </FadeInHeading>
               <FadeInSection>
-                <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
-                  <p className="text-muted-foreground">
-                    記事を準備中です。しばらくお待ちください。
-                  </p>
-                </div>
+                {latestPosts.length === 0 ? (
+                  <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
+                    <p className="text-muted-foreground">記事がありません。</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-4">
+                    {latestPosts.map((post) => (
+                      <li key={post.slug}>
+                        <Link
+                          href={`/posts/${encodeURIComponent(post.slug)}/`}
+                          className="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors"
+                        >
+                          <h2 className="text-lg font-semibold">{post.title}</h2>
+                          {post.date && (
+                            <time
+                              dateTime={post.date}
+                              className="text-sm text-muted-foreground"
+                            >
+                              {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
+                            </time>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </FadeInSection>
             </section>
 
@@ -75,11 +103,32 @@ export default async function Home() {
                 人気記事
               </FadeInHeading>
               <FadeInSection>
-                <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
-                  <p className="text-muted-foreground">
-                    記事を準備中です。しばらくお待ちください。
-                  </p>
-                </div>
+                {popularPosts.length === 0 ? (
+                  <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
+                    <p className="text-muted-foreground">記事がありません。</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-4">
+                    {popularPosts.map((post) => (
+                      <li key={post.slug}>
+                        <Link
+                          href={`/posts/${encodeURIComponent(post.slug)}/`}
+                          className="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors"
+                        >
+                          <h2 className="text-lg font-semibold">{post.title}</h2>
+                          {post.date && (
+                            <time
+                              dateTime={post.date}
+                              className="text-sm text-muted-foreground"
+                            >
+                              {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
+                            </time>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </FadeInSection>
             </section>
           </div>

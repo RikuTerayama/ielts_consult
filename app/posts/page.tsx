@@ -1,6 +1,10 @@
+import Link from "next/link";
 import { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { FadeInSection } from "@/components/anim/fade-in-section";
+import { getAllPosts } from "@/lib/posts";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 
 export const metadata: Metadata = {
   title: "記事一覧",
@@ -15,6 +19,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PostsPage() {
+  const posts = await getAllPosts();
+
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -40,9 +46,37 @@ export default async function PostsPage() {
         </FadeInSection>
         <FadeInSection>
           <h1 className="text-4xl font-bold mb-4">IELTS対策・ビジネス英語の記事一覧</h1>
-          <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
-            <p className="text-muted-foreground">記事を準備中です。しばらくお待ちください。</p>
-          </div>
+          {posts.length === 0 ? (
+            <div className="text-center py-12 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20">
+              <p className="text-muted-foreground">記事がありません。</p>
+            </div>
+          ) : (
+            <ul className="space-y-6">
+              {posts.map((post) => (
+                <li key={post.slug}>
+                  <Link
+                    href={`/posts/${encodeURIComponent(post.slug)}/`}
+                    className="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors"
+                  >
+                    <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
+                    {post.date && (
+                      <time
+                        dateTime={post.date}
+                        className="text-sm text-muted-foreground block mb-2"
+                      >
+                        {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
+                      </time>
+                    )}
+                    {post.description && (
+                      <p className="text-muted-foreground text-sm line-clamp-2">
+                        {post.description}
+                      </p>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </FadeInSection>
       </div>
     </>
