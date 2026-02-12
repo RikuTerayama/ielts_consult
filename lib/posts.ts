@@ -31,8 +31,21 @@ function normalizeUrl(href: string): string {
   try {
     const u = new URL(href);
     u.protocol = "https:";
-    let pathname = u.pathname.replace(/\/+$/, "") || "/";
+    const pathname = u.pathname.replace(/\/+$/, "") || "/";
     return `https://${u.host}${pathname}${u.search}`;
+  } catch {
+    return href;
+  }
+}
+
+/** クエリ文字列を除いた正規化URL（フォールバック参照用） */
+function normalizeUrlWithoutQuery(href: string): string {
+  try {
+    const u = new URL(href);
+    u.protocol = "https:";
+    u.search = "";
+    const pathname = u.pathname.replace(/\/+$/, "") || "/";
+    return `https://${u.host}${pathname}`;
   } catch {
     return href;
   }
@@ -40,7 +53,12 @@ function normalizeUrl(href: string): string {
 
 function getAffiliateMeta(href: string): AffiliateMetaItem | null {
   const key = normalizeUrl(href);
-  return AFFILIATE_META[key] ?? null;
+  let meta = AFFILIATE_META[key] ?? null;
+  if (!meta) {
+    const keyNoQuery = normalizeUrlWithoutQuery(href);
+    meta = AFFILIATE_META[keyNoQuery] ?? null;
+  }
+  return meta;
 }
 
 /** テキストノード用エスケープ（&, <, >, ", '） */
@@ -112,9 +130,9 @@ const EXTERNAL_LINK_ICON =
 function renderRichAffiliateCard(href: string, meta: AffiliateMetaItem): string {
   const safeHref = escapeHtmlAttr(href);
   const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
-  const label = escapeHtml(meta.label ?? DEFAULT_LABEL);
-  const title = escapeHtml(meta.title);
-  const altText = escapeHtmlAttr(meta.title || "");
+  const label = escapeHtml((meta.label && meta.label.trim()) ? meta.label : DEFAULT_LABEL);
+  const title = escapeHtml(meta.title || "Amazonで商品を見る");
+  const altText = escapeHtmlAttr(meta.title || "Amazon商品");
   const subtitle = meta.subtitle ? escapeHtml(meta.subtitle) : "";
   const cta = "Amazonで見る";
 
@@ -122,7 +140,7 @@ function renderRichAffiliateCard(href: string, meta: AffiliateMetaItem): string 
     ? `<img src="${escapeHtmlAttr(meta.image)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
     : '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
 
-  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
+  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
 /** ミニマルカード（メタなし）の HTML を生成 */
@@ -136,7 +154,7 @@ function renderMinimalAffiliateCard(href: string): string {
   const mediaHtml =
     '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
 
-  return `<a class="affiliate-card" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
+  return `<a class="affiliate-card affiliate-card--minimal" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
 /** アフィリエイトカードの HTML を生成（メタあり: リッチ、なし: ミニマル） */
