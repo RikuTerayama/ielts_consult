@@ -97,6 +97,14 @@ export interface Post {
   order?: number;
 }
 
+/** public 配下の実ファイル存在を確認し、404 にならない hero src を返す（Node 環境のみ） */
+export function resolveHeroSrc(hero: string | undefined): string {
+  const fallback = "/og-image.png";
+  if (!hero || !hero.startsWith("/")) return fallback;
+  const publicPath = path.join(process.cwd(), "public", hero.slice(1));
+  return fs.existsSync(publicPath) ? hero : fallback;
+}
+
 export interface PostAddition {
   slug: string;
   takeaways?: string[];

@@ -1,10 +1,8 @@
-import Link from "next/link";
 import { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { PostCard } from "@/components/post-card";
 import { FadeInSection } from "@/components/anim/fade-in-section";
 import { getAllPosts } from "@/lib/posts";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 
 export const metadata: Metadata = {
   title: "記事一覧",
@@ -51,31 +49,11 @@ export default async function PostsPage() {
               <p className="text-muted-foreground">記事がありません。</p>
             </div>
           ) : (
-            <ul className="space-y-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
-                <li key={post.slug}>
-                  <Link
-                    href={`/posts/${encodeURIComponent(post.slug)}/`}
-                    className="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors"
-                  >
-                    <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                    {post.date && (
-                      <time
-                        dateTime={post.date}
-                        className="text-sm text-muted-foreground block mb-2"
-                      >
-                        {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
-                      </time>
-                    )}
-                    {post.description && (
-                      <p className="text-muted-foreground text-sm line-clamp-2">
-                        {post.description}
-                      </p>
-                    )}
-                  </Link>
-                </li>
+                <PostCard key={post.slug} post={post} />
               ))}
-            </ul>
+            </div>
           )}
         </FadeInSection>
       </div>
