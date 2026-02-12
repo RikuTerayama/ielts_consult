@@ -42,17 +42,18 @@ export function HeroSection() {
             </FadeIn>
           </div>
           
-          {/* 右側: 抽象的なグラフィックまたは主要記事プレビュー */}
+          {/* 右側: LP 画像 */}
           <FadeIn delay={0.4} className="hidden lg:block relative">
-            <div className="relative aspect-square rounded-2xl bg-gradient-to-br from-indigo-100 via-indigo-50 to-violet-100 dark:from-indigo-950 dark:via-indigo-900 dark:to-violet-950 border border-slate-200 dark:border-slate-800 p-8 flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <div className="text-6xl font-bold text-indigo-600 dark:text-indigo-400 opacity-20">
-                  IELTS
-                </div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  実践的な学習コンテンツ
-                </p>
-              </div>
+            <div className="relative aspect-square rounded-2xl bg-gradient-to-br from-indigo-100 via-indigo-50 to-violet-100 dark:from-indigo-950 dark:via-indigo-900 dark:to-violet-950 border border-slate-200 dark:border-slate-800 p-0 overflow-hidden flex items-center justify-center">
+              <img
+                src="/assets/LP.png"
+                alt="IELTS 実践的な学習コンテンツ"
+                width={1424}
+                height={752}
+                className="w-full h-full object-contain rounded-2xl"
+                loading="eager"
+                decoding="async"
+              />
             </div>
           </FadeIn>
         </div>
