@@ -9,6 +9,7 @@ import type { CheerioAPI, Cheerio } from "cheerio/slim";
 import type { AnyNode } from "domhandler";
 
 import affiliateMeta from "@/content/affiliate-meta.json";
+import externalLinkMeta from "@/content/external-link-meta.json";
 import { inferLearningStep, inferSkill } from "@/config/categories";
 import { extractTags } from "@/lib/tagging";
 
@@ -24,6 +25,16 @@ export type AffiliateMetaItem = {
 export type AffiliateMetaMap = Record<string, AffiliateMetaItem>;
 
 const AFFILIATE_META = affiliateMeta as AffiliateMetaMap;
+
+export type ExternalLinkMetaItem = {
+  title?: string;
+  description?: string;
+  image?: string;
+};
+
+export type ExternalLinkMetaMap = Record<string, ExternalLinkMetaItem>;
+
+const EXTERNAL_LINK_META = externalLinkMeta as ExternalLinkMetaMap;
 
 const DEFAULT_LABEL = "PR";
 
@@ -62,6 +73,43 @@ function getAffiliateMeta(href: string): AffiliateMetaItem | null {
   return meta;
 }
 
+function getExternalLinkMeta(href: string): ExternalLinkMetaItem | null {
+  const key = normalizeUrl(href);
+  let meta = EXTERNAL_LINK_META[key] ?? null;
+  if (!meta) {
+    const keyNoQuery = normalizeUrlWithoutQuery(href);
+    meta = EXTERNAL_LINK_META[keyNoQuery] ?? null;
+  }
+  return meta;
+}
+
+/** カード化対象URLの種別。Amazon は affiliate-meta、note は external-link-meta を参照 */
+function getUrlKind(href: string): "amazon" | "note" | null {
+  if (!href || typeof href !== "string") return null;
+  try {
+    const u = new URL(href);
+    const host = u.hostname.toLowerCase().replace(/^www\./, "");
+    if (
+      host === "amzn.to" ||
+      host === "amazon.co.jp" ||
+      host === "amazon.com" ||
+      u.hostname.toLowerCase() === "www.amazon.co.jp" ||
+      u.hostname.toLowerCase() === "www.amazon.com"
+    )
+      return "amazon";
+    if (host === "note.com" || u.hostname.toLowerCase() === "www.note.com")
+      return "note";
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** カード化対象のURLか（Amazon または note） */
+function isCardTargetUrl(href: string): boolean {
+  return getUrlKind(href) !== null;
+}
+
 /** テキストノード用エスケープ（&, <, >, ", '） */
 function escapeHtml(str: string): string {
   return str
@@ -74,23 +122,6 @@ function escapeHtml(str: string): string {
 
 // --- アフィリエイトリンクカード化 -----------------------------------------
 
-/** href がカード化対象のアフィリエイトドメインか（amzn.to, amazon.co.jp, amazon.com, www.amazon.*） */
-function isAffiliateTargetUrl(href: string): boolean {
-  if (!href || typeof href !== "string") return false;
-  try {
-    const u = new URL(href);
-    const host = u.hostname.toLowerCase().replace(/^www\./, "");
-    return (
-      host === "amzn.to" ||
-      host === "amazon.co.jp" ||
-      host === "amazon.com" ||
-      u.hostname.toLowerCase() === "www.amazon.co.jp" ||
-      u.hostname.toLowerCase() === "www.amazon.com"
-    );
-  } catch {
-    return false;
-  }
-}
 
 /** p 要素が「URL単体行」（a が1つだけ、a.text が href と同一）か */
 function isUrlSingleLine($: CheerioAPI, $p: Cheerio<AnyNode>): boolean {
@@ -112,12 +143,14 @@ function escapeHtmlAttr(str: string): string {
     .replace(/>/g, "&gt;");
 }
 
-/** 表示用の短い URL 文字列（amzn.to/xxx や amazon.co.jp 等） */
+/** 表示用の短い URL 文字列（amzn.to/xxx、note.com、amazon.co.jp 等） */
 function getShortUrlDisplay(href: string): string {
   try {
     const u = new URL(href);
     if (u.hostname === "amzn.to") return `amzn.to${u.pathname}`;
-    return u.hostname.replace(/^www\./, "");
+    const host = u.hostname.replace(/^www\./, "");
+    if (host === "note.com" && u.pathname !== "/") return `note.com${u.pathname}`;
+    return host;
   } catch {
     return href;
   }
@@ -166,6 +199,45 @@ function renderAffiliateCard(href: string): string {
   return renderMinimalAffiliateCard(href);
 }
 
+/** Note 用リッチカード（メタあり）の HTML を生成 */
+function renderRichExternalLinkCard(href: string, meta: ExternalLinkMetaItem): string {
+  const safeHref = escapeHtmlAttr(href);
+  const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
+  const label = "Note";
+  const title = escapeHtml(meta.title || "Noteで見る");
+  const altText = escapeHtmlAttr(meta.title || "Note");
+  const description = meta.description ? escapeHtml(meta.description) : "";
+  const cta = "開く";
+
+  const imgSrc = meta.image && meta.image.trim();
+  const mediaHtml = imgSrc
+    ? `<img src="${escapeHtmlAttr(imgSrc)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
+    : '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📝</span></div>';
+
+  return `<a class="affiliate-card affiliate-card--rich affiliate-card--external" href="${safeHref}" target="_blank" rel="noopener noreferrer" data-link-type="note"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${description ? `<div class="affiliate-card__subtitle">${description}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
+}
+
+/** Note 用ミニマルカード（メタなし）の HTML を生成 */
+function renderMinimalExternalLinkCard(href: string): string {
+  const safeHref = escapeHtmlAttr(href);
+  const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
+  const label = "Note";
+  const title = "Noteで見る";
+  const cta = "開く";
+
+  const mediaHtml =
+    '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📝</span></div>';
+
+  return `<a class="affiliate-card affiliate-card--minimal affiliate-card--external" href="${safeHref}" target="_blank" rel="noopener noreferrer" data-link-type="note"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
+}
+
+/** 外部リンク（Note）カードの HTML を生成（メタあり: リッチ、なし: ミニマル） */
+function renderExternalLinkCard(href: string): string {
+  const meta = getExternalLinkMeta(href);
+  if (meta && meta.title && meta.title.trim()) return renderRichExternalLinkCard(href, meta);
+  return renderMinimalExternalLinkCard(href);
+}
+
 /** contentHtml 内の URL単体行（対象ドメイン）をカード HTML に置換 */
 function replaceAffiliateLinksWithCards(contentHtml: string): string {
   if (!contentHtml || typeof contentHtml !== "string") return contentHtml;
@@ -177,8 +249,13 @@ function replaceAffiliateLinksWithCards(contentHtml: string): string {
     if (!isUrlSingleLine($, $p)) return;
     const $a = $p.find("a").first();
     const href = $a.attr("href")?.trim() ?? "";
-    if (!isAffiliateTargetUrl(href)) return;
-    $p.replaceWith(renderAffiliateCard(href));
+    const kind = getUrlKind(href);
+    if (!kind) return;
+    if (kind === "amazon") {
+      $p.replaceWith(renderAffiliateCard(href));
+    } else if (kind === "note") {
+      $p.replaceWith(renderExternalLinkCard(href));
+    }
   });
   return $("#__affiliate-root").html() ?? contentHtml;
 }
