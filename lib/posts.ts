@@ -8,6 +8,50 @@ import { load } from "cheerio/slim";
 import type { CheerioAPI, Cheerio } from "cheerio/slim";
 import type { AnyNode } from "domhandler";
 
+import affiliateMeta from "@/content/affiliate-meta.json";
+
+// --- アフィリエイトメタ（リッチカード用） -----------------------------------------
+
+export type AffiliateMetaItem = {
+  title: string;
+  subtitle?: string;
+  image?: string;
+  label?: string;
+};
+
+export type AffiliateMetaMap = Record<string, AffiliateMetaItem>;
+
+const AFFILIATE_META = affiliateMeta as AffiliateMetaMap;
+
+const DEFAULT_LABEL = "PR";
+
+/** http/https を吸収して https に統一、末尾スラッシュ除去 */
+function normalizeUrl(href: string): string {
+  try {
+    const u = new URL(href);
+    u.protocol = "https:";
+    let pathname = u.pathname.replace(/\/+$/, "") || "/";
+    return `https://${u.host}${pathname}${u.search}`;
+  } catch {
+    return href;
+  }
+}
+
+function getAffiliateMeta(href: string): AffiliateMetaItem | null {
+  const key = normalizeUrl(href);
+  return AFFILIATE_META[key] ?? null;
+}
+
+/** テキストノード用エスケープ（&, <, >, ", '） */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // --- アフィリエイトリンクカード化 -----------------------------------------
 
 /** href がカード化対象のアフィリエイトドメインか（amzn.to, amazon.co.jp, amazon.com, www.amazon.*） */
@@ -59,18 +103,43 @@ function getShortUrlDisplay(href: string): string {
   }
 }
 
-/** アフィリエイトカードの HTML を生成 */
-function renderAffiliateCard(href: string): string {
+/** リッチカード（メタあり）の HTML を生成 */
+function renderRichAffiliateCard(href: string, meta: AffiliateMetaItem): string {
   const safeHref = escapeHtmlAttr(href);
   const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
-  return `<a class="affiliate-card" href="${safeHref}" target="_blank" rel="noopener noreferrer" data-affiliate="amazon"><div class="affiliate-card__inner"><div class="affiliate-card__title">Amazonで商品を見る</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">開く</div></div></a>`;
+  const label = escapeHtml(meta.label ?? DEFAULT_LABEL);
+  const title = escapeHtml(meta.title);
+  const subtitle = meta.subtitle ? escapeHtml(meta.subtitle) : "";
+  const cta = "Amazonで見る";
+
+  const mediaHtml = meta.image
+    ? `<img src="${escapeHtmlAttr(meta.image)}" alt="" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
+    : '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
+
+  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}</div></div></a>`;
+}
+
+/** ミニマルカード（メタなし）の HTML を生成 */
+function renderMinimalAffiliateCard(href: string): string {
+  const safeHref = escapeHtmlAttr(href);
+  const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
+  return `<a class="affiliate-card" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__inner"><div class="affiliate-card__label">${DEFAULT_LABEL}</div><div class="affiliate-card__title">Amazonで商品を見る</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">開く</div></div></a>`;
+}
+
+/** アフィリエイトカードの HTML を生成（メタあり: リッチ、なし: ミニマル） */
+function renderAffiliateCard(href: string): string {
+  const meta = getAffiliateMeta(href);
+  if (meta) return renderRichAffiliateCard(href, meta);
+  return renderMinimalAffiliateCard(href);
 }
 
 /** contentHtml 内の URL単体行（対象ドメイン）をカード HTML に置換 */
 function replaceAffiliateLinksWithCards(contentHtml: string): string {
   if (!contentHtml || typeof contentHtml !== "string") return contentHtml;
-  const $ = load(contentHtml);
-  $("p.link").each((_, el) => {
+  // cheerio はフラグメントを読み込むと body を生成しないため、div でラップして確実に取得する
+  const wrapped = `<div id="__affiliate-root">${contentHtml}</div>`;
+  const $ = load(wrapped);
+  $("#__affiliate-root p.link").each((_, el) => {
     const $p = $(el);
     if (!isUrlSingleLine($, $p)) return;
     const $a = $p.find("a").first();
@@ -78,7 +147,7 @@ function replaceAffiliateLinksWithCards(contentHtml: string): string {
     if (!isAffiliateTargetUrl(href)) return;
     $p.replaceWith(renderAffiliateCard(href));
   });
-  return $("body").html() ?? contentHtml;
+  return $("#__affiliate-root").html() ?? contentHtml;
 }
 
 // --- Post 型・パース -----------------------------------------
