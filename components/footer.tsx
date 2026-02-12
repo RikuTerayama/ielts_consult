@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TRAINING_APP_URL } from "@/config/links";
+import { TRAINING_APP_URL, NOTE_URL } from "@/config/links";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -41,6 +41,17 @@ export function Footer() {
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   🎯 IELTSトレーニングアプリ
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={NOTE_URL} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  aria-label="noteへ移動（外部サイト）"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  📝 Note
                 </a>
               </li>
             </ul>
