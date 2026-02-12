@@ -122,6 +122,24 @@ a:focus-visible {
   @apply text-primary underline underline-offset-4 decoration-1 hover:decoration-2 transition-colors;
 }
 
+/* アフィリエイトリンクカード（URL単体行をカード化） */
+.prose .affiliate-card {
+  @apply block no-underline my-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-foreground transition-colors hover:border-primary/50 hover:bg-slate-100 dark:hover:bg-slate-800/50;
+  @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+}
+.prose .affiliate-card__inner {
+  @apply p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2;
+}
+.prose .affiliate-card__title {
+  @apply font-medium text-foreground;
+}
+.prose .affiliate-card__url {
+  @apply text-sm text-muted-foreground truncate;
+}
+.prose .affiliate-card__cta {
+  @apply text-sm text-primary font-medium shrink-0;
+}
+
 /* 引用のデザイン: 左側に太いアクセントライン */
 .prose blockquote {
   @apply border-l-4 border-primary pl-6 italic text-muted-foreground;

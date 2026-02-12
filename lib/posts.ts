@@ -5,6 +5,82 @@
 import fs from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
+import type { AnyNode } from "domhandler";
+
+// --- アフィリエイトリンクカード化 -----------------------------------------
+
+/** href がカード化対象のアフィリエイトドメインか（amzn.to, amazon.co.jp, amazon.com, www.amazon.*） */
+function isAffiliateTargetUrl(href: string): boolean {
+  if (!href || typeof href !== "string") return false;
+  try {
+    const u = new URL(href);
+    const host = u.hostname.toLowerCase().replace(/^www\./, "");
+    return (
+      host === "amzn.to" ||
+      host === "amazon.co.jp" ||
+      host === "amazon.com" ||
+      u.hostname.toLowerCase() === "www.amazon.co.jp" ||
+      u.hostname.toLowerCase() === "www.amazon.com"
+    );
+  } catch {
+    return false;
+  }
+}
+
+/** p 要素が「URL単体行」（a が1つだけ、a.text が href と同一）か */
+function isUrlSingleLine($: cheerio.CheerioAPI, $p: cheerio.Cheerio<AnyNode>): boolean {
+  const children = $p.children();
+  if (children.length !== 1) return false;
+  const child = children.eq(0);
+  const tagName = (child[0] as { tagName?: string } | undefined)?.tagName?.toLowerCase();
+  if (tagName !== "a") return false;
+  const href = child.attr("href")?.trim() ?? "";
+  const text = child.text().trim();
+  return href.length > 0 && text === href;
+}
+
+function escapeHtmlAttr(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/** 表示用の短い URL 文字列（amzn.to/xxx や amazon.co.jp 等） */
+function getShortUrlDisplay(href: string): string {
+  try {
+    const u = new URL(href);
+    if (u.hostname === "amzn.to") return `amzn.to${u.pathname}`;
+    return u.hostname.replace(/^www\./, "");
+  } catch {
+    return href;
+  }
+}
+
+/** アフィリエイトカードの HTML を生成 */
+function renderAffiliateCard(href: string): string {
+  const safeHref = escapeHtmlAttr(href);
+  const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
+  return `<a class="affiliate-card" href="${safeHref}" target="_blank" rel="noopener noreferrer" data-affiliate="amazon"><div class="affiliate-card__inner"><div class="affiliate-card__title">Amazonで商品を見る</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">開く</div></div></a>`;
+}
+
+/** contentHtml 内の URL単体行（対象ドメイン）をカード HTML に置換 */
+function replaceAffiliateLinksWithCards(contentHtml: string): string {
+  if (!contentHtml || typeof contentHtml !== "string") return contentHtml;
+  const $ = cheerio.load(contentHtml);
+  $("p.link").each((_, el) => {
+    const $p = $(el);
+    if (!isUrlSingleLine($, $p)) return;
+    const $a = $p.find("a").first();
+    const href = $a.attr("href")?.trim() ?? "";
+    if (!isAffiliateTargetUrl(href)) return;
+    $p.replaceWith(renderAffiliateCard(href));
+  });
+  return $("body").html() ?? contentHtml;
+}
+
+// --- Post 型・パース -----------------------------------------
 
 export interface Post {
   slug: string;
@@ -82,6 +158,8 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
 
     const firstImg = $("article img, .content img, body img").first();
     const hero = firstImg.attr("src") || undefined;
+
+    contentHtml = replaceAffiliateLinksWithCards(contentHtml);
 
     const plainText = $("body").text().replace(/\s+/g, " ").trim();
     const wordCount = plainText.length;
