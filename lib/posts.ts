@@ -274,6 +274,7 @@ export interface Post {
   categoryStep?: string;
   categorySkill?: string;
   order?: number;
+  audioSrc?: string;
 }
 
 /** public 配下の実ファイル存在を確認し、404 にならない hero src を返す（Node 環境のみ） */
@@ -282,6 +283,40 @@ export function resolveHeroSrc(hero: string | undefined): string {
   if (!hero || !hero.startsWith("/")) return fallback;
   const publicPath = path.join(process.cwd(), "public", hero.slice(1));
   return fs.existsSync(publicPath) ? hero : fallback;
+}
+
+const AUDIO_POSTS_DIR = path.join(process.cwd(), "public", "audio", "posts");
+
+function normalizeTitleLikeFileName(input: string): string {
+  return input
+    .replace(/\u3000/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** タイトルから対応する音声ファイルを探し、存在する場合は src を返す（ビルド時・Node のみ） */
+function resolveAudioSrcForTitle(title: string): string | undefined {
+  if (!title) return undefined;
+  try {
+    if (!fs.existsSync(AUDIO_POSTS_DIR)) return undefined;
+    const normalizedTitle = normalizeTitleLikeFileName(title);
+
+    const files = fs.readdirSync(AUDIO_POSTS_DIR);
+    for (const file of files) {
+      const ext = path.extname(file).toLowerCase();
+      if (ext !== ".m4a") continue;
+
+      const base = file.slice(0, file.length - ext.length);
+      const normalizedBase = normalizeTitleLikeFileName(base);
+
+      if (normalizedBase === normalizedTitle) {
+        return `/audio/posts/${encodeURIComponent(file)}`;
+      }
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
 }
 
 export interface PostAddition {
@@ -349,6 +384,12 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
 
     contentHtml = replaceAffiliateLinksWithCards(contentHtml);
 
+    const audioSrc = resolveAudioSrcForTitle(title);
+    if (audioSrc) {
+      const audioBlock = `<div class="post-audio" role="region" aria-label="音声"><audio controls preload="none" src="${audioSrc}"></audio></div>`;
+      contentHtml = audioBlock + contentHtml;
+    }
+
     const plainText = $("body").text().replace(/\s+/g, " ").trim();
     const wordCount = plainText.length;
     const readingMinutes = Math.max(1, Math.ceil(wordCount / 400));
@@ -365,6 +406,7 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
       content: contentHtml,
       readingTime,
       hero,
+      ...(audioSrc && { audioSrc }),
     };
   } catch {
     return null;
