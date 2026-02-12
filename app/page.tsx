@@ -1,12 +1,10 @@
-import Link from "next/link";
 import { HeroSection } from "@/components/hero-section";
 import { Sidebar } from "@/components/sidebar";
 import { TrainingAppCTA } from "@/components/training-app-cta";
+import { PostCard } from "@/components/post-card";
 import { FadeInHeading } from "@/components/anim/fade-in-heading";
 import { FadeInSection } from "@/components/anim/fade-in-section";
 import { getAllPosts } from "@/lib/posts";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 
 export default async function Home() {
   const posts = await getAllPosts();
@@ -70,26 +68,11 @@ export default async function Home() {
                     <p className="text-muted-foreground">記事がありません。</p>
                   </div>
                 ) : (
-                  <ul className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {latestPosts.map((post) => (
-                      <li key={post.slug}>
-                        <Link
-                          href={`/posts/${encodeURIComponent(post.slug)}/`}
-                          className="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors"
-                        >
-                          <h2 className="text-lg font-semibold">{post.title}</h2>
-                          {post.date && (
-                            <time
-                              dateTime={post.date}
-                              className="text-sm text-muted-foreground"
-                            >
-                              {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
-                            </time>
-                          )}
-                        </Link>
-                      </li>
+                      <PostCard key={post.slug} post={post} />
                     ))}
-                  </ul>
+                  </div>
                 )}
               </FadeInSection>
             </section>
@@ -108,26 +91,11 @@ export default async function Home() {
                     <p className="text-muted-foreground">記事がありません。</p>
                   </div>
                 ) : (
-                  <ul className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {popularPosts.map((post) => (
-                      <li key={post.slug}>
-                        <Link
-                          href={`/posts/${encodeURIComponent(post.slug)}/`}
-                          className="block p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors"
-                        >
-                          <h2 className="text-lg font-semibold">{post.title}</h2>
-                          {post.date && (
-                            <time
-                              dateTime={post.date}
-                              className="text-sm text-muted-foreground"
-                            >
-                              {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
-                            </time>
-                          )}
-                        </Link>
-                      </li>
+                      <PostCard key={post.slug} post={post} />
                     ))}
-                  </ul>
+                  </div>
                 )}
               </FadeInSection>
             </section>

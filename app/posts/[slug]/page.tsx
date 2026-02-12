@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
 import Link from "next/link";
 import { SITE_URL } from "@/config/site";
-import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import { getPostBySlug, getAllPosts, resolveHeroSrc } from "@/lib/posts";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -33,10 +33,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   const title = `${post.title} | IELTS対策`;
   const description = post.description || undefined;
 
-  const ogImage =
-    post.hero && post.hero.startsWith("/")
-      ? `${SITE_URL}${post.hero}`
-      : `${SITE_URL}/og-image.jpg`;
+  const ogImage = `${SITE_URL}${resolveHeroSrc(post.hero)}`;
 
   return {
     title,
