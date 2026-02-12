@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-02-12",
+  "site_url": "https://ieltsconsult.netlify.app",
+  "findings": [
+    {
+      "priority": "Blocker",
+      "category": "G",
+      "finding": "AdSense スクリプトが layout に含まれていない",
+      "evidence": "app/layout.tsx の head/body に adsbygoogle.js なし。rg \"adsbygoogle\" app でヒットなし。out/index.html の head 内にも adsbygoogle なし",
+      "impact": "審査時に AdSense がサイトを認識できない。サイト接続・広告表示の前提が満たされていない",
+      "recommendation": "head 内に adsbygoogle.js の script タグを追加。ads.txt の pub-4232725615106709 と一致させる",
+      "fix_scope": "app/layout.tsx（5 分）",
+      "files": [
+        { "file": "app/layout.tsx", "line": null }
+      ]
+    },
+    {
+      "priority": "Blocker",
+      "category": "B",
+      "finding": "タグ一覧が「準備中」のまま",
+      "evidence": "app/tags/page.tsx L38: 「タグ一覧を準備中です。しばらくお待ちください。」。ヘッダー・フッターから /tags への導線あり",
+      "impact": "サイトが未完成に見える。審査時に質の低いサイトと判断される可能性",
+      "recommendation": "タグ機能を実装するか、導線を削除するか、noindex にする",
+      "fix_scope": "app/tags/page.tsx, lib/posts.ts, components/header.tsx, components/footer.tsx（30 分〜）",
+      "files": [
+        { "file": "app/tags/page.tsx", "line": 38 },
+        { "file": "lib/posts.ts", "line": null },
+        { "file": "components/header.tsx", "line": null },
+        { "file": "components/footer.tsx", "line": null }
+      ]
+    },
+    {
+      "priority": "Blocker",
+      "category": "B",
+      "finding": "検索ページが「準備中」、入力欄 disabled",
+      "evidence": "app/search/page.tsx L36: disabled。L42: 「検索機能を準備中です。」。ヘッダー・フッターから /search への導線あり",
+      "impact": "サイトが未完成に見える。審査時に質の低いサイトと判断される可能性",
+      "recommendation": "検索機能を実装するか、導線を削除するか、noindex にする",
+      "fix_scope": "app/search/page.tsx, components/header.tsx, components/footer.tsx",
+      "files": [
+        { "file": "app/search/page.tsx", "line": 36 },
+        { "file": "app/search/page.tsx", "line": 42 },
+        { "file": "components/header.tsx", "line": null },
+        { "file": "components/footer.tsx", "line": null }
+      ]
+    },
+    {
+      "priority": "Blocker",
+      "category": "B",
+      "finding": "学習ステップ・スキル別ページが「準備中」",
+      "evidence": "app/steps/[step]/page.tsx L57: 「この学習ステップの記事は準備中です。」。app/skills/[skill]/page.tsx L65: 「このスキルの記事は準備中です。」。lib/categories.ts の getPostsByStep は空配列を返す",
+      "impact": "サイトが未完成に見える。審査時に質の低いサイトと判断される可能性",
+      "recommendation": "記事とステップ/スキルの紐付けを実装するか、noindex にする",
+      "fix_scope": "lib/categories.ts, app/steps/[step]/page.tsx, app/skills/[skill]/page.tsx",
+      "files": [
+        { "file": "app/steps/[step]/page.tsx", "line": 57 },
+        { "file": "app/skills/[skill]/page.tsx", "line": 65 },
+        { "file": "lib/categories.ts", "line": null }
+      ]
+    },
+    {
+      "priority": "Blocker",
+      "category": "A",
+      "finding": "About ページの虚偽記述（コメント機能）",
+      "evidence": "app/about/page.tsx L46: 「コメント機能による読者との交流：読者同士で意見交換や質問ができる環境を提供」。app/posts/[slug]/page.tsx に Giscus 等のコメントコンポーネントなし",
+      "impact": "虚偽表示の疑い。AdSense ポリシー違反のリスク",
+      "recommendation": "該当箇条書きを削除するか「準備中」に修正",
+      "fix_scope": "app/about/page.tsx（5 分）",
+      "files": [
+        { "file": "app/about/page.tsx", "line": 46 }
+      ]
+    },
+    {
+      "priority": "High",
+      "category": "A",
+      "finding": "About ページの h2 重複",
+      "evidence": "app/about/page.tsx L26, L38: 両方とも「コンテンツについて」",
+      "impact": "見出し構造が不自然。軽微だが品質イメージに影響",
+      "recommendation": "一方を「提供する価値」など別の見出しに変更",
+      "fix_scope": "app/about/page.tsx（2 分）",
+      "files": [
+        { "file": "app/about/page.tsx", "line": 26 },
+        { "file": "app/about/page.tsx", "line": 38 }
+      ]
+    },
+    {
+      "priority": "High",
+      "category": "A",
+      "finding": "問い合わせが Twitter のみ",
+      "evidence": "app/contact/page.tsx L26-28: Twitter（X）のみ。メールフォーム・メールアドレスなし",
+      "impact": "連絡先が不明と判断される可能性。一部審査では不十分とされる場合あり",
+      "recommendation": "運用方針に応じて、メールアドレスやフォームを追加",
+      "fix_scope": "app/contact/page.tsx",
+      "files": [
+        { "file": "app/contact/page.tsx", "line": 26 }
+      ]
+    },
+    {
+      "priority": "High",
+      "category": "B",
+      "finding": "記事 1 件が途中で切り捨て",
+      "evidence": "content/posts/IELTS7.0を取った後、実際にビジネスで使える英語力に変える方法.html L22: 「ステップ2：業界特有の専門用語を習得</h3></div>」で終わり、以降の本文なし",
+      "impact": "途中で終わった記事は薄いコンテンツとして評価されるリスク",
+      "recommendation": "元ソースから欠落部分を補完し、記事を完成させる",
+      "fix_scope": "content/posts/IELTS7.0を取った後、実際にビジネスで使える英語力に変える方法.html",
+      "files": [
+        { "file": "content/posts/IELTS7.0を取った後、実際にビジネスで使える英語力に変える方法.html", "line": 22 }
+      ]
+    },
+    {
+      "priority": "High",
+      "category": "B",
+      "finding": "記事間の内部リンクがほぼ 0",
+      "evidence": "rg \"ieltsconsult.netlify.app|/posts/\" content/posts でヒットなし。app/posts/[slug]/page.tsx に関連記事セクションなし。Breadcrumb のみ",
+      "impact": "サイト構造が弱く、質の低いサイトに見えるリスク。リンクジュースが流れにくい",
+      "recommendation": "関連記事セクション、次に読む記事、カテゴリ導線などを記事ページに追加",
+      "fix_scope": "app/posts/[slug]/page.tsx, lib/posts.ts（1 時間〜）",
+      "files": [
+        { "file": "app/posts/[slug]/page.tsx", "line": null },
+        { "file": "lib/posts.ts", "line": null }
+      ]
+    },
+    {
+      "priority": "Medium",
+      "category": "C",
+      "finding": "sitemap に未完成ページが含まれる",
+      "evidence": "public/sitemap.xml: /tags/, /search/, /steps/*, /skills/* が含まれる。これらは「準備中」表示",
+      "impact": "クローラーが未完成ページを発見する。サイト品質の誤解を招く可能性",
+      "recommendation": "未完成ページを sitemap から除外するか、noindex にした上で sitemap から除外した方が一貫",
+      "fix_scope": "scripts/generate-sitemap.ts",
+      "files": [
+        { "file": "scripts/generate-sitemap.ts", "line": null },
+        { "file": "public/sitemap.xml", "line": null }
+      ]
+    },
+    {
+      "priority": "Medium",
+      "category": "C",
+      "finding": "sitemap の URL エンコード（# 含む slug）の検証",
+      "evidence": "public/sitemap.xml L131 等: 「%25238」等の二重エンコード（【読む順#8】等）。lib/url.ts の encodePostSlugForPath で意図的に %23→%2523",
+      "impact": "静的パスとの整合性は要確認。404 になる可能性は低いが検証推奨（推定）",
+      "recommendation": "本番で該当 URL にアクセスし、200 で表示されることを確認",
+      "fix_scope": "検証のみ（修正不要の可能性あり）",
+      "files": [
+        { "file": "lib/url.ts", "line": null },
+        { "file": "public/sitemap.xml", "line": 131 }
+      ]
+    },
+    {
+      "priority": "Medium",
+      "category": "D",
+      "finding": "画像最適化が無効",
+      "evidence": "next.config.mjs L4-6: images: { unoptimized: true }",
+      "impact": "Core Web Vitals（LCP 等）に悪影響。転送量増",
+      "recommendation": "可能であれば unoptimized: false にし、Next/Image を使用。静的 export の制約を確認",
+      "fix_scope": "next.config.mjs, 画像参照箇所",
+      "files": [
+        { "file": "next.config.mjs", "line": 4 }
+      ]
+    },
+    {
+      "priority": "Medium",
+      "category": "D",
+      "finding": "TypeScript/ESLint エラーをビルドで無視",
+      "evidence": "next.config.mjs L12-19: ignoreBuildErrors: true、ignoreDuringBuilds: true",
+      "impact": "潜在的なバグを見逃す。品質管理上良くない",
+      "recommendation": "型エラー・Lint エラーを解消し、無視設定を外す",
+      "fix_scope": "next.config.mjs, 該当する ts/tsx ファイル",
+      "files": [
+        { "file": "next.config.mjs", "line": 12 },
+        { "file": "next.config.mjs", "line": 17 }
+      ]
+    },
+    {
+      "priority": "Medium",
+      "category": "G",
+      "finding": "GA4 未実装",
+      "evidence": "rg \"gtag\" app でヒットなし。README では環境変数と layout への追加が必要と記載",
+      "impact": "申請後の PV 計測・トラフィック分析ができない。運用上不便。申請必須とは断定しない",
+      "recommendation": "環境変数 NEXT_PUBLIC_GA_ID を設定し、layout に GA4 スクリプトを追加",
+      "fix_scope": "app/layout.tsx, Netlify 環境変数",
+      "files": [
+        { "file": "app/layout.tsx", "line": null }
+      ]
+    },
+    {
+      "priority": "Low",
+      "category": "F",
+      "finding": "Netlify に Cache-Control 未指定",
+      "evidence": "netlify.toml L17-23: [[headers]] に X-Frame-Options 等のみ。Cache-Control なし",
+      "impact": "キャッシュ効率が最適化されていない可能性",
+      "recommendation": "静的アセットに Cache-Control を追加するルールを検討",
+      "fix_scope": "netlify.toml",
+      "files": [
+        { "file": "netlify.toml", "line": 17 }
+      ]
+    },
+    {
+      "priority": "Low",
+      "category": "E",
+      "finding": "誤クリック誘導のリスク確認",
+      "evidence": "アフィリエイト表記ページ（app/affiliate-disclosure/page.tsx）で「誤クリックを誘導しないデザイン」と明記。該当文言は未検出（推定）",
+      "impact": "現状問題なし。将来の運用で注意",
+      "recommendation": "広告周りの文言・配置を定期的に確認",
+      "fix_scope": "運用ガイド",
+      "files": [
+        { "file": "app/affiliate-disclosure/page.tsx", "line": null }
+      ]
+    }
+  ],
+  "commands_run": [
+    "npm run build (成功)",
+    "npm run lint (成功、警告 2 件)",
+    "node -e \"...\" (記事数: 24)",
+    "rg \"準備中\" app (6 件)",
+    "rg \"adsbygoogle\" app (0 件)",
+    "rg \"gtag\" app (0 件)",
+    "rg \"ieltsconsult.netlify.app|/posts/\" content/posts (0 件)"
+  ]
+}
