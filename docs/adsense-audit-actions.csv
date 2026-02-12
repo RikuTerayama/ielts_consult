@@ -1,0 +1,9 @@
+priority,area,issue,file,fix_summary,verify
+P0,AdSense,AdSenseスクリプトがlayoutに含まれていない,app/layout.tsx,"<head>に adsbygoogle.js の script タグを追加（client=ca-pub-4232725615106709）","out/index.html の head に script が含まれることを確認"
+P0,サイト基盤,タグページが準備中表示,app/tags/page.tsx,タグ機能を実装するか導線を削除/noindex,本番 /tags/ で準備中表示が解消されているか確認
+P0,サイト基盤,Aboutでコメント機能を謳っているが未実装,app/about/page.tsx,コメント機能の記述を削除または「準備中」に修正,本番 /about/ で該当記述が修正されているか確認
+P1,OG画像,og-image.jpgが存在しない,public/og-image.jpg,1200x630 の OG 用画像を配置,https://ieltsconsult.netlify.app/og-image.jpg が 200 で返るか確認
+P1,コンテンツ,記事間の内部リンクが0,app/posts/[slug]/page.tsx + lib,関連記事セクションや nextSteps を追加,記事ページに同一ドメインへのリンクが表示されているか確認
+P2,サイト基盤,Aboutのh2重複,app/about/page.tsx,「コンテンツについて」の2つ目を別見出しに変更,目視で見出し重複が解消されているか確認
+P2,サイト基盤,ContactがTwitterのみ,app/contact/page.tsx,メールやフォームなどの連絡先を追加（任意）,問い合わせ導線が明確か確認
+P2,コンテンツ,過去の有用性の低いコンテンツ指摘,content/posts/*.html + 記事構成,独自分析・解説の追加、説明文の重複解消,コンテンツの質が向上しているか人手で確認
