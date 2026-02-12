@@ -28,6 +28,7 @@
     "assets:delete-unused": "node scripts/delete-unused-assets.mjs",
     "assets:delete-unused:apply": "node scripts/delete-unused-assets.mjs --apply",
     "affiliate:missing-meta": "tsx scripts/list-missing-affiliate-meta.ts",
+    "affiliate:incomplete-meta": "tsx scripts/list-incomplete-affiliate-meta.ts",
     "affiliate:sync-meta": "tsx scripts/sync-affiliate-meta.ts"
   },
   "dependencies": {

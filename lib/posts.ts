@@ -136,8 +136,9 @@ function renderRichAffiliateCard(href: string, meta: AffiliateMetaItem): string 
   const subtitle = meta.subtitle ? escapeHtml(meta.subtitle) : "";
   const cta = "Amazonで見る";
 
-  const mediaHtml = meta.image
-    ? `<img src="${escapeHtmlAttr(meta.image)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
+  const imgSrc = meta.image && meta.image.trim();
+  const mediaHtml = imgSrc
+    ? `<img src="${escapeHtmlAttr(imgSrc)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
     : '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
 
   return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
@@ -157,10 +158,10 @@ function renderMinimalAffiliateCard(href: string): string {
   return `<a class="affiliate-card affiliate-card--minimal" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
-/** アフィリエイトカードの HTML を生成（メタあり: リッチ、なし: ミニマル） */
+/** アフィリエイトカードの HTML を生成（title あり: リッチ、なし/空: ミニマル） */
 function renderAffiliateCard(href: string): string {
   const meta = getAffiliateMeta(href);
-  if (meta) return renderRichAffiliateCard(href, meta);
+  if (meta && meta.title && meta.title.trim()) return renderRichAffiliateCard(href, meta);
   return renderMinimalAffiliateCard(href);
 }
 
