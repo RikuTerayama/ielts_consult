@@ -4,7 +4,8 @@
 
 import fs from "fs";
 import path from "path";
-import * as cheerio from "cheerio";
+import { load } from "cheerio/slim";
+import type { CheerioAPI, Cheerio } from "cheerio/slim";
 import type { AnyNode } from "domhandler";
 
 // --- アフィリエイトリンクカード化 -----------------------------------------
@@ -28,7 +29,7 @@ function isAffiliateTargetUrl(href: string): boolean {
 }
 
 /** p 要素が「URL単体行」（a が1つだけ、a.text が href と同一）か */
-function isUrlSingleLine($: cheerio.CheerioAPI, $p: cheerio.Cheerio<AnyNode>): boolean {
+function isUrlSingleLine($: CheerioAPI, $p: Cheerio<AnyNode>): boolean {
   const children = $p.children();
   if (children.length !== 1) return false;
   const child = children.eq(0);
@@ -68,7 +69,7 @@ function renderAffiliateCard(href: string): string {
 /** contentHtml 内の URL単体行（対象ドメイン）をカード HTML に置換 */
 function replaceAffiliateLinksWithCards(contentHtml: string): string {
   if (!contentHtml || typeof contentHtml !== "string") return contentHtml;
-  const $ = cheerio.load(contentHtml);
+  const $ = load(contentHtml);
   $("p.link").each((_, el) => {
     const $p = $(el);
     if (!isUrlSingleLine($, $p)) return;
@@ -116,7 +117,7 @@ function getSlugFromFilename(filename: string): string {
 function parseHtmlPost(filePath: string, slug: string): Post | null {
   try {
     const raw = fs.readFileSync(filePath, "utf-8");
-    const $ = cheerio.load(raw);
+    const $ = load(raw);
 
     const title =
       $("title").first().text().trim() ||
