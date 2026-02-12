@@ -104,27 +104,39 @@ function getShortUrlDisplay(href: string): string {
   }
 }
 
+/** 外部リンクアイコン（インライン SVG） */
+const EXTERNAL_LINK_ICON =
+  '<span class="affiliate-card__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>';
+
 /** リッチカード（メタあり）の HTML を生成 */
 function renderRichAffiliateCard(href: string, meta: AffiliateMetaItem): string {
   const safeHref = escapeHtmlAttr(href);
   const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
   const label = escapeHtml(meta.label ?? DEFAULT_LABEL);
   const title = escapeHtml(meta.title);
+  const altText = escapeHtmlAttr(meta.title || "");
   const subtitle = meta.subtitle ? escapeHtml(meta.subtitle) : "";
   const cta = "Amazonで見る";
 
   const mediaHtml = meta.image
-    ? `<img src="${escapeHtmlAttr(meta.image)}" alt="" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
+    ? `<img src="${escapeHtmlAttr(meta.image)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
     : '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
 
-  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}</div></div></a>`;
+  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
 /** ミニマルカード（メタなし）の HTML を生成 */
 function renderMinimalAffiliateCard(href: string): string {
   const safeHref = escapeHtmlAttr(href);
   const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
-  return `<a class="affiliate-card" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__inner"><div class="affiliate-card__label">${DEFAULT_LABEL}</div><div class="affiliate-card__title">Amazonで商品を見る</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">開く</div></div></a>`;
+  const label = escapeHtml(DEFAULT_LABEL);
+  const title = "Amazonで商品を見る";
+  const cta = "開く";
+
+  const mediaHtml =
+    '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
+
+  return `<a class="affiliate-card" href="${safeHref}" target="_blank" rel="noopener noreferrer sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
 /** アフィリエイトカードの HTML を生成（メタあり: リッチ、なし: ミニマル） */

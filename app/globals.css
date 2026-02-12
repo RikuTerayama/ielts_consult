@@ -124,60 +124,54 @@ a:focus-visible {
 
 /* アフィリエイトリンクカード（URL単体行をカード化） */
 .prose .affiliate-card {
-  @apply block no-underline my-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-foreground transition-colors hover:border-primary/50 hover:bg-slate-100 dark:hover:bg-slate-800/50;
+  @apply block no-underline my-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-foreground;
+  @apply transition-all duration-200 hover:border-primary/50 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:shadow-md;
   @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
-  @apply relative;
+  @apply relative flex flex-col sm:flex-row overflow-hidden min-h-[100px];
 }
 
-/* ミニマルカード（メタなし） */
-.prose .affiliate-card:not(.affiliate-card--rich) .affiliate-card__inner {
-  @apply p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2;
-}
-.prose .affiliate-card:not(.affiliate-card--rich) .affiliate-card__label {
-  @apply absolute top-2 right-2 text-[10px] uppercase tracking-wider text-muted-foreground/70;
-}
-
-/* リッチカード（メタあり） */
-.prose .affiliate-card--rich {
-  @apply flex flex-col sm:flex-row overflow-hidden;
-}
-.prose .affiliate-card--rich .affiliate-card__label {
+/* 共通: ラベル */
+.prose .affiliate-card .affiliate-card__label {
   @apply absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] uppercase tracking-wider rounded bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-400;
 }
-.prose .affiliate-card--rich .affiliate-card__media {
-  @apply shrink-0 w-[120px] h-[160px] sm:w-[100px] sm:h-[133px] bg-slate-200 dark:bg-slate-700 rounded-t-xl sm:rounded-t-none sm:rounded-l-xl overflow-hidden;
+
+/* 共通: メディア枠（固定幅・CLS対策） */
+.prose .affiliate-card .affiliate-card__media {
+  @apply shrink-0 w-[80px] sm:w-[100px] aspect-[3/4] sm:aspect-[3/4] bg-slate-200 dark:bg-slate-700 rounded-t-xl sm:rounded-t-none sm:rounded-l-xl overflow-hidden;
 }
-.prose .affiliate-card--rich .affiliate-card__img {
+.prose .affiliate-card .affiliate-card__img {
   @apply w-full h-full object-cover;
 }
-.prose .affiliate-card--rich .affiliate-card__placeholder {
+.prose .affiliate-card .affiliate-card__placeholder {
   @apply w-full h-full flex items-center justify-center bg-slate-200 dark:bg-slate-700 text-2xl text-slate-400 dark:text-slate-500;
 }
-.prose .affiliate-card--rich .affiliate-card__body {
-  @apply flex-1 p-4 flex flex-col gap-1 min-w-0;
-}
-.prose .affiliate-card--rich .affiliate-card__title {
-  @apply font-medium text-foreground line-clamp-2;
-}
-.prose .affiliate-card--rich .affiliate-card__subtitle {
-  @apply text-sm text-muted-foreground line-clamp-1;
-}
-.prose .affiliate-card--rich .affiliate-card__url {
-  @apply text-xs text-muted-foreground/80 truncate mt-1;
-}
-.prose .affiliate-card--rich .affiliate-card__cta {
-  @apply text-sm text-primary font-medium mt-auto pt-2 self-end;
+
+/* 共通: メディア枠（リッチは幅広め） */
+.prose .affiliate-card--rich .affiliate-card__media {
+  @apply w-[100px] sm:w-[120px];
 }
 
-/* 共通（ミニマル） */
-.prose .affiliate-card:not(.affiliate-card--rich) .affiliate-card__title {
-  @apply font-medium text-foreground;
+/* 共通: ボディ */
+.prose .affiliate-card .affiliate-card__body {
+  @apply flex-1 p-4 flex flex-col gap-1 min-w-0 justify-between;
 }
-.prose .affiliate-card__url {
-  @apply text-sm text-muted-foreground truncate;
+.prose .affiliate-card .affiliate-card__title {
+  @apply font-medium text-foreground line-clamp-2;
 }
-.prose .affiliate-card:not(.affiliate-card--rich) .affiliate-card__cta {
-  @apply text-sm text-primary font-medium shrink-0;
+.prose .affiliate-card .affiliate-card__subtitle {
+  @apply text-sm text-muted-foreground line-clamp-1;
+}
+.prose .affiliate-card .affiliate-card__url {
+  @apply text-xs text-muted-foreground/80 truncate;
+}
+.prose .affiliate-card .affiliate-card__cta {
+  @apply text-sm text-primary font-medium mt-2 flex items-center gap-1.5 w-fit self-end;
+}
+.prose .affiliate-card .affiliate-card__icon {
+  @apply inline-flex shrink-0 text-current;
+}
+.prose .affiliate-card .affiliate-card__icon svg {
+  @apply shrink-0;
 }
 
 /* 引用のデザイン: 左側に太いアクセントライン */
