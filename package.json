@@ -26,7 +26,8 @@
     "audit:assets": "tsx scripts/audit-assets.ts",
     "audit:hero": "tsx scripts/audit-hero-public.ts",
     "assets:delete-unused": "node scripts/delete-unused-assets.mjs",
-    "assets:delete-unused:apply": "node scripts/delete-unused-assets.mjs --apply"
+    "assets:delete-unused:apply": "node scripts/delete-unused-assets.mjs --apply",
+    "affiliate:missing-meta": "tsx scripts/list-missing-affiliate-meta.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
