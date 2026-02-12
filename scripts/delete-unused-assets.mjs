@@ -17,6 +17,7 @@ import path from 'path';
 
 const AUDIT_FILE = path.join(process.cwd(), 'audit-unused-assets.txt');
 const ASSETS_DIR = path.join(process.cwd(), 'assets');
+const PUBLIC_ASSETS_DIR = path.join(process.cwd(), 'public', 'assets');
 const REPORT_FILE = path.join(process.cwd(), 'delete-unused-assets-report.md');
 
 const ALLOWED_EXTENSIONS = new Set([
@@ -87,6 +88,10 @@ function main() {
     if (apply) {
       try {
         fs.unlinkSync(filePath);
+        const publicPath = path.join(PUBLIC_ASSETS_DIR, fileName);
+        if (fs.existsSync(publicPath)) {
+          fs.unlinkSync(publicPath);
+        }
         deleted.push({ file: fileName, size });
         totalBytes += size;
       } catch (err) {
