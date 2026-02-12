@@ -9,6 +9,7 @@ import type { CheerioAPI, Cheerio } from "cheerio/slim";
 import type { AnyNode } from "domhandler";
 
 import affiliateMeta from "@/content/affiliate-meta.json";
+import { inferLearningStep, inferSkill } from "@/config/categories";
 
 // --- アフィリエイトメタ（リッチカード用） -----------------------------------------
 
@@ -288,6 +289,36 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
   if (!fs.existsSync(filePath)) return null;
   return parseHtmlPost(filePath, decodedSlug);
+}
+
+/** 関連記事を取得（タグ一致 → step/skill 一致 → 新着の順で最大4件） */
+export function getRelatedPosts(currentSlug: string, allPosts: Post[], limit = 4): Post[] {
+  const others = allPosts.filter((p) => p.slug !== currentSlug);
+  if (others.length === 0) return [];
+
+  const current = allPosts.find((p) => p.slug === currentSlug);
+  const step = current ? inferLearningStep(current.title, current.tags) : null;
+  const skill = current ? inferSkill(current.title, current.tags) : null;
+
+  const byTag = others.filter((p) =>
+    current?.tags.some((t) => p.tags.includes(t))
+  );
+  const byStepOrSkill = others.filter((p) => {
+    const pStep = inferLearningStep(p.title, p.tags);
+    const pSkill = inferSkill(p.title, p.tags);
+    return (step && pStep === step) || (skill && pSkill === skill);
+  });
+  const byDate = others;
+
+  const seen = new Set<string>();
+  const result: Post[] = [];
+  for (const post of [...byTag, ...byStepOrSkill, ...byDate]) {
+    if (seen.has(post.slug)) continue;
+    seen.add(post.slug);
+    result.push(post);
+    if (result.length >= limit) break;
+  }
+  return result;
 }
 
 export async function getPostAddition(_slug: string): Promise<PostAddition | null> {

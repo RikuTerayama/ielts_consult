@@ -24,16 +24,6 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tags" className="text-muted-foreground hover:text-primary transition-colors">
-                  タグ一覧
-                </Link>
-              </li>
-              <li>
-                <Link href="/search" className="text-muted-foreground hover:text-primary transition-colors">
-                  記事検索
-                </Link>
-              </li>
-              <li>
                 <a 
                   href={TRAINING_APP_URL} 
                   target="_blank" 

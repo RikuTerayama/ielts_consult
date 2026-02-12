@@ -5,6 +5,13 @@ import { getAllPosts } from '../lib/posts';
 import { getAllSteps, getAllSkills } from '../lib/categories';
 import { encodePostSlugForPath } from '../lib/url';
 
+/** 審査前は準備中のため sitemap から除外するパス（将来復活時に削除） */
+const SITEMAP_EXCLUDE_PREFIXES = ['/tags', '/search', '/steps', '/skills'];
+
+function shouldIncludeInSitemap(path: string): boolean {
+  return !SITEMAP_EXCLUDE_PREFIXES.some((prefix) => path === prefix || path.startsWith(prefix + '/'));
+}
+
 async function generateSitemap() {
   console.log('🗺️  サイトマップを生成しています...');
 
@@ -17,8 +24,6 @@ async function generateSitemap() {
   const staticPages = [
     '',
     '/posts',
-    '/tags',
-    '/search',
     '/about',
     '/about-author',
     '/editorial-policy',
@@ -27,11 +32,10 @@ async function generateSitemap() {
     '/privacy',
     '/disclaimer',
     '/affiliate-disclosure',
-    '/steps',
-  ];
+  ].filter(shouldIncludeInSitemap);
 
-  const stepPages = steps.map((step) => `/steps/${step.id}`);
-  const skillPages = skills.map((skill) => `/skills/${skill.id}`);
+  const stepPages = steps.map((step) => `/steps/${step.id}`).filter(shouldIncludeInSitemap);
+  const skillPages = skills.map((skill) => `/skills/${skill.id}`).filter(shouldIncludeInSitemap);
 
   const postUrls = posts
     .map(

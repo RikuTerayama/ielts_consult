@@ -22,6 +22,7 @@
     "list:note-links": "tsx scripts/list-note-links.ts",
     "audit:adsense": "tsx scripts/audit-adsense-readiness.ts",
     "convert:single": "tsx scripts/convert-single-item-to-html.ts",
+    "repair:posts": "tsx scripts/repair-truncated-posts.ts",
     "audit:assets": "tsx scripts/audit-assets.ts",
     "audit:hero": "tsx scripts/audit-hero-public.ts",
     "assets:delete-unused": "node scripts/delete-unused-assets.mjs",

@@ -35,7 +35,7 @@ export default function AboutPage() {
           <li>効率的な学習方法の提案</li>
         </ul>
 
-        <h2>コンテンツについて</h2>
+        <h2>提供する価値</h2>
         <p>
           当サイトでは、以下の価値を提供しています：
         </p>
@@ -44,7 +44,6 @@ export default function AboutPage() {
           <li><strong>ビジネス英語の実践例</strong>：外資系コンサルで実際に使える英語表現</li>
           <li><strong>検索性を高めるためのタグ付けとカテゴリ分類</strong>：学習ステップやスキル別に記事を整理</li>
           <li><strong>関連記事の推薦機能</strong>：関連する記事を自動的に推薦</li>
-          <li><strong>コメント機能による読者との交流</strong>：読者同士で意見交換や質問ができる環境を提供</li>
         </ul>
 
         <h2>運営者について</h2>
