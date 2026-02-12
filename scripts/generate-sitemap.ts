@@ -3,6 +3,7 @@ import path from 'path';
 import { SITE_URL } from '../config/site';
 import { getAllPosts } from '../lib/posts';
 import { getAllSteps, getAllSkills } from '../lib/categories';
+import { encodePostSlugForPath } from '../lib/url';
 
 async function generateSitemap() {
   console.log('🗺️  サイトマップを生成しています...');
@@ -35,7 +36,7 @@ async function generateSitemap() {
   const postUrls = posts
     .map(
       (post) => `  <url>
-    <loc>${SITE_URL}/posts/${encodeURIComponent(post.slug)}/</loc>
+    <loc>${SITE_URL}/posts/${encodePostSlugForPath(post.slug)}/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`
