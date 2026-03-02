@@ -9,3 +9,11 @@ https://www.ieltsconsult.netlify.app/* https://ieltsconsult.netlify.app/:splat 3
 /index.html / 301
 /*/index.html /:splat 301
 
+# 存在しない記事: 404 を返す（ソフト404根絶）
+/posts/n2cd779121111 /404.html 404
+/posts/n2cd779121111/ /404.html 404
+
+# タグ大文字小文字正規化: ielts -> IELTS
+/tags/ielts /tags/IELTS/ 301
+/tags/ielts/ /tags/IELTS/ 301
+

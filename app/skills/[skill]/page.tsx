@@ -1,6 +1,7 @@
 import { getAllSkills, getPostsBySkill } from "@/lib/categories";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { SITE_URL } from "@/config/site";
 import { SkillId } from "@/config/categories";
 
 type SkillPageProps = {
@@ -31,9 +32,12 @@ export async function generateMetadata({ params }: SkillPageProps): Promise<Meta
   return {
     title: `${skill.label} | 技能別`,
     description: skill.description,
+    alternates: {
+      canonical: `${SITE_URL}/skills/${params.skill}/`,
+    },
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
   };
 }
