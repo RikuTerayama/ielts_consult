@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
     images: [
       {
-        url: "/og-image.png",
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "IELTS対策｜外資系コンサルの英語力底上げ",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "IELTS対策｜外資系コンサルの英語力底上げ",
     description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
-    images: ["/og-image.png"],
+    images: [`${SITE_URL}/og-image.png`],
   },
   robots: {
     index: true,

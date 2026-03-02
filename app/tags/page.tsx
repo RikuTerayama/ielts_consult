@@ -9,8 +9,8 @@ export const metadata: Metadata = {
     canonical: "https://ieltsconsult.netlify.app/tags/",
   },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
 };
 

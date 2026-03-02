@@ -1,8 +1,4 @@
-# SPA用のフォールバック（静的ファイルが存在しない場合のみ）
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# SPA fallback を撤廃し、存在しないパスは 404.html を返す（ソフト404根絶）
 
 [build]
   command = "pnpm run build"
@@ -20,3 +16,8 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/rss.xml"
+  [headers.values]
+    Content-Type = "application/rss+xml"

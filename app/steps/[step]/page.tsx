@@ -2,6 +2,7 @@ import { getAllSteps } from "@/lib/categories";
 import { getPostsByStep } from "@/lib/categories";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { SITE_URL } from "@/config/site";
 import { LearningStepId } from "@/config/categories";
 
 type StepPageProps = {
@@ -32,9 +33,12 @@ export async function generateMetadata({ params }: StepPageProps): Promise<Metad
   return {
     title: `${step.label} | 学習ステップ`,
     description: step.description,
+    alternates: {
+      canonical: `${SITE_URL}/steps/${params.step}/`,
+    },
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
   };
 }

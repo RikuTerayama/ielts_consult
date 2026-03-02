@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PostCard } from "@/components/post-card";
+import { SITE_URL } from "@/config/site";
 import { getPostsByTag, getAllTags } from "@/lib/posts";
 
 type TagPageProps = {
@@ -22,12 +23,16 @@ export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const tag = decodeURIComponent(params.tag);
+  const canonicalUrl = `${SITE_URL}/tags/${encodeURIComponent(tag)}/`;
   return {
     title: `Tag: ${tag}`,
     description: `タグ「${tag}」の記事一覧`,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
   };
 }
