@@ -69,7 +69,7 @@ await inBatches(pageRoutes, 8, async (route) => {
     const pathname = new URL(canonical).pathname;
     const onceDecoded = decodeURIComponent(pathname);
     const twiceDecoded = decodeURIComponent(onceDecoded);
-    if (onceDecoded.replace(/%23/gi, "#") !== twiceDecoded) {
+    if (onceDecoded !== twiceDecoded) {
       doubleEncodedCanonicals += 1;
     }
   } catch {

@@ -60,7 +60,7 @@ for (const htmlPath of htmlFiles) {
     const pathname = new URL(canonical).pathname;
     const onceDecoded = decodeURIComponent(pathname);
     const twiceDecoded = decodeURIComponent(onceDecoded);
-    if (onceDecoded.replace(/%23/gi, "#") !== twiceDecoded) {
+    if (onceDecoded !== twiceDecoded) {
       doubleEncodedCanonicals += 1;
     }
   } catch {
@@ -85,14 +85,13 @@ for (const htmlPath of htmlFiles) {
   }
 }
 
-const encodePostSlugForPath = (slug) =>
-  encodeURIComponent(slug).replace(/%23/g, "%2523");
+const encodePostSlugForPath = (slug) => encodeURIComponent(slug);
 const postSlugByOutputDirectory = new Map(
   fs
     .readdirSync(path.join(repoRoot, "content", "posts"))
     .filter((name) => name.endsWith(".html"))
     .map((name) => name.slice(0, -5))
-    .map((slug) => [slug.replace(/#/g, "%23"), slug])
+    .map((slug) => [slug, slug])
 );
 const postOutputFiles = htmlFiles.filter((file) => {
   const relative = path.relative(path.join(outDir, "posts"), file);
