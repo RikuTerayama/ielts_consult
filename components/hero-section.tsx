@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { TRAINING_APP_URL } from "@/config/links";
 import { FadeIn } from "@/components/anim/fade-in";
 
 export function HeroSection() {
@@ -25,18 +24,9 @@ export function HeroSection() {
               </p>
             </FadeIn>
             <FadeIn delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+              <div className="mt-8">
                 <Button asChild size="lg" className="rounded-xl">
-                  <a 
-                    href={TRAINING_APP_URL} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    🎯 IELTSトレーニングアプリを始める
-                  </a>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="rounded-xl">
-                  <Link href="/posts">記事を読む</Link>
+                  <Link href="/posts">最新記事を読む</Link>
                 </Button>
               </div>
             </FadeIn>

@@ -127,7 +127,7 @@ a:focus-visible {
   @apply block no-underline my-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900/80 text-foreground;
   @apply transition-all duration-200 ease-out;
   @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
-  @apply relative flex flex-col sm:flex-row overflow-hidden min-h-[112px] sm:min-h-[120px];
+  @apply relative flex flex-row overflow-hidden min-h-[120px];
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
 }
 .prose .affiliate-card:hover,
@@ -151,23 +151,23 @@ a:focus-visible {
 
 /* 共通: メディア枠（3:4・CLS対策・画像なしでも同サイズ） */
 .prose .affiliate-card .affiliate-card__media {
-  @apply shrink-0 w-[84px] sm:w-[100px] aspect-[3/4] bg-slate-200 dark:bg-slate-700 rounded-t-xl sm:rounded-t-none sm:rounded-l-xl overflow-hidden;
+  @apply shrink-0 w-[92px] sm:w-[108px] bg-slate-100 dark:bg-slate-700 rounded-l-xl overflow-hidden;
 }
 .prose .affiliate-card .affiliate-card__img {
   @apply w-full h-full object-cover;
 }
 .prose .affiliate-card .affiliate-card__placeholder {
-  @apply w-full h-full flex items-center justify-center bg-slate-200 dark:bg-slate-700 text-2xl text-slate-400 dark:text-slate-500;
+  @apply w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-100 dark:from-slate-700 dark:to-slate-800 text-xs font-semibold tracking-wide text-orange-700 dark:text-orange-300;
 }
 
 /* リッチ: メディア幅を広め */
 .prose .affiliate-card--rich .affiliate-card__media {
-  @apply w-[96px] sm:w-[120px];
+  @apply w-[100px] sm:w-[120px];
 }
 
 /* 共通: ボディ（モバイルタップ領域確保） */
 .prose .affiliate-card .affiliate-card__body {
-  @apply flex-1 p-4 sm:p-5 flex flex-col gap-1.5 min-w-0 justify-between min-h-[72px];
+  @apply flex-1 p-4 sm:p-5 flex flex-col gap-1.5 min-w-0 justify-between;
 }
 /* タイポ階層: title 強・subtitle 控えめ・url さらに控えめ */
 .prose .affiliate-card .affiliate-card__title {
@@ -180,7 +180,7 @@ a:focus-visible {
   @apply text-[11px] sm:text-xs text-muted-foreground/70 dark:text-muted-foreground/80 truncate;
 }
 .prose .affiliate-card .affiliate-card__cta {
-  @apply text-sm text-primary font-medium mt-auto pt-2 flex items-center gap-1.5 w-fit self-end;
+  @apply text-xs sm:text-sm bg-primary text-primary-foreground font-medium mt-2 px-3 py-2 rounded-lg flex items-center gap-1.5 w-fit self-end;
 }
 .prose .affiliate-card .affiliate-card__icon {
   @apply inline-flex shrink-0 text-current;
@@ -226,7 +226,11 @@ a:focus-visible {
 }
 
 .prose figure img {
-  @apply mx-auto;
+  @apply mx-auto w-full h-auto;
+}
+
+.prose figcaption {
+  @apply mt-2 text-sm text-muted-foreground text-center;
 }
 
 /* 広告スロット: 影を排除、繊細な境界線 */

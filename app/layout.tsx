@@ -111,18 +111,6 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "WebPage",
-                "url": SITE_URL,
-                "name": "IELTS対策｜外資系コンサルの英語力底上げ",
-                "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
-              }),
-            }}
-          />
         </ThemeProvider>
       </body>
     </html>

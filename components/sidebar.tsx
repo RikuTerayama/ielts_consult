@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrainingAppCTA } from "@/components/training-app-cta";
 import type { Post } from "@/lib/posts";
 import type { TagWithCount } from "@/lib/posts";
 import { encodePostSlugForPath } from "@/lib/url";
@@ -13,8 +12,6 @@ interface SidebarProps {
 export function Sidebar({ latestPosts = [], popularTags = [] }: SidebarProps) {
   return (
     <div className="space-y-6">
-      <TrainingAppCTA variant="sidebar" />
-
       <Card>
         <CardHeader>
           <CardTitle>新着記事</CardTitle>

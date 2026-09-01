@@ -21,6 +21,7 @@
 
 import fs from 'fs-extra';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { XMLParser } from 'fast-xml-parser';
 import { load } from 'cheerio/slim';
 import type { CheerioOptions } from 'cheerio/slim';
@@ -35,6 +36,7 @@ const ALLOWED_TAGS = new Set([
   'p',
   'h2',
   'h3',
+  'h4',
   'ul',
   'ol',
   'li',
@@ -49,18 +51,75 @@ const ALLOWED_TAGS = new Set([
   'blockquote',
 ]);
 
+interface SanitizeContentOptions {
+  /** 画像・音声・添付ファイルを除き、本文テキストだけを残す */
+  textOnly?: boolean;
+}
+
 function extractText(html: string): string {
   const $ = load(html, DECODE_ENTITIES_FALSE);
   return $.text().trim();
 }
 
-export function sanitizeContent(html: string, articleTitle: string): string {
+function decodeTextEntities(value: string): string {
+  if (!value) return value;
+  let decoded = value;
+  for (let i = 0; i < 3; i++) {
+    const $ = load(`<span id="__decode-text">${decoded}</span>`);
+    const next = $('#__decode-text').text();
+    if (next === decoded) break;
+    decoded = next;
+  }
+  return decoded;
+}
+
+export function sanitizeContent(
+  html: string,
+  articleTitle: string,
+  options: SanitizeContentOptions = {}
+): string {
   // b を strong に統一（許可タグに strong があるため）
   let normalized = html.replace(/<b\b/gi, '<strong').replace(/<\/b>/gi, '</strong>');
   // フラグメントの場合 cheerio が body を生成しないため、div でラップ
   const wrapped = `<div id="__sanitize-root">${normalized}</div>`;
   const $ = load(wrapped, DECODE_ENTITIES_FALSE);
   const $root = $('#__sanitize-root');
+
+  if (options.textOnly) {
+    // 画像を含む figure はキャプションを含めて除去する。
+    $root.find('figure').each((_, el) => {
+      const $el = $(el);
+      if ($el.find('img, picture').length > 0) $el.remove();
+    });
+    $root.find('img, picture, audio, video, source').remove();
+
+    // note export の音声ブロックは「タイトル + /assets/*.m4a」の div。
+    // 音声はブロックごと、その他のローカル添付はリンクだけを除去する。
+    $root.find('a').each((_, el) => {
+      const $el = $(el);
+      const href = $el.attr('href') || '';
+      if (!/^\/assets\//i.test(href)) return;
+
+      if (/\.(?:m4a|mp3|wav|aac)(?:[?#].*)?$/i.test(href)) {
+        const $container = $el.closest('div');
+        if ($container.length > 0 && !$container.is($root)) {
+          $container.remove();
+          return;
+        }
+      }
+      $el.remove();
+    });
+
+    // note 固有の意味を持たない wrapper は本文要素だけ残す。
+    $root.find('div').each((_, el) => {
+      const $el = $(el);
+      $el.replaceWith($el.html() || '');
+    });
+    $root.find('p, figure').each((_, el) => {
+      const $el = $(el);
+      if (!$el.text().trim() && $el.children().length === 0) $el.remove();
+    });
+  }
 
   // 許可タグ以外はテキストのみ残してタグを剥がす（内側から処理するため逆順）
   const SKIP_TAGS = new Set(['html', 'head', 'body', 'div']);
@@ -134,15 +193,13 @@ export function sanitizeContent(html: string, articleTitle: string): string {
   // p の中にリンク URL だけがある場合は class="link" を付ける
   $root.find('p').each((_, el) => {
     const $el = $(el);
-    const html = $el.html() || '';
-    const $inner = load(html, DECODE_ENTITIES_FALSE);
-    const children = $inner('body').children();
+    const children = $el.children();
     if (children.length === 1) {
       const child = children.eq(0);
       const childTag = (child[0] as Element)?.tagName?.toLowerCase();
       if (childTag === 'a') {
         const href = child.attr('href') || '';
-        const text = extractText(child.html() || '').trim();
+        const text = $el.text().trim();
         // href と表示テキストが同じ（URL だけのリンク）の場合
         if (href && text === href) {
           $el.addClass('link');
@@ -195,7 +252,12 @@ function extractTagContent(xml: string, tagName: string): string {
     'i'
   );
   const m = xml.match(regex);
-  return m ? m[1].trim() : '';
+  if (!m) return '';
+  const value = m[1].trim();
+  if (value.startsWith('<![CDATA[') && value.endsWith(']]>')) {
+    return value.slice(9, -3);
+  }
+  return value;
 }
 
 function extractGuid(xml: string): string {
@@ -259,11 +321,11 @@ export function parseItemXml(xmlString: string): ParsedItem | null {
   const guid = extractGuid(xml) || getStr(item, 'guid');
 
   return {
-    title: getStr(item, 'title') || '',
-    link: getStr(item, 'link') || '',
+    title: decodeTextEntities(getStr(item, 'title') || ''),
+    link: decodeTextEntities(getStr(item, 'link') || ''),
     guid,
     contentEncoded,
-    postName,
+    postName: decodeTextEntities(postName),
     postDate,
     status: status || undefined,
     postType: postType || undefined,
@@ -273,7 +335,8 @@ export function parseItemXml(xmlString: string): ParsedItem | null {
 export function convertItemToHtml(
   xmlString: string,
   outDir: string = CONTENT_POSTS_DIR,
-  dryRun?: boolean
+  dryRun?: boolean,
+  options: SanitizeContentOptions = {}
 ): { slug: string; filePath: string } | null {
   const parsed = parseItemXml(xmlString);
   if (!parsed) return null;
@@ -284,9 +347,11 @@ export function convertItemToHtml(
   if (postName) {
     try {
       // URL の + はスペースを表す
-      slug = decodeURIComponent(postName.replace(/\+/g, '%20'));
+      slug = decodeTextEntities(
+        decodeURIComponent(postName.replace(/\+/g, '%20'))
+      );
     } catch {
-      slug = postName;
+      slug = decodeTextEntities(postName);
     }
   }
   if (!slug) slug = guid || 'untitled';
@@ -298,9 +363,9 @@ export function convertItemToHtml(
     safeSlug = safeSlug.slice(0, MAX_SLUG_LEN).replace(/-+$/, '') || guid || 'untitled';
   }
 
-  const sanitizedBody = sanitizeContent(contentEncoded, title);
-  const firstImgSrc = getFirstImageSrc(contentEncoded);
-  const plainText = extractText(contentEncoded);
+  const sanitizedBody = sanitizeContent(contentEncoded, title, options);
+  const firstImgSrc = options.textOnly ? null : getFirstImageSrc(contentEncoded);
+  const plainText = extractText(options.textOnly ? sanitizedBody : contentEncoded);
   const description = truncateForDescription(plainText);
   const isoDate = toIsoDate(postDate);
 
@@ -405,7 +470,13 @@ async function main() {
   console.log(`✅ 生成しました: ${result.filePath}`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+const isDirectRun =
+  Boolean(process.argv[1]) &&
+  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+
+if (isDirectRun) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

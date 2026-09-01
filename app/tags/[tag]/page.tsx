@@ -17,7 +17,7 @@ export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
     return [{ tag: "_" }];
   }
   return allTags.map(({ tag }) => ({
-    tag: encodeURIComponent(tag),
+    tag,
   }));
 }
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
+import { SITE_URL } from "@/config/site";
 
 interface BreadcrumbItem {
   label: string;
@@ -16,12 +17,20 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.label,
-      item: `https://ieltsconsult.netlify.app${item.href}`,
-    })),
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "ホーム",
+        item: `${SITE_URL}/`,
+      },
+      ...items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 2,
+        name: item.label,
+        item: `${SITE_URL}${item.href}`,
+      })),
+    ],
   };
 
   return (
@@ -30,7 +39,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
         }}
       />
 

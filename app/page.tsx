@@ -1,6 +1,5 @@
 import { HeroSection } from "@/components/hero-section";
 import { Sidebar } from "@/components/sidebar";
-import { TrainingAppCTA } from "@/components/training-app-cta";
 import { PostCard } from "@/components/post-card";
 import { FadeInHeading } from "@/components/anim/fade-in-heading";
 import { FadeInSection } from "@/components/anim/fade-in-section";
@@ -83,10 +82,6 @@ export default async function Home() {
                 )}
               </FadeInSection>
             </section>
-
-            <FadeInSection delay={0.2}>
-              <TrainingAppCTA className="mb-12" />
-            </FadeInSection>
 
             <section>
               <FadeInHeading className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">

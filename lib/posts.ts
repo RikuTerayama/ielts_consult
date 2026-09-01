@@ -36,7 +36,10 @@ export type ExternalLinkMetaMap = Record<string, ExternalLinkMetaItem>;
 
 const EXTERNAL_LINK_META = externalLinkMeta as ExternalLinkMetaMap;
 
-const DEFAULT_LABEL = "PR";
+type AffiliateContext = {
+  title?: string;
+  subtitle?: string;
+};
 
 /** http/https を吸収して https に統一、末尾スラッシュ除去 */
 function normalizeUrl(href: string): string {
@@ -160,43 +163,80 @@ function getShortUrlDisplay(href: string): string {
 const EXTERNAL_LINK_ICON =
   '<span class="affiliate-card__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>';
 
-/** リッチカード（メタあり）の HTML を生成 */
-function renderRichAffiliateCard(href: string, meta: AffiliateMetaItem): string {
+function truncateText(value: string, maxLength: number): string {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  return normalized.length > maxLength
+    ? `${normalized.slice(0, maxLength - 1)}…`
+    : normalized;
+}
+
+/** 本文直前の見出し・説明から、取得できる範囲で商品文脈を補う */
+function getAffiliateContext(
+  $: CheerioAPI,
+  $p: Cheerio<AnyNode>
+): AffiliateContext {
+  let heading = "";
+  let description = "";
+
+  for (const element of $p.prevAll("h2, h3, h4, p").slice(0, 8).toArray()) {
+    const $element = $(element);
+    const tagName = (element as { tagName?: string }).tagName?.toLowerCase();
+    const text = $element.text().replace(/\s+/g, " ").trim();
+    if (!text) continue;
+    if (!heading && tagName && /^h[2-4]$/.test(tagName)) heading = text;
+    if (
+      !description &&
+      tagName === "p" &&
+      !$element.hasClass("link") &&
+      text.length >= 12
+    ) {
+      description = text;
+    }
+    if (heading && description) break;
+  }
+
+  const title = heading || (description ? truncateText(description, 54) : "");
+  return {
+    ...(title && { title }),
+    ...(description && description !== title
+      ? { subtitle: truncateText(description, 100) }
+      : {}),
+  };
+}
+
+/** Amazonカードの HTML を生成。商品名がない場合も本文文脈を保つ。 */
+function renderRichAffiliateCard(
+  href: string,
+  meta: AffiliateMetaItem | null,
+  context: AffiliateContext
+): string {
   const safeHref = escapeHtmlAttr(href);
   const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
-  const label = escapeHtml((meta.label && meta.label.trim()) ? meta.label : DEFAULT_LABEL);
-  const title = escapeHtml(meta.title || "Amazonで商品を見る");
-  const altText = escapeHtmlAttr(meta.title || "Amazon商品");
-  const subtitle = meta.subtitle ? escapeHtml(meta.subtitle) : "";
-  const cta = "Amazonで見る";
+  const label = "PR・Amazonアソシエイト";
+  const rawTitle = meta?.title?.trim() || context.title || "記事で紹介しているAmazon商品";
+  const rawSubtitle =
+    meta?.subtitle?.trim() ||
+    context.subtitle ||
+    "選び方や活用方法は本文で紹介しています。";
+  const title = escapeHtml(rawTitle);
+  const altText = escapeHtmlAttr(rawTitle);
+  const subtitle = escapeHtml(rawSubtitle);
+  const cta = "Amazon.co.jpで商品を見る";
 
-  const imgSrc = meta.image && meta.image.trim();
+  const configuredImage = meta?.image?.trim();
+  const imgSrc =
+    configuredImage && !configuredImage.endsWith("/placeholder.svg")
+      ? configuredImage
+      : "";
   const mediaHtml = imgSrc
     ? `<img src="${escapeHtmlAttr(imgSrc)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
-    : '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
+    : '<div class="affiliate-card__placeholder" aria-hidden="true"><span>Amazon</span></div>';
 
-  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div>${subtitle ? `<div class="affiliate-card__subtitle">${subtitle}</div>` : ""}<div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
+  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__subtitle">${subtitle}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
-/** ミニマルカード（メタなし）の HTML を生成 */
-function renderMinimalAffiliateCard(href: string): string {
-  const safeHref = escapeHtmlAttr(href);
-  const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
-  const label = escapeHtml(DEFAULT_LABEL);
-  const title = "Amazonで商品を見る";
-  const cta = "開く";
-
-  const mediaHtml =
-    '<div class="affiliate-card__placeholder"><span class="affiliate-card__placeholder-icon" aria-hidden="true">📚</span></div>';
-
-  return `<a class="affiliate-card affiliate-card--minimal" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
-}
-
-/** アフィリエイトカードの HTML を生成（title あり: リッチ、なし/空: ミニマル） */
-function renderAffiliateCard(href: string): string {
-  const meta = getAffiliateMeta(href);
-  if (meta && meta.title && meta.title.trim()) return renderRichAffiliateCard(href, meta);
-  return renderMinimalAffiliateCard(href);
+function renderAffiliateCard(href: string, context: AffiliateContext): string {
+  return renderRichAffiliateCard(href, getAffiliateMeta(href), context);
 }
 
 /** Note 用リッチカード（メタあり）の HTML を生成 */
@@ -252,7 +292,7 @@ function replaceAffiliateLinksWithCards(contentHtml: string): string {
     const kind = getUrlKind(href);
     if (!kind) return;
     if (kind === "amazon") {
-      $p.replaceWith(renderAffiliateCard(href));
+      $p.replaceWith(renderAffiliateCard(href, getAffiliateContext($, $p)));
     } else if (kind === "note") {
       $p.replaceWith(renderExternalLinkCard(href));
     }
@@ -269,12 +309,15 @@ export interface Post {
   description: string;
   tags: string[];
   hero?: string;
+  heroWidth?: number;
+  heroHeight?: number;
   content: string;
   readingTime: string;
   categoryStep?: string;
   categorySkill?: string;
   order?: number;
   audioSrc?: string;
+  noteGuid?: string;
 }
 
 /** public 配下の実ファイル存在を確認し、404 にならない hero src を返す（Node 環境のみ） */
@@ -295,16 +338,28 @@ function normalizeTitleLikeFileName(input: string): string {
 }
 
 /** タイトルから対応する音声ファイルを探し、存在する場合は src を返す（ビルド時・Node のみ） */
-function resolveAudioSrcForTitle(title: string): string | undefined {
-  if (!title) return undefined;
+function resolveAudioSrcForPost(
+  title: string,
+  noteGuid?: string
+): string | undefined {
+  if (!title && !noteGuid) return undefined;
   try {
     if (!fs.existsSync(AUDIO_POSTS_DIR)) return undefined;
     const normalizedTitle = normalizeTitleLikeFileName(title);
 
     const files = fs.readdirSync(AUDIO_POSTS_DIR);
+    if (noteGuid) {
+      const guidFile = files.find((file) => {
+        const extension = path.extname(file).toLowerCase();
+        return [".m4a", ".mp3", ".wav", ".aac"].includes(extension) &&
+          file.slice(0, -extension.length) === noteGuid;
+      });
+      if (guidFile) return `/audio/posts/${encodeURIComponent(guidFile)}`;
+    }
+
     for (const file of files) {
       const ext = path.extname(file).toLowerCase();
-      if (ext !== ".m4a") continue;
+      if (![".m4a", ".mp3", ".wav", ".aac"].includes(ext)) continue;
 
       const base = file.slice(0, file.length - ext.length);
       const normalizedBase = normalizeTitleLikeFileName(base);
@@ -381,10 +436,13 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
 
     const firstImg = $("article img, .content img, body img").first();
     const hero = firstImg.attr("src") || undefined;
+    const heroWidth = Number.parseInt(firstImg.attr("width") || "", 10) || undefined;
+    const heroHeight = Number.parseInt(firstImg.attr("height") || "", 10) || undefined;
+    const noteGuid = raw.match(/note\.com\/ielts_consult\/n\/([A-Za-z0-9]+)/)?.[1];
 
     contentHtml = replaceAffiliateLinksWithCards(contentHtml);
 
-    const audioSrc = resolveAudioSrcForTitle(title);
+    const audioSrc = resolveAudioSrcForPost(title, noteGuid);
     if (audioSrc) {
       const audioBlock = `<div class="post-audio" role="region" aria-label="音声"><p class="post-audio__label">音声解説はこちら</p><p class="post-audio__hint">通勤中や作業中にも聴けます</p><audio controls preload="none" src="${audioSrc}"></audio></div>`;
       const wrapped = `<div id="__audio-root">${contentHtml}</div>`;
@@ -414,7 +472,10 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
       content: contentHtml,
       readingTime,
       hero,
+      ...(heroWidth && { heroWidth }),
+      ...(heroHeight && { heroHeight }),
       ...(audioSrc && { audioSrc }),
+      ...(noteGuid && { noteGuid }),
     };
   } catch {
     return null;

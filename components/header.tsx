@@ -5,7 +5,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useState } from "react";
-import { TRAINING_APP_URL, NOTE_URL } from "@/config/links";
+import { NOTE_URL } from "@/config/links";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,15 +44,6 @@ export function Header() {
               About
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <a 
-              href={TRAINING_APP_URL} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="relative text-sm font-medium text-foreground/70 hover:text-foreground transition-colors py-2 group"
-            >
-              🎯 トレーニングアプリ
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-            </a>
             <a 
               href={NOTE_URL} 
               target="_blank" 
@@ -102,15 +93,6 @@ export function Header() {
             >
               About
             </Link>
-            <a
-              href={TRAINING_APP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              🎯 トレーニングアプリ
-            </a>
             <a
               href={NOTE_URL}
               target="_blank"

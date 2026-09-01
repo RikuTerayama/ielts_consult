@@ -21,8 +21,6 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
-  const encodedSlug = encodePostSlugForPath(params.slug);
-  const canonicalUrl = `${SITE_URL}/posts/${encodedSlug}/`;
 
   if (!post) {
     return {
@@ -31,10 +29,17 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     };
   }
 
-  const title = `${post.title} | IELTS対策`;
+  const encodedSlug = encodePostSlugForPath(post.slug);
+  const canonicalUrl = `${SITE_URL}/posts/${encodedSlug}/`;
+  const title = post.title;
   const description = post.description || undefined;
 
-  const ogImage = `${SITE_URL}${resolveHeroSrc(post.hero)}`;
+  const heroPath = resolveHeroSrc(post.hero);
+  const ogImage = `${SITE_URL}${heroPath}`;
+  const ogImageDimensions =
+    heroPath === post.hero && post.heroWidth && post.heroHeight
+      ? { width: post.heroWidth, height: post.heroHeight }
+      : { width: 1200, height: 630 };
 
   return {
     title,
@@ -47,11 +52,13 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       url: canonicalUrl,
       title,
       description,
+      publishedTime: post.date || undefined,
+      modifiedTime: post.date || undefined,
+      authors: [`${SITE_URL}/about-author/`],
       images: [
         {
           url: ogImage,
-          width: 1200,
-          height: 630,
+          ...ogImageDimensions,
           alt: post.title,
         },
       ],
@@ -71,9 +78,41 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const allPosts = await getAllPosts();
   const relatedPosts = getRelatedPosts(post.slug, allPosts, 4);
+  const canonicalUrl = `${SITE_URL}/posts/${encodePostSlugForPath(post.slug)}/`;
+  const heroUrl = `${SITE_URL}${resolveHeroSrc(post.hero)}`;
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description || post.title,
+    url: canonicalUrl,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    image: [heroUrl],
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      "@type": "Person",
+      name: "IELTS Consult",
+      url: `${SITE_URL}/about-author/`,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "IELTS Consult",
+      url: SITE_URL,
+    },
+  };
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <Breadcrumb
         items={[
           { label: "記事一覧", href: "/posts" },
