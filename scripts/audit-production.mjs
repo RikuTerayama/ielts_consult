@@ -48,7 +48,9 @@ async function inBatches(items, batchSize, callback) {
 }
 
 const htmlFiles = walk(outDir).filter((file) => file.endsWith("index.html"));
-const pageRoutes = htmlFiles.map(routeForOutput);
+const pageRoutes = htmlFiles
+  .map(routeForOutput)
+  .filter((route) => route !== "/404/");
 const internalUrls = new Set();
 let doubleEncodedCanonicals = 0;
 let trainingLinkOccurrences = 0;
