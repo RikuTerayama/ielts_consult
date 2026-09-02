@@ -6,6 +6,59 @@ type WeightedBoundary = {
   cumulativeWeight: number;
 };
 
+export type ArticleAdPlan = {
+  amazonCardCount: number;
+  a8AffiliateCardCount: number;
+  maxRotatingAds: 1 | 2 | 3 | 4;
+  inlineSlots: 0 | 1 | 2;
+  showSidebar: true;
+  showPreFooter: boolean;
+};
+
+/**
+ * Amazon商品カードと既存A8リンクカードを含めた、記事単位の広告密度制御。
+ * Desktopのsidebar 1枠を先に確保し、長文かつ低密度の記事だけ末尾枠を使う。
+ */
+export function getArticleAdPlan(contentHtml: string): ArticleAdPlan {
+  const $ = load(`<div id="__post-ad-plan-root">${contentHtml}</div>`);
+  const $root = $("#__post-ad-plan-root");
+  const amazonCardCount = $root.find('[data-affiliate="amazon"]').length;
+  const a8AffiliateCardCount = $root.find('[data-affiliate="a8"]').length;
+  const textLength = $root.text().replace(/\s+/g, " ").trim().length;
+  const isLongArticle = textLength >= 3000;
+
+  let maxRotatingAds: 1 | 2 | 3 | 4 =
+    amazonCardCount >= 8 ? 2 : amazonCardCount >= 3 ? 3 : 4;
+
+  // A8リンクカード自体も広告として扱い、密度が高い記事では追加枠を抑える。
+  if (a8AffiliateCardCount >= 8) {
+    maxRotatingAds = 1;
+  } else if (a8AffiliateCardCount >= 4) {
+    maxRotatingAds = Math.min(maxRotatingAds, 2) as 1 | 2;
+  }
+
+  const showPreFooter =
+    isLongArticle &&
+    amazonCardCount < 8 &&
+    a8AffiliateCardCount < 4 &&
+    maxRotatingAds >= 3;
+  const reservedSlots = 1 + (showPreFooter ? 1 : 0);
+  const desiredInlineSlots = isLongArticle ? 2 : 1;
+  const inlineSlots = Math.max(
+    0,
+    Math.min(2, desiredInlineSlots, maxRotatingAds - reservedSlots)
+  ) as 0 | 1 | 2;
+
+  return {
+    amazonCardCount,
+    a8AffiliateCardCount,
+    maxRotatingAds,
+    inlineSlots,
+    showSidebar: true,
+    showPreFooter,
+  };
+}
+
 function getNodeWeight(node: AnyNode): number {
   const $ = load(`<div id="__weight-root"></div>`);
   const $root = $("#__weight-root");
@@ -23,7 +76,7 @@ function getTagName(node: AnyNode): string {
 
 /**
  * 記事本文をトップレベル要素の境界で分割する。HTML要素の途中には広告を挿入しない。
- * 長い記事は約28%・60%、それ以外は約55%に1枠だけ設ける。
+ * 長い記事は約30%・65%、それ以外は約30%に1枠だけ設ける。
  */
 export function splitPostContentForAds(
   contentHtml: string,
@@ -62,8 +115,8 @@ export function splitPostContentForAds(
 
   const targetRatios =
     maxAdSlots === 2 && textLength >= 3000 && candidates.length >= 8
-      ? [0.28, 0.6]
-      : [0.55];
+      ? [0.3, 0.65]
+      : [0.3];
   const boundaries: number[] = [];
 
   for (const ratio of targetRatios) {

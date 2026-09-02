@@ -110,9 +110,20 @@ export default async function Home() {
             <Sidebar
               latestPosts={sidebarLatestPosts}
               popularTags={popularTags}
+              adSlot="home-sidebar"
+              adMaxCreativeWidth={300}
+              adMinViewportWidth={1024}
+              adClassName="hidden lg:block"
             />
           </aside>
         </div>
+
+        <A8RotatingAd
+          slot="home-pre-footer"
+          allowLeaderboard
+          preferLeaderboard
+          className="a8-ad--pre-footer mt-16"
+        />
       </div>
     </>
   );

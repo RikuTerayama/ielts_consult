@@ -10,23 +10,48 @@ const SEEN_KEY_PREFIX = "a8-ad-rotation:v1:seen";
 type A8RotatingAdProps = {
   slot: string;
   allowLeaderboard?: boolean;
+  maxCreativeWidth?: 300 | 336 | 728;
+  minViewportWidth?: number;
+  preferLeaderboard?: boolean;
   className?: string;
 };
 
-function getEligibleAds(allowLeaderboard: boolean): readonly A8Ad[] {
+function getEligibleAds(
+  allowLeaderboard: boolean,
+  maxCreativeWidth: 300 | 336 | 728,
+  preferLeaderboard: boolean
+): readonly A8Ad[] {
   const viewportWidth = document.documentElement.clientWidth;
   const horizontalPadding = viewportWidth < 640 ? 48 : 64;
-  const availableWidth = Math.min(768, viewportWidth - horizontalPadding);
+  const availableWidth = Math.min(
+    maxCreativeWidth,
+    viewportWidth - horizontalPadding
+  );
 
-  return A8_ADS.filter((ad) => {
+  const eligibleAds = A8_ADS.filter((ad) => {
     if (ad.width > availableWidth) return false;
     if (ad.width === 728 && (!allowLeaderboard || viewportWidth < 768)) return false;
     return true;
   });
+
+  const leaderboardAds = eligibleAds.filter((ad) => ad.width === 728);
+  return preferLeaderboard && leaderboardAds.length > 0
+    ? leaderboardAds
+    : eligibleAds;
 }
 
-function selectAd(slot: string, pathname: string, allowLeaderboard: boolean): A8Ad | null {
-  const eligibleAds = getEligibleAds(allowLeaderboard);
+function selectAd(
+  slot: string,
+  pathname: string,
+  allowLeaderboard: boolean,
+  maxCreativeWidth: 300 | 336 | 728,
+  preferLeaderboard: boolean
+): A8Ad | null {
+  const eligibleAds = getEligibleAds(
+    allowLeaderboard,
+    maxCreativeWidth,
+    preferLeaderboard
+  );
   if (eligibleAds.length === 0) return null;
 
   const storage = window.sessionStorage;
@@ -54,14 +79,42 @@ function selectAd(slot: string, pathname: string, allowLeaderboard: boolean): A8
 export function A8RotatingAd({
   slot,
   allowLeaderboard = false,
+  maxCreativeWidth = 728,
+  minViewportWidth = 0,
+  preferLeaderboard = false,
   className = "",
 }: A8RotatingAdProps) {
   const pathname = usePathname();
   const [ad, setAd] = useState<A8Ad | null>(null);
 
   useEffect(() => {
-    setAd(selectAd(slot, pathname, allowLeaderboard));
-  }, [allowLeaderboard, pathname, slot]);
+    const updateAd = () => {
+      if (document.documentElement.clientWidth < minViewportWidth) {
+        setAd(null);
+        return;
+      }
+      setAd(
+        selectAd(
+          slot,
+          pathname,
+          allowLeaderboard,
+          maxCreativeWidth,
+          preferLeaderboard
+        )
+      );
+    };
+
+    updateAd();
+    window.addEventListener("resize", updateAd);
+    return () => window.removeEventListener("resize", updateAd);
+  }, [
+    allowLeaderboard,
+    maxCreativeWidth,
+    minViewportWidth,
+    pathname,
+    preferLeaderboard,
+    slot,
+  ]);
 
   return (
     <aside

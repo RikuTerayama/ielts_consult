@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { A8RotatingAd } from "@/components/a8-rotating-ad";
 import type { Post } from "@/lib/posts";
 import type { TagWithCount } from "@/lib/posts";
 import { encodePostSlugForPath } from "@/lib/url";
@@ -7,63 +8,92 @@ import { encodePostSlugForPath } from "@/lib/url";
 interface SidebarProps {
   latestPosts?: Post[];
   popularTags?: TagWithCount[];
+  adSlot?: string;
+  adMaxCreativeWidth?: 300 | 336;
+  adMinViewportWidth?: number;
+  adClassName?: string;
+  showNavigation?: boolean;
+  className?: string;
 }
 
-export function Sidebar({ latestPosts = [], popularTags = [] }: SidebarProps) {
+export function Sidebar({
+  latestPosts = [],
+  popularTags = [],
+  adSlot,
+  adMaxCreativeWidth = 336,
+  adMinViewportWidth = 0,
+  adClassName = "",
+  showNavigation = true,
+  className = "",
+}: SidebarProps) {
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>新着記事</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {latestPosts.length > 0 ? (
-            <ul className="space-y-2">
-              {latestPosts.map((post) => (
-                <li key={post.slug}>
-                  <Link
-                    href={`/posts/${encodePostSlugForPath(post.slug)}/`}
-                    className="text-sm text-muted-foreground hover:text-primary hover:underline line-clamp-2 block transition-colors"
-                  >
-                    {post.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              記事がありません。
-            </p>
-          )}
-        </CardContent>
-      </Card>
+    <div className={`space-y-6 ${className}`.trim()}>
+      {adSlot && (
+        <div className={adClassName}>
+          <A8RotatingAd
+            slot={adSlot}
+            maxCreativeWidth={adMaxCreativeWidth}
+            minViewportWidth={adMinViewportWidth}
+          />
+        </div>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>人気タグ</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {popularTags.length > 0 ? (
-            <ul className="flex flex-wrap gap-2">
-              {popularTags.map(({ tag, count }) => (
-                <li key={tag}>
-                  <Link
-                    href={`/tags/${encodeURIComponent(tag)}/`}
-                    className="inline-block text-sm px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-800 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
-                  >
-                    {tag}
-                    <span className="ml-1 text-xs opacity-70">({count})</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              タグがありません。
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      {showNavigation && (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>新着記事</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {latestPosts.length > 0 ? (
+                <ul className="space-y-2">
+                  {latestPosts.map((post) => (
+                    <li key={post.slug}>
+                      <Link
+                        href={`/posts/${encodePostSlugForPath(post.slug)}/`}
+                        className="text-sm text-muted-foreground hover:text-primary hover:underline line-clamp-2 block transition-colors"
+                      >
+                        {post.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  記事がありません。
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>人気タグ</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {popularTags.length > 0 ? (
+                <ul className="flex flex-wrap gap-2">
+                  {popularTags.map(({ tag, count }) => (
+                    <li key={tag}>
+                      <Link
+                        href={`/tags/${encodeURIComponent(tag)}/`}
+                        className="inline-block text-sm px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-800 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
+                      >
+                        {tag}
+                        <span className="ml-1 text-xs opacity-70">({count})</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  タグがありません。
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

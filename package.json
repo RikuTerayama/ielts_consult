@@ -26,6 +26,8 @@
     "repair:posts": "tsx scripts/repair-truncated-posts.ts",
     "audit:assets": "tsx scripts/audit-assets.ts",
     "audit:hero": "tsx scripts/audit-hero-public.ts",
+    "audit:audio": "node scripts/audit-all-post-audio.mjs",
+    "audit:ads": "node scripts/audit-ad-density.mjs",
     "assets:delete-unused": "node scripts/delete-unused-assets.mjs",
     "assets:delete-unused:apply": "node scripts/delete-unused-assets.mjs --apply",
     "affiliate:missing-meta": "tsx scripts/list-missing-affiliate-meta.ts",
