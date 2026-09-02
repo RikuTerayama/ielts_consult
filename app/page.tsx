@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/sidebar";
 import { PostCard } from "@/components/post-card";
 import { FadeInHeading } from "@/components/anim/fade-in-heading";
 import { FadeInSection } from "@/components/anim/fade-in-section";
+import { A8RotatingAd } from "@/components/a8-rotating-ad";
 import { getAllPosts, getAllTags } from "@/lib/posts";
 
 const SIDEBAR_LATEST_N = 6;
@@ -82,6 +83,8 @@ export default async function Home() {
                 )}
               </FadeInSection>
             </section>
+
+            <A8RotatingAd slot="home-between-sections" className="mb-16" />
 
             <section>
               <FadeInHeading className="text-3xl md:text-4xl font-semibold tracking-tight mb-8">

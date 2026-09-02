@@ -2,8 +2,10 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { PostCard } from "@/components/post-card";
+import { A8RotatingAd } from "@/components/a8-rotating-ad";
 import { SITE_URL } from "@/config/site";
 import { getPostBySlug, getAllPosts, getRelatedPosts, resolveHeroSrc } from "@/lib/posts";
+import { splitPostContentForAds } from "@/lib/post-ad-slots";
 import { encodePostSlugForPath } from "@/lib/url";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -78,6 +80,10 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const allPosts = await getAllPosts();
   const relatedPosts = getRelatedPosts(post.slug, allPosts, 4);
+  const affiliateCardCount = (post.content.match(/data-affiliate=/g) ?? []).length;
+  const maxAdSlots: 0 | 1 | 2 =
+    affiliateCardCount >= 6 ? 0 : affiliateCardCount >= 2 ? 1 : 2;
+  const contentSegments = splitPostContentForAds(post.content, maxAdSlots);
   const canonicalUrl = `${SITE_URL}/posts/${encodePostSlugForPath(post.slug)}/`;
   const heroUrl = `${SITE_URL}${resolveHeroSrc(post.hero)}`;
   const articleSchema = {
@@ -132,10 +138,21 @@ export default async function PostPage({ params }: PostPageProps) {
             </time>
           )}
         </header>
-        <div
-          className="prose prose-slate dark:prose-invert max-w-none prose-img:rounded-lg prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        {contentSegments.map((segment, index) => (
+          <div key={`post-content-${index}`}>
+            <div
+              className="prose prose-slate dark:prose-invert max-w-none prose-img:rounded-lg prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+              dangerouslySetInnerHTML={{ __html: segment }}
+            />
+            {index < contentSegments.length - 1 && (
+              <A8RotatingAd
+                slot={`article-${index + 1}`}
+                allowLeaderboard
+                className="my-10"
+              />
+            )}
+          </div>
+        ))}
       </article>
       {relatedPosts.length > 0 && (
         <section className="mt-16 pt-12 border-t" aria-labelledby="related-heading">

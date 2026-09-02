@@ -10,6 +10,10 @@ import type { AnyNode } from "domhandler";
 
 import affiliateMeta from "@/content/affiliate-meta.json";
 import externalLinkMeta from "@/content/external-link-meta.json";
+import {
+  AMAZON_PRODUCT_OVERRIDES,
+  type AmazonProductOverride,
+} from "@/config/amazon-product-overrides";
 import { inferLearningStep, inferSkill } from "@/config/categories";
 import { extractTags } from "@/lib/tagging";
 
@@ -68,12 +72,20 @@ function normalizeUrlWithoutQuery(href: string): string {
 
 function getAffiliateMeta(href: string): AffiliateMetaItem | null {
   const key = normalizeUrl(href);
-  let meta = AFFILIATE_META[key] ?? null;
-  if (!meta) {
-    const keyNoQuery = normalizeUrlWithoutQuery(href);
-    meta = AFFILIATE_META[keyNoQuery] ?? null;
-  }
-  return meta;
+  const keyNoQuery = normalizeUrlWithoutQuery(href);
+  const meta = AFFILIATE_META[key] ?? AFFILIATE_META[keyNoQuery] ?? null;
+  const override: AmazonProductOverride | null =
+    AMAZON_PRODUCT_OVERRIDES[key] ??
+    AMAZON_PRODUCT_OVERRIDES[keyNoQuery] ??
+    null;
+  if (!override) return meta;
+
+  return {
+    title: override.title?.trim() || meta?.title || "",
+    subtitle: override.subtitle?.trim() || meta?.subtitle,
+    image: override.image?.trim() || meta?.image,
+    label: meta?.label,
+  };
 }
 
 function getExternalLinkMeta(href: string): ExternalLinkMetaItem | null {
@@ -87,7 +99,7 @@ function getExternalLinkMeta(href: string): ExternalLinkMetaItem | null {
 }
 
 /** カード化対象URLの種別。Amazon は affiliate-meta、note は external-link-meta を参照 */
-function getUrlKind(href: string): "amazon" | "note" | null {
+function getUrlKind(href: string): "amazon" | "note" | "a8" | null {
   if (!href || typeof href !== "string") return null;
   try {
     const u = new URL(href);
@@ -102,15 +114,11 @@ function getUrlKind(href: string): "amazon" | "note" | null {
       return "amazon";
     if (host === "note.com" || u.hostname.toLowerCase() === "www.note.com")
       return "note";
+    if (host === "px.a8.net") return "a8";
     return null;
   } catch {
     return null;
   }
-}
-
-/** カード化対象のURLか（Amazon または note） */
-function isCardTargetUrl(href: string): boolean {
-  return getUrlKind(href) !== null;
 }
 
 /** テキストノード用エスケープ（&, <, >, ", '） */
@@ -146,13 +154,14 @@ function escapeHtmlAttr(str: string): string {
     .replace(/>/g, "&gt;");
 }
 
-/** 表示用の短い URL 文字列（amzn.to/xxx、note.com、amazon.co.jp 等） */
+/** 表示用の短い URL 文字列（amzn.to/xxx、note.com、px.a8.net 等） */
 function getShortUrlDisplay(href: string): string {
   try {
     const u = new URL(href);
     if (u.hostname === "amzn.to") return `amzn.to${u.pathname}`;
     const host = u.hostname.replace(/^www\./, "");
     if (host === "note.com" && u.pathname !== "/") return `note.com${u.pathname}`;
+    if (host === "px.a8.net") return "px.a8.net";
     return host;
   } catch {
     return href;
@@ -229,10 +238,10 @@ function renderRichAffiliateCard(
       ? configuredImage
       : "";
   const mediaHtml = imgSrc
-    ? `<img src="${escapeHtmlAttr(imgSrc)}" alt="${altText}" width="120" height="160" loading="lazy" decoding="async" class="affiliate-card__img" />`
+    ? `<img src="${escapeHtmlAttr(imgSrc)}" alt="${altText}" width="200" height="200" loading="lazy" decoding="async" class="affiliate-card__img" />`
     : '<div class="affiliate-card__placeholder" aria-hidden="true"><span>Amazon</span></div>';
 
-  return `<a class="affiliate-card affiliate-card--rich" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__subtitle">${subtitle}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
+  return `<a class="affiliate-card affiliate-card--rich affiliate-card--amazon" href="${safeHref}" target="_blank" rel="noopener noreferrer nofollow sponsored" data-affiliate="amazon"><div class="affiliate-card__label">${label}</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__subtitle">${subtitle}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">${cta}${EXTERNAL_LINK_ICON}</div></div></a>`;
 }
 
 function renderAffiliateCard(href: string, context: AffiliateContext): string {
@@ -278,12 +287,140 @@ function renderExternalLinkCard(href: string): string {
   return renderMinimalExternalLinkCard(href);
 }
 
+function getSingleTextLink(
+  $: CheerioAPI,
+  $element: Cheerio<AnyNode>,
+  href: string
+): string {
+  if (!$element.length || $element[0]?.type !== "tag") return "";
+  const links = $element.find("a[href]");
+  if (links.length !== 1) return "";
+  const $link = links.first();
+  if (($link.attr("href")?.trim() ?? "") !== href) return "";
+  const text = $link.text().replace(/\s+/g, " ").trim();
+  return text && text !== href ? text : "";
+}
+
+function getA8Context(
+  $: CheerioAPI,
+  $p: Cheerio<AnyNode>,
+  postTitle: string,
+  linkedText = ""
+): AffiliateContext {
+  const baseContext = getAffiliateContext($, $p);
+  const genericHeading = /^(?:まとめ|結論|向いている人|向いていない人|メリット|デメリット|特徴|料金|使い方|おすすめの人|公式情報)$/i;
+  const contextualHeading = $p
+    .prevAll("h2, h3, h4")
+    .toArray()
+    .map((element) => $(element).text().replace(/\s+/g, " ").trim())
+    .find((text) => text && !genericHeading.test(text));
+  const ownText = $p
+    .clone()
+    .find("a")
+    .remove()
+    .end()
+    .text()
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    title: truncateText(
+      linkedText || contextualHeading || postTitle || "おすすめサービス",
+      64
+    ),
+    subtitle: truncateText(
+      ownText ||
+        baseContext.subtitle ||
+        "本文で紹介しているサービスの詳細を公式サイトで確認できます。",
+      110
+    ),
+  };
+}
+
+function renderA8AffiliateCard(href: string, context: AffiliateContext): string {
+  const safeHref = escapeHtmlAttr(href);
+  const shortUrl = escapeHtmlAttr(getShortUrlDisplay(href));
+  const title = escapeHtml(context.title || "おすすめサービス");
+  const subtitle = escapeHtml(
+    context.subtitle ||
+      "本文で紹介しているサービスの詳細を公式サイトで確認できます。"
+  );
+  const mediaHtml =
+    '<div class="affiliate-card__placeholder" aria-hidden="true"><span>PR</span></div>';
+
+  return `<a class="affiliate-card affiliate-card--rich affiliate-card--a8" href="${safeHref}" target="_blank" rel="nofollow sponsored noopener noreferrer" data-affiliate="a8"><div class="affiliate-card__label">PR</div><div class="affiliate-card__media">${mediaHtml}</div><div class="affiliate-card__body"><div class="affiliate-card__title">${title}</div><div class="affiliate-card__subtitle">${subtitle}</div><div class="affiliate-card__url">${shortUrl}</div><div class="affiliate-card__cta">公式サイトを見る${EXTERNAL_LINK_ICON}</div></div></a>`;
+}
+
+function replaceBareA8LinksWithCards($: CheerioAPI, postTitle: string): void {
+  const rootSelector = "#__affiliate-root";
+  const bareAnchors = $(`${rootSelector} a[href]`)
+    .toArray()
+    .filter((element) => {
+      const $a = $(element);
+      const href = $a.attr("href")?.trim() ?? "";
+      return getUrlKind(href) === "a8" && $a.text().trim() === href;
+    });
+
+  for (const element of bareAnchors) {
+    const $a = $(element);
+    if (!$a.parent().length) continue;
+    const href = $a.attr("href")?.trim() ?? "";
+    const $p = $a.closest("p");
+    if (!$p.length || $p.find("a[href]").length !== 1) continue;
+
+    const $previous = $p.prev();
+    const $next = $p.next();
+    const previousText = getSingleTextLink($, $previous, href);
+    const nextText = getSingleTextLink($, $next, href);
+    const linkedText = previousText || nextText;
+    const $contextElement = previousText ? $previous : $p;
+    const context = getA8Context($, $contextElement, postTitle, linkedText);
+    const card = renderA8AffiliateCard(href, context);
+
+    if (previousText) {
+      $previous.replaceWith(card);
+      $p.remove();
+    } else if (nextText) {
+      $p.replaceWith(card);
+      $next.remove();
+    } else {
+      $p.replaceWith(card);
+    }
+  }
+}
+
+function replaceWeakA8TextLinksWithCards(
+  $: CheerioAPI,
+  postTitle: string
+): void {
+  const weakCtaPattern = /(?:こちら|無料|登録|相談|見る|確認|詳細|試す|申し込)/;
+  const links = $("#__affiliate-root a[href]").toArray();
+
+  for (const element of links) {
+    const $a = $(element);
+    if ($a.closest("[data-affiliate]").length) continue;
+    const href = $a.attr("href")?.trim() ?? "";
+    const linkedText = $a.text().replace(/\s+/g, " ").trim();
+    if (getUrlKind(href) !== "a8" || !weakCtaPattern.test(linkedText)) continue;
+
+    const $p = $a.closest("p");
+    if (!$p.length || $p.find("a[href]").length !== 1) continue;
+    const context = getA8Context($, $p, postTitle, linkedText);
+    $p.replaceWith(renderA8AffiliateCard(href, context));
+  }
+}
+
 /** contentHtml 内の URL単体行（対象ドメイン）をカード HTML に置換 */
-function replaceAffiliateLinksWithCards(contentHtml: string): string {
+function replaceAffiliateLinksWithCards(
+  contentHtml: string,
+  postTitle: string
+): string {
   if (!contentHtml || typeof contentHtml !== "string") return contentHtml;
   // cheerio はフラグメントを読み込むと body を生成しないため、div でラップして確実に取得する
   const wrapped = `<div id="__affiliate-root">${contentHtml}</div>`;
   const $ = load(wrapped);
+  replaceBareA8LinksWithCards($, postTitle);
+  replaceWeakA8TextLinksWithCards($, postTitle);
   $("#__affiliate-root p.link").each((_, el) => {
     const $p = $(el);
     if (!isUrlSingleLine($, $p)) return;
@@ -440,7 +577,7 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
     const heroHeight = Number.parseInt(firstImg.attr("height") || "", 10) || undefined;
     const noteGuid = raw.match(/note\.com\/ielts_consult\/n\/([A-Za-z0-9]+)/)?.[1];
 
-    contentHtml = replaceAffiliateLinksWithCards(contentHtml);
+    contentHtml = replaceAffiliateLinksWithCards(contentHtml, title);
 
     const audioSrc = resolveAudioSrcForPost(title, noteGuid);
     if (audioSrc) {

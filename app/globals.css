@@ -165,6 +165,29 @@ a:focus-visible {
   @apply w-[100px] sm:w-[120px];
 }
 
+/* Amazon: 正規画像を切らずに表示し、未登録時は同じ領域でfallbackを維持 */
+.prose .affiliate-card--amazon {
+  @apply min-h-[200px];
+}
+.prose .affiliate-card--amazon .affiliate-card__media {
+  @apply w-[180px] min-h-[200px] bg-white dark:bg-slate-800 rounded-l-xl;
+  aspect-ratio: 1 / 1;
+}
+.prose .affiliate-card--amazon .affiliate-card__img {
+  @apply w-full h-full object-contain p-3;
+}
+.prose .affiliate-card--amazon .affiliate-card__placeholder {
+  @apply bg-gradient-to-br from-orange-50 to-amber-100 dark:from-slate-700 dark:to-slate-800 text-base;
+}
+
+/* A8の裸URLを、公式素材へ誤対応させずサイト側カードとして表示 */
+.prose .affiliate-card--a8 .affiliate-card__media {
+  @apply w-[96px] sm:w-[112px] bg-slate-100 dark:bg-slate-800;
+}
+.prose .affiliate-card--a8 .affiliate-card__placeholder {
+  @apply bg-gradient-to-br from-indigo-50 to-violet-100 dark:from-indigo-950 dark:to-slate-800 text-indigo-700 dark:text-indigo-200 text-sm;
+}
+
 /* 共通: ボディ（モバイルタップ領域確保） */
 .prose .affiliate-card .affiliate-card__body {
   @apply flex-1 p-4 sm:p-5 flex flex-col gap-1.5 min-w-0 justify-between;
@@ -180,7 +203,8 @@ a:focus-visible {
   @apply text-[11px] sm:text-xs text-muted-foreground/70 dark:text-muted-foreground/80 truncate;
 }
 .prose .affiliate-card .affiliate-card__cta {
-  @apply text-xs sm:text-sm bg-primary text-primary-foreground font-medium mt-2 px-3 py-2 rounded-lg flex items-center gap-1.5 w-fit self-end;
+  @apply text-xs sm:text-sm bg-primary text-primary-foreground font-semibold mt-2 px-4 py-2.5 rounded-lg flex items-center gap-1.5 w-fit self-end;
+  box-shadow: 0 2px 7px rgb(15 23 42 / 0.16);
 }
 .prose .affiliate-card .affiliate-card__icon {
   @apply inline-flex shrink-0 text-current;
@@ -202,6 +226,41 @@ a:focus-visible {
 }
 .prose .post-audio audio {
   @apply w-full max-w-md;
+}
+
+/* A8.net ローテーション枠。素材そのもののURL・width/heightには触れない */
+.a8-ad {
+  @apply relative flex flex-col items-center justify-center w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/40 px-1 py-4;
+  min-height: 312px;
+}
+.a8-ad__label {
+  @apply absolute top-2 left-3 text-[10px] font-medium tracking-wider text-slate-500 dark:text-slate-400;
+}
+.a8-ad__creative {
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+}
+.a8-ad__creative > img[width="1"][height="1"] {
+  width: 1px;
+  height: 1px;
+  vertical-align: bottom;
+}
+
+@media (max-width: 640px) {
+  .prose .affiliate-card--amazon {
+    @apply flex-col;
+  }
+  .prose .affiliate-card--amazon .affiliate-card__media {
+    @apply w-full h-[200px] min-h-[200px] rounded-l-none rounded-t-xl;
+    aspect-ratio: auto;
+  }
+  .prose .affiliate-card--amazon .affiliate-card__body {
+    @apply w-full pt-4;
+  }
+  .prose .affiliate-card--amazon .affiliate-card__cta {
+    @apply w-full justify-center self-stretch;
+  }
 }
 
 /* 引用のデザイン: 左側に太いアクセントライン */
