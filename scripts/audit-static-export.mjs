@@ -43,10 +43,10 @@ function isNotFoundOutput(htmlPath) {
 }
 
 function outputTargetForPathname(pathname) {
-  const decoded = safeDecode(pathname).replace(/^\/+/, "");
+  const decoded = safeDecode(pathname).replace(/^\/+|\/+$/g, "");
   if (!decoded) return path.join(outDir, "index.html");
   const direct = path.join(outDir, ...decoded.split("/"));
-  if (path.extname(direct)) return direct;
+  if (fs.existsSync(direct) && fs.statSync(direct).isFile()) return direct;
   return path.join(direct, "index.html");
 }
 

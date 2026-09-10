@@ -14,9 +14,13 @@ import {
   AMAZON_PRODUCT_OVERRIDES,
   type AmazonProductOverride,
 } from "@/config/amazon-product-overrides";
+import { SITE_URL } from "@/config/site";
 import { inferLearningStep, inferSkill } from "@/config/categories";
 import { extractTags } from "@/lib/tagging";
-import { normalizeRouteSegment } from "@/lib/url";
+import {
+  encodeRouteSegmentForPath,
+  normalizeRouteSegment,
+} from "@/lib/url";
 
 // --- アフィリエイトメタ（リッチカード用） -----------------------------------------
 
@@ -438,6 +442,69 @@ function replaceAffiliateLinksWithCards(
   return $("#__affiliate-root").html() ?? contentHtml;
 }
 
+const INTERNAL_PAGE_ROOTS = new Set([
+  "about",
+  "about-author",
+  "affiliate-disclosure",
+  "contact",
+  "cookie-policy",
+  "disclaimer",
+  "editorial-policy",
+  "posts",
+  "privacy",
+  "search",
+  "skills",
+  "steps",
+  "tags",
+]);
+
+/** 記事本文中のサイト内ページリンクをcanonicalと同じ表記へ揃える。 */
+function normalizeInternalPageLinks(contentHtml: string): string {
+  if (!contentHtml || typeof contentHtml !== "string") return contentHtml;
+
+  const wrapped = `<div id="__internal-link-root">${contentHtml}</div>`;
+  const $ = load(wrapped);
+
+  $("#__internal-link-root a[href]").each((_, element) => {
+    const $link = $(element);
+    const href = $link.attr("href")?.trim() ?? "";
+    if (!href || /^(?:#|mailto:|tel:|javascript:|data:)/i.test(href)) return;
+
+    let url: URL;
+    try {
+      url = new URL(href, SITE_URL);
+    } catch {
+      return;
+    }
+    if (url.origin !== SITE_URL) return;
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    let decodedSegments: string[];
+    try {
+      decodedSegments = segments.map((segment) => decodeURIComponent(segment));
+    } catch {
+      return;
+    }
+    if (
+      decodedSegments.length === 0 ||
+      !INTERNAL_PAGE_ROOTS.has(normalizeRouteSegment(decodedSegments[0]))
+    ) {
+      return;
+    }
+
+    const canonicalPath = `/${decodedSegments
+      .map(encodeRouteSegmentForPath)
+      .join("/")}/`;
+    const canonicalHref = `${canonicalPath}${url.search}${url.hash}`;
+    $link.attr(
+      "href",
+      /^https?:\/\//i.test(href) ? `${SITE_URL}${canonicalHref}` : canonicalHref
+    );
+  });
+
+  return $("#__internal-link-root").html() ?? contentHtml;
+}
+
 // --- Post 型・パース -----------------------------------------
 
 export interface Post {
@@ -578,7 +645,9 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
     const heroHeight = Number.parseInt(firstImg.attr("height") || "", 10) || undefined;
     const noteGuid = raw.match(/note\.com\/ielts_consult\/n\/([A-Za-z0-9]+)/)?.[1];
 
-    contentHtml = replaceAffiliateLinksWithCards(contentHtml, title);
+    contentHtml = normalizeInternalPageLinks(
+      replaceAffiliateLinksWithCards(contentHtml, title)
+    );
 
     const audioSrc = resolveAudioSrcForPost(title, noteGuid);
     if (audioSrc) {

@@ -43,7 +43,8 @@ function outputTargetForPathname(pathname) {
   const decoded = safeDecode(pathname).replace(/^\/+|\/+$/g, "");
   if (!decoded) return path.join(outDir, "index.html");
   const direct = path.join(outDir, ...decoded.split("/"));
-  return path.extname(direct) ? direct : path.join(direct, "index.html");
+  if (fs.existsSync(direct) && fs.statSync(direct).isFile()) return direct;
+  return path.join(direct, "index.html");
 }
 
 function isNotFoundOutput(htmlPath) {
@@ -63,6 +64,13 @@ function isCanonicalPagePath(pathname) {
     .split("/")
     .filter(Boolean)
     .every((segment) => segment === normalizeRouteSegment(segment));
+}
+
+function canonicalPagePath(pathname) {
+  const decoded = safeDecode(pathname);
+  const segments = decoded.split("/").filter(Boolean);
+  if (segments.length === 0) return "/";
+  return `/${segments.map((segment) => encodeURIComponent(normalizeRouteSegment(segment))).join("/")}/`;
 }
 
 function parseJsonLd($) {
@@ -140,20 +148,24 @@ for (const page of pageByRoute.values()) {
     }
     if (url.hostname !== siteHost) return;
 
-    const target = outputTargetForPathname(url.pathname);
+    const canonicalTargetRoute = canonicalPagePath(url.pathname);
+    const linkedPage = pageByRoute.get(canonicalTargetRoute);
+    const target = linkedPage
+      ? linkedPage.htmlPath
+      : outputTargetForPathname(url.pathname);
     if (!fs.existsSync(target)) {
       brokenInternalLinks.push({ from: page.route, href: url.pathname });
       return;
     }
 
-    if (!path.posix.extname(url.pathname)) {
+    if (linkedPage) {
       internalPageLinks.push({ from: page.route, href: url.pathname });
-      if (!isCanonicalPagePath(url.pathname)) {
+      if (url.pathname !== canonicalTargetRoute) {
         redirectingInternalLinks.push({ from: page.route, href: url.pathname });
       }
     }
 
-    const targetRoute = `${url.pathname}${url.pathname.endsWith("/") ? "" : "/"}`;
+    const targetRoute = linkedPage ? canonicalTargetRoute : url.pathname;
     if (/^\/posts\/[^/]+\/$/.test(targetRoute)) {
       inboundArticleLinks.set(
         targetRoute,
