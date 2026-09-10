@@ -16,7 +16,7 @@ Git履歴上、`e7d4ddd9aa233b55eb2900e0d5467e9954cdd85c`（2026-09-01）で新�
 - 他記事の関連記事欄からのリンク: 28/28
 - BlogPosting / BreadcrumbList / datePublished / dateModified / OGP: 正常
 
-デプロイ後のproduction HTTP監査でも全件200を再確認する。Search ConsoleではIndexing APIを使わず、下記canonical URLだけをURL検査へ投入する。
+Netlify production deploy `6aa2ace1ced89b000848d7bf`（commit `08ccb0df7e801286dd856fa6219df89a6fe89017`）後のHTTP監査でも、全28記事を含む全公開HTMLが200であることを確認済み。Search ConsoleではIndexing APIを使わず、下記canonical URLだけをURL検査へ投入する。
 
 ## Priority A
 

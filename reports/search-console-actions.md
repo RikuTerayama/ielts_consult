@@ -18,7 +18,7 @@ sitemapを再送信し、リダイレクトエラーとcanonical重複に関係�
 
 ## Search Console対象URLのBefore / After
 
-Beforeは2026-09-10の現行productionへ実リクエストした結果。Afterは修正済みproduction buildの期待値で、デプロイ後に同じHTTP監査で確定する。
+Beforeは2026-09-10の修正前productionへ実リクエストした結果。AfterはNetlify production deploy `6aa2ace1ced89b000848d7bf`（commit `08ccb0df7e801286dd856fa6219df89a6fe89017`）公開後の実測値。同一監査で公開HTML 88ページ、内部URL 561件、sitemap 75 URLを検証し、失敗0を確認した。
 
 | URL | Before status | After status | Final URL | Canonical / indexable | Sitemap | Internal links | Action |
 |---|---:|---:|---|---|---|---|---|
