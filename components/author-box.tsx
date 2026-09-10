@@ -25,7 +25,7 @@ export function AuthorBox({ className }: AuthorBoxProps) {
                 筆者について
               </h3>
               <Link
-                href="/about-author"
+                href="/about-author/"
                 className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
               >
                 詳しく見る →

@@ -19,7 +19,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4">コンテンツ</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/posts" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/posts/" className="text-muted-foreground hover:text-primary transition-colors">
                   記事一覧
                 </Link>
               </li>
@@ -41,42 +41,42 @@ export function Footer() {
             <h4 className="font-semibold mb-4">情報</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/about/" className="text-muted-foreground hover:text-primary transition-colors">
                   このサイトについて
                 </Link>
               </li>
               <li>
-                <Link href="/about-author" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/about-author/" className="text-muted-foreground hover:text-primary transition-colors">
                   筆者について
                 </Link>
               </li>
               <li>
-                <Link href="/editorial-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/editorial-policy/" className="text-muted-foreground hover:text-primary transition-colors">
                   編集方針
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/contact/" className="text-muted-foreground hover:text-primary transition-colors">
                   お問い合わせ
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/privacy/" className="text-muted-foreground hover:text-primary transition-colors">
                   プライバシーポリシー
                 </Link>
               </li>
               <li>
-                <Link href="/cookie-policy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/cookie-policy/" className="text-muted-foreground hover:text-primary transition-colors">
                   Cookieポリシー
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/disclaimer/" className="text-muted-foreground hover:text-primary transition-colors">
                   免責事項
                 </Link>
               </li>
               <li>
-                <Link href="/affiliate-disclosure" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/affiliate-disclosure/" className="text-muted-foreground hover:text-primary transition-colors">
                   アフィリエイト表示
                 </Link>
               </li>

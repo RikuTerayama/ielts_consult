@@ -76,7 +76,7 @@ export default function AffiliateDisclosurePage() {
         <h2>お問い合わせ</h2>
         <p>
           アフィリエイトプログラムに関するご質問は、
-          <a href="/contact">お問い合わせページ</a>よりお願いいたします。
+          <a href="/contact/">お問い合わせページ</a>よりお願いいたします。
         </p>
 
         <p className="text-sm text-muted-foreground mt-8">

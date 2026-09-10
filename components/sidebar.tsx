@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { A8RotatingAd } from "@/components/a8-rotating-ad";
 import type { Post } from "@/lib/posts";
 import type { TagWithCount } from "@/lib/posts";
-import { encodePostSlugForPath } from "@/lib/url";
+import { encodePostSlugForPath, encodeRouteSegmentForPath } from "@/lib/url";
 
 interface SidebarProps {
   latestPosts?: Post[];
@@ -76,7 +76,7 @@ export function Sidebar({
                   {popularTags.map(({ tag, count }) => (
                     <li key={tag}>
                       <Link
-                        href={`/tags/${encodeURIComponent(tag)}/`}
+                        href={`/tags/${encodeRouteSegmentForPath(tag)}/`}
                         className="inline-block text-sm px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-800 text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
                       >
                         {tag}

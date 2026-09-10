@@ -50,7 +50,7 @@ export default async function StepsPage() {
       <div className="container mx-auto px-4 py-12">
       <Breadcrumb 
         items={[
-          { label: "学習ステップ一覧", href: "/steps" }
+          { label: "学習ステップ一覧", href: "/steps/" }
         ]} 
         className="mb-8"
       />
@@ -66,7 +66,7 @@ export default async function StepsPage() {
         {steps.map((step) => (
           <Link
             key={step.id}
-            href={`/steps/${step.id}`}
+            href={`/steps/${step.id}/`}
             className="block p-6 border rounded-lg hover:shadow-lg transition-shadow"
           >
             <h2 className="text-xl font-semibold mb-2">{step.label}</h2>

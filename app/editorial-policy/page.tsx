@@ -41,7 +41,7 @@ export default function EditorialPolicyPage() {
 
         <h2>誤り訂正</h2>
         <p>
-          記事に誤りや不正確な情報を発見した場合は、<Link href="/contact">お問い合わせページ</Link>よりご連絡ください。
+          記事に誤りや不正確な情報を発見した場合は、<Link href="/contact/">お問い合わせページ</Link>よりご連絡ください。
           確認後、速やかに修正いたします。
         </p>
 

@@ -53,7 +53,7 @@ export default function CookiePolicyPage() {
 
         <h2>お問い合わせ</h2>
         <p>
-          Cookieに関するご質問は、<a href="/contact">お問い合わせページ</a>よりお願いいたします。
+          Cookieに関するご質問は、<a href="/contact/">お問い合わせページ</a>よりお願いいたします。
         </p>
       </div>
     </div>

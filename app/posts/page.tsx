@@ -38,7 +38,7 @@ export default async function PostsPage() {
       <div className="container mx-auto px-4 py-12">
         <FadeInSection>
           <Breadcrumb
-            items={[{ label: "記事一覧", href: "/posts" }]}
+            items={[{ label: "記事一覧", href: "/posts/" }]}
             className="mb-6"
           />
         </FadeInSection>

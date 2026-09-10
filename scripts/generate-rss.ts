@@ -29,6 +29,9 @@ async function generateRSS() {
   console.log("📡 RSSフィードを生成しています...");
 
   const posts = await getAllPosts();
+  const lastBuildDate = posts[0]?.date
+    ? toRfc2822(posts[0].date)
+    : new Date(0).toUTCString();
 
   const items = posts
     .map((post) => {
@@ -54,7 +57,7 @@ async function generateRSS() {
     <description>${SITE_DESCRIPTION}</description>
     <language>ja</language>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
 ${items}
   </channel>
 </rss>`;

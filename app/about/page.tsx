@@ -53,7 +53,7 @@ export default function AboutPage() {
 
         <h2>お問い合わせ</h2>
         <p>
-          ご質問・ご意見は<a href="/contact">お問い合わせページ</a>よりお願いいたします。
+          ご質問・ご意見は<a href="/contact/">お問い合わせページ</a>よりお願いいたします。
         </p>
       </div>
     </div>

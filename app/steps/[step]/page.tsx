@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: StepPageProps): Promise<Metad
       canonical: `${SITE_URL}/steps/${params.step}/`,
     },
     robots: {
-      index: true,
+      index: false,
       follow: true,
     },
   };

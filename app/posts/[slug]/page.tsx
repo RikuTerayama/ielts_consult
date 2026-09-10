@@ -12,7 +12,7 @@ import {
   resolveHeroSrc,
 } from "@/lib/posts";
 import { getArticleAdPlan, splitPostContentForAds } from "@/lib/post-ad-slots";
-import { encodePostSlugForPath } from "@/lib/url";
+import { encodePostSlugForPath, normalizeRouteSegment } from "@/lib/url";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -24,7 +24,7 @@ export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   const posts = await getAllPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+  return posts.map((post) => ({ slug: normalizeRouteSegment(post.slug) }));
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
@@ -128,7 +128,7 @@ export default async function PostPage({ params }: PostPageProps) {
       />
       <Breadcrumb
         items={[
-          { label: "記事一覧", href: "/posts" },
+          { label: "記事一覧", href: "/posts/" },
           { label: post.title, href: `/posts/${encodePostSlugForPath(post.slug)}/` },
         ]}
         className="mb-6"

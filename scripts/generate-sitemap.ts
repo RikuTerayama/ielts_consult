@@ -2,88 +2,94 @@ import fs from 'fs-extra';
 import path from 'path';
 import { SITE_URL } from '../config/site';
 import { getAllPosts, getAllTags } from '../lib/posts';
-import { getAllSteps, getAllSkills } from '../lib/categories';
-import { encodePostSlugForPath } from '../lib/url';
+import {
+  encodePostSlugForPath,
+  encodeRouteSegmentForPath,
+  normalizeRouteSegment,
+} from '../lib/url';
+
+type SitemapEntry = {
+  path: string;
+  changefreq: 'daily' | 'weekly' | 'monthly';
+  priority: string;
+  lastmod?: string;
+};
+
+function toLastmod(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+function renderUrl(entry: SitemapEntry): string {
+  return `  <url>
+    <loc>${SITE_URL}${entry.path}</loc>${
+      entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : ''
+    }
+    <changefreq>${entry.changefreq}</changefreq>
+    <priority>${entry.priority}</priority>
+  </url>`;
+}
 
 async function generateSitemap() {
   console.log('🗺️  サイトマップを生成しています...');
 
-  const [posts, steps, skills, allTags] = await Promise.all([
+  const [posts, allTags] = await Promise.all([
     getAllPosts(),
-    getAllSteps(),
-    getAllSkills(),
     getAllTags(),
   ]);
 
-  const staticPages = [
-    '',
-    '/posts',
-    '/about',
-    '/about-author',
-    '/editorial-policy',
-    '/cookie-policy',
-    '/contact',
-    '/privacy',
-    '/disclaimer',
-    '/affiliate-disclosure',
-    '/tags',
-    '/search',
-    '/steps',
+  const latestPostDate = posts
+    .map((post) => toLastmod(post.date))
+    .filter((date): date is string => Boolean(date))
+    .sort()
+    .at(-1);
+
+  // サイトマップにはcanonicalかつindex対象のURLだけを掲載する。
+  const staticPages: SitemapEntry[] = [
+    { path: '/', changefreq: 'daily', priority: '1.0', lastmod: latestPostDate },
+    { path: '/posts/', changefreq: 'daily', priority: '0.9', lastmod: latestPostDate },
+    { path: '/about/', changefreq: 'monthly', priority: '0.6' },
+    { path: '/about-author/', changefreq: 'monthly', priority: '0.7' },
+    { path: '/editorial-policy/', changefreq: 'monthly', priority: '0.5' },
+    { path: '/cookie-policy/', changefreq: 'monthly', priority: '0.3' },
+    { path: '/contact/', changefreq: 'monthly', priority: '0.4' },
+    { path: '/disclaimer/', changefreq: 'monthly', priority: '0.3' },
+    { path: '/affiliate-disclosure/', changefreq: 'monthly', priority: '0.3' },
+    { path: '/tags/', changefreq: 'weekly', priority: '0.7', lastmod: latestPostDate },
   ];
 
-  const stepPages = steps.map((step) => `/steps/${step.id}`);
-  const skillPages = skills.map((skill) => `/skills/${skill.id}`);
-  const tagPages = allTags.map(({ tag }) => `/tags/${encodeURIComponent(tag)}`);
+  const tagPages: SitemapEntry[] = allTags.map(({ tag }) => {
+    const tagKey = normalizeRouteSegment(tag);
+    const lastmod = posts
+      .filter((post) =>
+        post.tags.some((postTag) => normalizeRouteSegment(postTag) === tagKey)
+      )
+      .map((post) => toLastmod(post.date))
+      .filter((date): date is string => Boolean(date))
+      .sort()
+      .at(-1);
 
-  const postUrls = posts
-    .map(
-      (post) => `  <url>
-    <loc>${SITE_URL}/posts/${encodePostSlugForPath(post.slug)}/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`
-    )
-    .join('\n');
+    return {
+      path: `/tags/${encodeRouteSegmentForPath(tag)}/`,
+      changefreq: 'weekly',
+      priority: '0.6',
+      lastmod,
+    };
+  });
+
+  const postPages: SitemapEntry[] = posts.map((post) => ({
+    path: `/posts/${encodePostSlugForPath(post.slug)}/`,
+    changefreq: 'weekly',
+    priority: '0.8',
+    lastmod: toLastmod(post.date),
+  }));
+
+  const entries = [...staticPages, ...tagPages, ...postPages];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${staticPages
-  .map(
-    (page) => `  <url>
-    <loc>${SITE_URL}${page}/</loc>
-    <changefreq>${page === '' ? 'daily' : 'weekly'}</changefreq>
-    <priority>${page === '' ? '1.0' : '0.8'}</priority>
-  </url>`
-  )
-  .join('\n')}
-${stepPages
-  .map(
-    (page) => `  <url>
-    <loc>${SITE_URL}${page}/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>`
-  )
-  .join('\n')}
-${skillPages
-  .map(
-    (page) => `  <url>
-    <loc>${SITE_URL}${page}/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>`
-  )
-  .join('\n')}
-${tagPages
-  .map(
-    (page) => `  <url>
-    <loc>${SITE_URL}${page}/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>`
-  )
-  .join('\n')}
-${postUrls}
+${entries.map(renderUrl).join('\n')}
 </urlset>`;
 
   const outputPath = path.join(process.cwd(), 'public', 'sitemap.xml');

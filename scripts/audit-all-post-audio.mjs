@@ -141,7 +141,11 @@ const results = postFiles.map((fileName) => {
     .map((baseName) => assetMap.get(baseName.toLowerCase()))
     .filter(Boolean);
 
-  const builtPath = path.join(outPostsDir, slug, "index.html");
+  const builtPath = path.join(
+    outPostsDir,
+    slug.normalize("NFC").toLowerCase(),
+    "index.html"
+  );
   let builtPlayerCount;
   let builtAudioSrc;
   let builtAudioExists;

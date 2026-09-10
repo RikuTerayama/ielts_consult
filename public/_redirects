@@ -13,7 +13,5 @@ https://www.ieltsconsult.netlify.app/* https://ieltsconsult.netlify.app/:splat 3
 /posts/n2cd779121111 /404.html 404
 /posts/n2cd779121111/ /404.html 404
 
-# タグ大文字小文字正規化: ielts -> IELTS
-/tags/ielts /tags/IELTS/ 301
-/tags/ielts/ /tags/IELTS/ 301
-
+# 動的ページは生成時にNFC・小文字・末尾スラッシュありへ統一。
+# NetlifyのPretty URLsが非正規の大小文字/末尾スラッシュを1回で正規URLへ転送する。

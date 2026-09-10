@@ -26,7 +26,7 @@ export function HeroSection() {
             <FadeIn delay={0.3}>
               <div className="mt-8">
                 <Button asChild size="lg" className="rounded-xl">
-                  <Link href="/posts">最新記事を読む</Link>
+                  <Link href="/posts/">最新記事を読む</Link>
                 </Button>
               </div>
             </FadeIn>

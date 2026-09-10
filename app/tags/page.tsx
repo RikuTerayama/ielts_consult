@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { getAllTags } from "@/lib/posts";
+import { encodeRouteSegmentForPath } from "@/lib/url";
 
 export const metadata: Metadata = {
   title: "タグ一覧",
@@ -43,7 +44,7 @@ export default async function TagsPage() {
             {allTags.map(({ tag, count }) => (
               <li key={tag}>
                 <Link
-                  href={`/tags/${encodeURIComponent(tag)}/`}
+                  href={`/tags/${encodeRouteSegmentForPath(tag)}/`}
                   className="inline-block px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-muted/30 transition-colors text-muted-foreground hover:text-primary"
                 >
                   {tag}

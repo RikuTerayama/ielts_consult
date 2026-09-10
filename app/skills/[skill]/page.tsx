@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: SkillPageProps): Promise<Meta
       canonical: `${SITE_URL}/skills/${params.skill}/`,
     },
     robots: {
-      index: true,
+      index: false,
       follow: true,
     },
   };

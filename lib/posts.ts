@@ -16,6 +16,7 @@ import {
 } from "@/config/amazon-product-overrides";
 import { inferLearningStep, inferSkill } from "@/config/categories";
 import { extractTags } from "@/lib/tagging";
+import { normalizeRouteSegment } from "@/lib/url";
 
 // --- アフィリエイトメタ（リッチカード用） -----------------------------------------
 
@@ -643,15 +644,30 @@ export async function getAllPosts(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const decodedSlug = decodeURIComponent(slug);
-  const filePath = path.join(POSTS_DIR, `${decodedSlug}.html`);
+  let decodedSlug: string;
+  try {
+    decodedSlug = decodeURIComponent(slug);
+  } catch {
+    return null;
+  }
 
-  if (!fs.existsSync(filePath)) return null;
-  return parseHtmlPost(filePath, decodedSlug);
+  const canonicalSlug = normalizeRouteSegment(decodedSlug);
+  const filename = fs
+    .readdirSync(POSTS_DIR)
+    .find(
+      (file) =>
+        file.endsWith(".html") &&
+        normalizeRouteSegment(getSlugFromFilename(file)) === canonicalSlug
+    );
+
+  if (!filename) return null;
+  const sourceSlug = getSlugFromFilename(filename);
+  return parseHtmlPost(path.join(POSTS_DIR, filename), sourceSlug);
 }
 
 /** 関連記事を取得（タグ一致 → step/skill 一致 → 新着の順で最大4件） */
 export function getRelatedPosts(currentSlug: string, allPosts: Post[], limit = 4): Post[] {
+  if (limit <= 0) return [];
   const others = allPosts.filter((p) => p.slug !== currentSlug);
   if (others.length === 0) return [];
 
@@ -667,11 +683,35 @@ export function getRelatedPosts(currentSlug: string, allPosts: Post[], limit = 4
     const pSkill = inferSkill(p.title, p.tags);
     return (step && pStep === step) || (skill && pSkill === skill);
   });
+  const currentIndex = allPosts.findIndex((post) => post.slug === currentSlug);
+  const chronologicalNeighbor =
+    currentIndex >= 0
+      ? allPosts[(currentIndex + 1) % allPosts.length]
+      : undefined;
   const byDate = others;
 
   const seen = new Set<string>();
   const result: Post[] = [];
-  for (const post of [...byTag, ...byStepOrSkill, ...byDate]) {
+  // 関連性の高い3件を優先し、最後の1件は公開日順の隣接記事にする。
+  // 新着上位へのリンク集中を避けながら、全記事に自然な回遊経路を作る。
+  for (const post of [...byTag, ...byStepOrSkill]) {
+    if (seen.has(post.slug)) continue;
+    seen.add(post.slug);
+    result.push(post);
+    if (result.length >= Math.max(0, limit - 1)) break;
+  }
+
+  if (
+    chronologicalNeighbor &&
+    chronologicalNeighbor.slug !== currentSlug &&
+    !seen.has(chronologicalNeighbor.slug) &&
+    result.length < limit
+  ) {
+    seen.add(chronologicalNeighbor.slug);
+    result.push(chronologicalNeighbor);
+  }
+
+  for (const post of byDate) {
     if (seen.has(post.slug)) continue;
     seen.add(post.slug);
     result.push(post);
@@ -687,23 +727,34 @@ export async function getPostAddition(_slug: string): Promise<PostAddition | nul
 export type TagWithCount = { tag: string; count: number };
 
 export async function getPostsByTag(tagParam: string): Promise<Post[]> {
-  const tag = decodeURIComponent(tagParam);
+  let tag: string;
+  try {
+    tag = normalizeRouteSegment(decodeURIComponent(tagParam));
+  } catch {
+    return [];
+  }
   const posts = await getAllPosts();
-  return posts.filter((p) => p.tags.includes(tag));
+  return posts.filter((post) =>
+    post.tags.some((postTag) => normalizeRouteSegment(postTag) === tag)
+  );
 }
 
 export async function getAllTags(posts?: Post[]): Promise<TagWithCount[]> {
   const targetPosts = posts ?? (await getAllPosts());
-  const countMap = new Map<string, number>();
+  const countMap = new Map<string, TagWithCount>();
 
   for (const post of targetPosts) {
     for (const tag of post.tags) {
-      countMap.set(tag, (countMap.get(tag) ?? 0) + 1);
+      const key = normalizeRouteSegment(tag);
+      const current = countMap.get(key);
+      countMap.set(key, {
+        tag: current?.tag ?? tag,
+        count: (current?.count ?? 0) + 1,
+      });
     }
   }
 
-  return Array.from(countMap.entries())
-    .map(([tag, count]) => ({ tag, count }))
+  return Array.from(countMap.values())
     .sort((a, b) => {
       if (b.count !== a.count) return b.count - a.count;
       return a.tag.localeCompare(b.tag);

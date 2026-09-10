@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PostCard } from "@/components/post-card";
 import { SITE_URL } from "@/config/site";
 import { getPostsByTag, getAllTags } from "@/lib/posts";
+import { encodeRouteSegmentForPath, normalizeRouteSegment } from "@/lib/url";
 
 type TagPageProps = {
   params: { tag: string };
@@ -17,13 +18,17 @@ export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
     return [{ tag: "_" }];
   }
   return allTags.map(({ tag }) => ({
-    tag,
+    tag: normalizeRouteSegment(tag),
   }));
 }
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
-  const tag = decodeURIComponent(params.tag);
-  const canonicalUrl = `${SITE_URL}/tags/${encodeURIComponent(tag)}/`;
+  const tagSlug = normalizeRouteSegment(decodeURIComponent(params.tag));
+  const allTags = await getAllTags();
+  const tag = allTags.find(
+    (item) => normalizeRouteSegment(item.tag) === tagSlug
+  )?.tag ?? tagSlug;
+  const canonicalUrl = `${SITE_URL}/tags/${encodeRouteSegmentForPath(tagSlug)}/`;
   return {
     title: `Tag: ${tag}`,
     description: `タグ「${tag}」の記事一覧`,
@@ -38,7 +43,11 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
 }
 
 export default async function TagPage({ params }: TagPageProps) {
-  const tag = decodeURIComponent(params.tag);
+  const tagSlug = normalizeRouteSegment(decodeURIComponent(params.tag));
+  const allTags = await getAllTags();
+  const tag = allTags.find(
+    (item) => normalizeRouteSegment(item.tag) === tagSlug
+  )?.tag ?? tagSlug;
   const posts = await getPostsByTag(params.tag);
 
   return (

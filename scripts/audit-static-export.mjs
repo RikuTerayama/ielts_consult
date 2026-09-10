@@ -29,6 +29,19 @@ function safeDecode(pathname) {
   }
 }
 
+function normalizeRouteSegment(segment) {
+  return segment.normalize("NFC").toLowerCase();
+}
+
+function encodeRouteSegment(segment) {
+  return encodeURIComponent(normalizeRouteSegment(segment));
+}
+
+function isNotFoundOutput(htmlPath) {
+  const relative = path.relative(outDir, htmlPath).replaceAll(path.sep, "/");
+  return relative === "404.html" || relative === "404/index.html";
+}
+
 function outputTargetForPathname(pathname) {
   const decoded = safeDecode(pathname).replace(/^\/+/, "");
   if (!decoded) return path.join(outDir, "index.html");
@@ -54,6 +67,11 @@ let checkedInternalReferences = 0;
 let doubleEncodedCanonicals = 0;
 for (const htmlPath of htmlFiles) {
   const $ = load(fs.readFileSync(htmlPath, "utf8"));
+  if (isNotFoundOutput(htmlPath)) {
+    assert($("link[rel='canonical']").length === 0, `${htmlPath}: 404にcanonicalがあります`);
+    assert(/noindex/i.test($("meta[name='robots']").attr("content") || ""), `${htmlPath}: 404がnoindexではありません`);
+    continue;
+  }
   assert($("link[rel='canonical']").length === 1, `${htmlPath}: canonicalが1件ではありません`);
   const canonical = $("link[rel='canonical']").attr("href") || "";
   try {
@@ -85,13 +103,13 @@ for (const htmlPath of htmlFiles) {
   }
 }
 
-const encodePostSlugForPath = (slug) => encodeURIComponent(slug);
+const encodePostSlugForPath = encodeRouteSegment;
 const postSlugByOutputDirectory = new Map(
   fs
     .readdirSync(path.join(repoRoot, "content", "posts"))
     .filter((name) => name.endsWith(".html"))
     .map((name) => name.slice(0, -5))
-    .map((slug) => [slug, slug])
+    .map((slug) => [normalizeRouteSegment(slug), slug])
 );
 const postOutputFiles = htmlFiles.filter((file) => {
   const relative = path.relative(path.join(outDir, "posts"), file);
@@ -121,7 +139,7 @@ for (const htmlPath of tagOutputFiles) {
   const $ = load(fs.readFileSync(htmlPath, "utf8"));
   const canonical = $("link[rel='canonical']").attr("href") || "";
   assert(
-    canonical === `${siteUrl}/tags/${encodeURIComponent(tag)}/`,
+    canonical === `${siteUrl}/tags/${encodeRouteSegment(tag)}/`,
     `${tag}: タグcanonical不一致`
   );
 }
@@ -131,12 +149,17 @@ let targetImages = 0;
 let targetAudio = 0;
 let targetAffiliateCards = 0;
 for (const article of manifest.articles) {
-  const articlePath = path.join(outDir, "posts", article.slug, "index.html");
+  const articlePath = path.join(
+    outDir,
+    "posts",
+    normalizeRouteSegment(article.slug),
+    "index.html"
+  );
   assert(fs.existsSync(articlePath), `${article.guid}: 出力HTMLなし`);
   if (!fs.existsSync(articlePath)) continue;
 
   const $ = load(fs.readFileSync(articlePath, "utf8"));
-  const expectedCanonical = `${siteUrl}/posts/${encodeURIComponent(article.slug)}/`;
+  const expectedCanonical = `${siteUrl}/posts/${encodePostSlugForPath(article.slug)}/`;
   assert(
     $("link[rel='canonical']").attr("href") === expectedCanonical,
     `${article.guid}: canonical不一致`
