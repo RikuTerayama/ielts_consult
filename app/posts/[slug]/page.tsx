@@ -5,6 +5,8 @@ import { PostCard } from "@/components/post-card";
 import { A8RotatingAd } from "@/components/a8-rotating-ad";
 import { Sidebar } from "@/components/sidebar";
 import { SITE_URL } from "@/config/site";
+import { AUTHOR, PUBLISHER, WEBSITE_ID } from "@/config/entities";
+import Link from "next/link";
 import {
   getPostBySlug,
   getAllPosts,
@@ -61,7 +63,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       title,
       description,
       publishedTime: post.date || undefined,
-      modifiedTime: post.date || undefined,
+      modifiedTime: post.modifiedDate || post.date || undefined,
       authors: [`${SITE_URL}/about-author/`],
       images: [
         {
@@ -96,6 +98,8 @@ export default async function PostPage({ params }: PostPageProps) {
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
+    "@id": `${canonicalUrl}#article`,
+    isPartOf: { "@id": WEBSITE_ID },
     headline: post.title,
     description: post.description || post.title,
     url: canonicalUrl,
@@ -104,18 +108,10 @@ export default async function PostPage({ params }: PostPageProps) {
       "@id": canonicalUrl,
     },
     image: [heroUrl],
-    datePublished: post.date,
-    dateModified: post.date,
-    author: {
-      "@type": "Person",
-      name: "IELTS Consult",
-      url: `${SITE_URL}/about-author/`,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "IELTS Consult",
-      url: SITE_URL,
-    },
+    datePublished: post.date || undefined,
+    dateModified: post.modifiedDate || post.date || undefined,
+    author: AUTHOR,
+    publisher: PUBLISHER,
   };
 
   return (
@@ -137,12 +133,21 @@ export default async function PostPage({ params }: PostPageProps) {
         <article className="w-full min-w-0 max-w-[800px] mx-auto xl:mx-0">
           <header className="mb-8">
             <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+            <p className="text-sm text-muted-foreground mb-2">
+              執筆：<Link href="/about-author/" rel="author" className="underline underline-offset-4">{AUTHOR.name}</Link>
+              {" · "}<Link href="/editorial-policy/" className="underline underline-offset-4">編集方針</Link>
+            </p>
             {post.date && (
               <time
                 dateTime={post.date}
                 className="text-muted-foreground text-sm block"
               >
-                {format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
+                公開：{format(new Date(post.date), "yyyy年M月d日", { locale: ja })}
+              </time>
+            )}
+            {post.modifiedDate && post.modifiedDate !== post.date && (
+              <time dateTime={post.modifiedDate} data-modified className="text-muted-foreground text-sm block">
+                更新：{format(new Date(post.modifiedDate), "yyyy年M月d日", { locale: ja })}
               </time>
             )}
           </header>

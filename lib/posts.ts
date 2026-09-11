@@ -511,6 +511,7 @@ export interface Post {
   slug: string;
   title: string;
   date: string;
+  modifiedDate?: string;
   description: string;
   tags: string[];
   hero?: string;
@@ -621,10 +622,11 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
       const metaDate = $('meta[property="article:published_time"]').attr("content");
       if (metaDate) date = metaDate;
     }
-    if (!date) {
-      const stat = fs.statSync(filePath);
-      date = stat.mtime.toISOString();
-    }
+    // Unknown dates stay unknown: a checkout/deploy timestamp is not publication.
+    if (date && Number.isNaN(Date.parse(date))) date = "";
+    const modifiedValue = $('meta[property="article:modified_time"]').attr("content");
+    const modifiedDate = modifiedValue && !Number.isNaN(Date.parse(modifiedValue))
+      ? modifiedValue : undefined;
 
     let contentHtml = "";
     const article = $("article");
@@ -674,6 +676,7 @@ function parseHtmlPost(filePath: string, slug: string): Post | null {
       slug,
       title,
       date,
+      ...(modifiedDate && { modifiedDate }),
       description,
       tags,
       content: contentHtml,
@@ -704,8 +707,8 @@ export async function getAllPosts(): Promise<Post[]> {
   }
 
   posts.sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
+    const dateA = Date.parse(a.date) || 0;
+    const dateB = Date.parse(b.date) || 0;
     return dateB - dateA;
   });
 

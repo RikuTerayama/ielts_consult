@@ -82,7 +82,7 @@ async function generateSitemap() {
     path: `/posts/${encodePostSlugForPath(post.slug)}/`,
     changefreq: 'weekly',
     priority: '0.8',
-    lastmod: toLastmod(post.date),
+    lastmod: toLastmod(post.modifiedDate || post.date),
   }));
 
   const entries = [...staticPages, ...tagPages, ...postPages];

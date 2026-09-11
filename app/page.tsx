@@ -5,6 +5,7 @@ import { FadeInHeading } from "@/components/anim/fade-in-heading";
 import { FadeInSection } from "@/components/anim/fade-in-section";
 import { A8RotatingAd } from "@/components/a8-rotating-ad";
 import { getAllPosts, getAllTags } from "@/lib/posts";
+import { PUBLISHER, WEBSITE_ID } from "@/config/entities";
 
 const SIDEBAR_LATEST_N = 6;
 const SIDEBAR_POPULAR_TAGS_M = 10;
@@ -20,25 +21,18 @@ export default async function Home() {
 
   const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "IELTS Consult",
-    "url": "https://ieltsconsult.netlify.app",
-    "logo": "https://ieltsconsult.netlify.app/logo.png",
+    ...PUBLISHER,
     "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを提供",
-    "sameAs": [],
   };
 
   const webSiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID,
     "name": "IELTS対策｜外資系コンサルの英語力底上げ",
     "description": "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
     "url": "https://ieltsconsult.netlify.app",
-    "publisher": {
-      "@type": "Organization",
-      "name": "IELTS Consult",
-      "url": "https://ieltsconsult.netlify.app"
-    },
+    "publisher": { "@id": PUBLISHER['@id'] },
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://ieltsconsult.netlify.app/search?q={search_term_string}",

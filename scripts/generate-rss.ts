@@ -18,20 +18,19 @@ function escapeXml(str: string): string {
 }
 
 function toRfc2822(dateStr: string): string {
-  try {
-    return new Date(dateStr).toUTCString();
-  } catch {
-    return new Date().toUTCString();
-  }
+  const date = new Date(dateStr);
+  return Number.isNaN(date.getTime()) ? "" : date.toUTCString();
 }
 
 async function generateRSS() {
   console.log("📡 RSSフィードを生成しています...");
 
   const posts = await getAllPosts();
-  const lastBuildDate = posts[0]?.date
-    ? toRfc2822(posts[0].date)
-    : new Date(0).toUTCString();
+  // Reflect a real content change, not the build clock. Item pubDate stays original.
+  const latestContentDate = posts.map(post => post.modifiedDate || post.date)
+    .filter(value => value && !Number.isNaN(Date.parse(value)))
+    .sort((a, b) => Date.parse(b) - Date.parse(a))[0];
+  const lastBuildDate = latestContentDate ? toRfc2822(latestContentDate) : "";
 
   const items = posts
     .map((post) => {
@@ -43,7 +42,7 @@ async function generateRSS() {
       <title>${title}</title>
       <link>${link}</link>
       <guid isPermaLink="true">${link}</guid>
-      <pubDate>${pubDate}</pubDate>
+      ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ''}
       <description>${desc}</description>
     </item>`;
     })
@@ -57,7 +56,7 @@ async function generateRSS() {
     <description>${SITE_DESCRIPTION}</description>
     <language>ja</language>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>${lastBuildDate}</lastBuildDate>
+    ${lastBuildDate ? `<lastBuildDate>${lastBuildDate}</lastBuildDate>` : ''}
 ${items}
   </channel>
 </rss>`;

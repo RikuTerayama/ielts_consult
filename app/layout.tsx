@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { SITE_URL } from "@/config/site";
+import { AUTHOR } from "@/config/entities";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   },
   description: "IELTS対策、ビジネス英語、外資系コンサルで求められる英語力向上のための実践的なノウハウを発信するブログ",
   keywords: ["IELTS", "英語学習", "外資系コンサル", "ビジネス英語", "英語力向上"],
-  authors: [{ name: "IELTS Consult", url: SITE_URL }],
+  authors: [{ name: AUTHOR.name, url: AUTHOR.url }],
   creator: "IELTS Consult",
   publisher: "IELTS Consult",
   formatDetection: {

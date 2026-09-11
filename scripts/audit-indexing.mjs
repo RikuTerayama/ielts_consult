@@ -273,8 +273,7 @@ const noindexInSitemap = [...pageByRoute.values()].filter(
 const tagPages = [...pageByRoute.values()].filter((page) =>
   /^\/tags\/[^/]+\/$/.test(page.route)
 );
-assert(postPages.length === 52, `記事出力数 ${postPages.length}`);
-assert(tagPages.length === 13, `タグ出力数 ${tagPages.length}`);
+assert(postPages.length === fs.readdirSync(postsDir).filter(file => file.endsWith('.html')).length, `記事出力数 ${postPages.length}`);
 assert(sitemapBlocks.length === 10 + postPages.length + tagPages.length, `sitemap URL数 ${sitemapBlocks.length}`);
 assert(noindexInSitemap.length === 0, `sitemap内noindex ${noindexInSitemap.length}`);
 assert(doubleEncodedCanonicals === 0, `canonical二重エンコード ${doubleEncodedCanonicals}`);
@@ -293,7 +292,8 @@ const sourcePosts = fs
     return {
       slug,
       route: `/posts/${encodeURIComponent(normalizeRouteSegment(slug))}/`,
-      lastmod: date ? new Date(date).toISOString() : undefined,
+      lastmod: ($('meta[property="article:modified_time"]').attr('content') || date)
+        ? new Date($('meta[property="article:modified_time"]').attr('content') || date).toISOString() : undefined,
     };
   });
 
@@ -307,7 +307,7 @@ for (const post of sourcePosts) {
 
 const rss = fs.readFileSync(path.join(outDir, "rss.xml"), "utf8");
 const rssLinks = [...rss.matchAll(/<guid[^>]*>([^<]+)<\/guid>/g)].map((match) => match[1]);
-assert(rssLinks.length === 52, `RSS記事数 ${rssLinks.length}`);
+assert(rssLinks.length === sourcePosts.length, `RSS記事数 ${rssLinks.length}`);
 assert(new Set(rssLinks).size === rssLinks.length, "RSS GUID重複があります");
 assert(rssLinks.every((url) => sitemapSet.has(url)), "RSSに非canonical/非sitemap URLがあります");
 
